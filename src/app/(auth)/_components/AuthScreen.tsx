@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth/current-user";
 import { devMailerEnabled } from "@/lib/auth/config";
 import { loginDestination } from "@/lib/auth/navigation";
 import { AuthForm, type AuthMode } from "./AuthForm";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 type PublicMode = Exclude<AuthMode, "staff">;
 type Search = Promise<Record<string, string | string[] | undefined>>;
@@ -41,6 +42,7 @@ export function AuthScreen({ mode, searchParams }: { mode: PublicMode; searchPar
     </section>
     <section className="flex min-h-screen flex-col justify-center px-6 py-12 sm:px-12 lg:px-16">
       <div className="mx-auto w-full max-w-md">
+        <div className="mb-8 flex justify-end"><ThemeToggle /></div>
         <Link href="/login" className="mb-12 flex items-center gap-2 text-lg font-semibold lg:hidden"><span className="grid size-8 place-items-center rounded-lg bg-primary text-on-primary">B</span>Brightloop</Link>
         <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary">Your Brightloop workspace</p>
         <h1 className="text-3xl font-semibold tracking-tight">{copy[mode].title}</h1>

@@ -60,5 +60,6 @@ export function navFor(role: Role): NavSection[] {
 
 /** Highlight a menu item on its own page and on its sub-pages (/invoices/42). */
 export function isActive(pathname: string, href: string) {
+  if (href === "/portal") return pathname === href || pathname.startsWith("/portal/subscriptions/");
   return pathname === href || pathname.startsWith(`${href}/`);
 }

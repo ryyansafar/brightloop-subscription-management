@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 // Owner: fathima. Invoice form view: status bar with actions, the printable document, and payments.
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -12,7 +13,7 @@ import { invoiceStepLabels } from "../status-labels";
 
 export const metadata: Metadata = { title: "Invoice" };
 
-export default async function InvoicePage({ params }: { params: Promise<{ id: string }> }) {
+async function InvoicePageContent({ params }: { params: Promise<{ id: string }> }) {
   await connection();
   const id = Number((await params).id);
   const invoice = Number.isInteger(id) && id > 0 ? await getInvoice(id) : null;
@@ -72,4 +73,8 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
       </div>
     </>
   );
+}
+
+export default function InvoicePage(props: { params: Promise<{ id: string }> }) {
+  return <Suspense fallback={<div role="status" className="p-6 text-muted">Loading…</div>}><InvoicePageContent {...props} /></Suspense>;
 }

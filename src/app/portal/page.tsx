@@ -5,7 +5,6 @@ import { Button, PageHeader, StatCard, StatusBadge, formatDate, param, pageParam
 import { TableToolbar } from "@/components/table/TableToolbar";
 import { Pagination } from "@/components/table/Pagination";
 import { formatINR } from "@/lib/money";
-import { LogoutButton } from "@/lib/auth/ui/LogoutButton";
 import { SubscriptionActions } from "@/app/(app)/subscriptions/SubscriptionActions";
 import { portalOverview, PAGE_SIZE } from "./queries";
 
@@ -13,7 +12,7 @@ export const metadata: Metadata = { title: "My subscriptions" };
 async function PortalPage({ searchParams }: { searchParams: Promise<Params> }) {
   const params = await searchParams;
   const data = await portalOverview({ status: param(params, "status"), q: param(params, "q"), page: pageParam(params) });
-  return <><PageHeader title={`Welcome, ${data.user.name.split(" ")[0]}`} description="Your subscriptions, renewals and billing, all in one place." actions={<><LogoutButton /><Button href="/portal/invoices" variant="primary">View my invoices</Button></>} />
+  return <><PageHeader title={`Welcome, ${data.user.name.split(" ")[0]}`} description="Your subscriptions, renewals and billing, all in one place." actions={<><Button href="/portal/invoices" variant="primary">View my invoices</Button></>} />
     <div className="space-y-6 p-4 md:p-6"><div className="grid gap-4 sm:grid-cols-3"><StatCard label="Active subscriptions" value={String(data.active)} tone="success" /><StatCard label="Outstanding invoices" value={formatINR(data.outstanding)} tone={data.outstanding > 0 ? "warning" : "neutral"} href="/portal/invoices?status=CONFIRMED" /><StatCard label="Next invoice date" value={formatDate(data.nextInvoiceDate)} /></div>
       <section className="overflow-hidden rounded-xl border border-line bg-surface"><TableToolbar basePath="/portal" searchParams={params} filters={[{ param: "status", options: [{ label: "Active", value: "ACTIVE" }, { label: "Paused", value: "PAUSED" }, { label: "Closed", value: "CLOSED" }] }]} search={{ placeholder: "Search your subscriptions" }} /></section>
       {data.rows.length ? <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-2">{data.rows.map((subscription) => <article key={subscription.id} className="overflow-hidden rounded-xl border border-line bg-surface">

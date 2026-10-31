@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 // Owner: fathima. Dashboard: KPI tiles with date range and plan filters (GET form, so it is shareable).
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -34,7 +35,7 @@ function readFilters(params: Params, today: Date) {
   };
 }
 
-export default async function DashboardPage({ searchParams }: { searchParams: Promise<Params> }) {
+async function DashboardPageContent({ searchParams }: { searchParams: Promise<Params> }) {
   await connection(); // live numbers: render per request, never prerender
   const f = readFilters(await searchParams, new Date());
   const [s, series, plans] = await Promise.all([getDashboardSummary(f), getMonthlySeries(f), getPlanOptions()]);
@@ -100,4 +101,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       </div>
     </>
   );
+}
+
+export default function DashboardPage(props: { searchParams: Promise<Params> }) {
+  return <Suspense fallback={<div role="status" className="p-6 text-muted">Loading…</div>}><DashboardPageContent {...props} /></Suspense>;
 }

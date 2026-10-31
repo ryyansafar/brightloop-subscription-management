@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { PageHeader, StatusBar, StatusBadge, formatDate } from "@/components";
 import { formatINR } from "@/lib/money";
-import { LogoutButton } from "@/lib/auth/ui/LogoutButton";
 import { SubscriptionActions } from "./SubscriptionActions";
 import type { SubscriptionDetail } from "./queries";
 
@@ -9,7 +8,7 @@ export function SubscriptionView({ subscription: sub, portal = false }: { subscr
   const base = portal ? "/portal" : "/subscriptions";
   const subtotal = sub.lines.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0);
   const steps = ["DRAFT", "QUOTATION", "CONFIRMED", "ACTIVE", ...(sub.status === "PAUSED" ? ["PAUSED"] : []), "CLOSED"];
-  return <><PageHeader title={sub.number} breadcrumbs={[{ label: portal ? "My subscriptions" : "Subscriptions", href: base }]} description={sub.plan.name} actions={<LogoutButton />} />
+  return <><PageHeader title={sub.number} breadcrumbs={[{ label: portal ? "My subscriptions" : "Subscriptions", href: base }]} description={sub.plan.name} />
     <StatusBar current={sub.status} steps={steps} actions={<SubscriptionActions id={sub.id} status={sub.status} plan={sub.plan} hasEndDate={!!sub.endDate} portal={portal} />} />
     <div className="grid grid-cols-1 items-start gap-6 p-4 md:p-6 xl:grid-cols-[minmax(0,1fr)_320px]">
       <div className="min-w-0 space-y-6"><section className="rounded-xl border border-line bg-surface p-5 md:p-6"><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-semibold">Subscription overview</h2><StatusBadge status={sub.status} /></div>

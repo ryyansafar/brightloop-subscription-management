@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, postJson } from "@/components";
+import { Button } from "@/components/ui/Button";
+import { postJson } from "@/components/postJson";
 
 export function LogoutButton() {
   const router = useRouter();

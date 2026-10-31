@@ -29,13 +29,40 @@
   --series-2: #eb6834;
 }
 
+:root { color-scheme: light; }
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #19151b;
+  --foreground: #e6e8eb;
+  --surface: #231e26;
+  --surface-2: #2e2631;
+  --line: #433447;
+  --muted: #9aa4b2;
+  --primary: #c28fb5;
+  --primary-hover: #d3a6c7;
+  --primary-soft: #2e2230;
+  --on-primary: #1a1116;
+  --success: #5cc795;
+  --success-soft: #16291f;
+  --warning: #e3a944;
+  --warning-soft: #2c2312;
+  --danger: #f2877c;
+  --danger-soft: #331b19;
+  --info: #7fb2ec;
+  --info-soft: #172436;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #121418;
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    color-scheme: dark;
+    --background: #19151b;
     --foreground: #e6e8eb;
-    --surface: #1a1d22;
-    --surface-2: #23272e;
-    --line: #2f343c;
+    --surface: #231e26;
+    --surface-2: #2e2631;
+    --line: #433447;
     --muted: #9aa4b2;
     --primary: #c28fb5;
     --primary-hover: #d3a6c7;

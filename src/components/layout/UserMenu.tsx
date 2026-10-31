@@ -5,6 +5,7 @@ import type { Role } from "@/lib/state";
 import { Badge, humanize } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { postJson } from "../postJson";
+import { ThemeToggle } from "../ThemeToggle";
 
 interface UserMenuProps {
   name: string;
@@ -36,6 +37,7 @@ export function UserMenu({ name, role }: UserMenuProps) {
         </p>
         <Badge tone={role === "CUSTOMER" ? "neutral" : "primary"}>{humanize(role)}</Badge>
       </div>
+      <ThemeToggle />
       <Button variant="secondary" loading={busy} onClick={signOut} className="h-11 w-full md:h-10">
         {busy ? "Signing out…" : "Sign out"}
       </Button>

@@ -1,7 +1,7 @@
 "use client";
 // Owner: fathima. Modal built on the native <dialog> (focus trap and Esc for free).
 // Locks page scroll while open, returns focus to the opener, and stacks footer buttons on phones.
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 
 interface DialogProps {
   open: boolean;
@@ -14,6 +14,7 @@ interface DialogProps {
 
 export function Dialog({ open, onClose, title, children, footer }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
   const opener = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -47,6 +48,7 @@ export function Dialog({ open, onClose, title, children, footer }: DialogProps) 
   return (
     <dialog
       ref={ref}
+      aria-labelledby={titleId}
       onClose={onClose}
       onCancel={(e) => {
         // Esc: let the parent own the state so the dialog and `open` never disagree.
@@ -57,7 +59,7 @@ export function Dialog({ open, onClose, title, children, footer }: DialogProps) 
       className="no-print m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-lg border border-line bg-surface p-0 text-foreground shadow-xl backdrop:bg-black/40"
     >
       <div className="flex items-center justify-between gap-2 border-b border-line py-1.5 pl-5 pr-2">
-        <h2 className="text-base font-semibold">{title}</h2>
+        <h2 id={titleId} className="text-base font-semibold">{title}</h2>
         <button
           type="button"
           onClick={onClose}

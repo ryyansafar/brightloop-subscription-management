@@ -33,8 +33,8 @@ export function AppShell({ role, userName, children }: AppShellProps) {
       )}
 
       <aside
-        className={`no-print fixed inset-y-0 left-0 z-40 flex w-60 shrink-0 flex-col border-r border-line bg-surface transition-transform md:sticky md:top-0 md:h-screen md:translate-x-0 ${
-          open ? "translate-x-0" : "-translate-x-full"
+        className={`no-print fixed inset-y-0 left-0 z-40 flex w-60 shrink-0 flex-col border-r border-line bg-surface transition-transform md:visible md:sticky md:top-0 md:h-screen md:translate-x-0 ${
+          open ? "visible translate-x-0" : "invisible -translate-x-full"
         }`}
       >
         <div className="flex h-14 items-center gap-2 border-b border-line px-4">
