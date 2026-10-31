@@ -46,12 +46,16 @@ export async function getDashboardSummary(f: DashboardFilters): Promise<Dashboar
   const plan = planClause(f.planId, Prisma.sql`s.planId`);
 
   const [subs, revenue, payments, open, churn] = await Promise.all([
+    // Lines are totalled once per subscription first: SubscriptionLine has no
+    // subscriptionId index, so joining it row by row is slow (~1s on 3,000 subs).
     db.$queryRaw<{ active: bigint; mrr: number | null }[]>`
-      SELECT COUNT(DISTINCT s.id) AS active,
-             SUM(l.quantity * l.unitPrice * ${MONTHLY_FACTOR}) AS mrr
+      SELECT COUNT(*) AS active, SUM(COALESCE(l.amount, 0) * ${MONTHLY_FACTOR}) AS mrr
       FROM Subscription s
       JOIN Plan p ON p.id = s.planId
-      LEFT JOIN SubscriptionLine l ON l.subscriptionId = s.id
+      LEFT JOIN (
+        SELECT subscriptionId, SUM(quantity * unitPrice) AS amount
+        FROM SubscriptionLine GROUP BY subscriptionId
+      ) l ON l.subscriptionId = s.id
       WHERE s.status = 'ACTIVE' ${plan}`,
     db.$queryRaw<{ total: bigint | null }[]>`
       SELECT SUM(i.total) AS total

@@ -1,21 +1,49 @@
 // Owner: fathima. Shell for the back-office pages (dashboard, subscriptions, invoices, catalog...).
-import type { ReactNode } from "react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { Suspense, type ReactNode } from "react";
 import { AppShell, ToastProvider } from "@/components";
-import type { Role } from "@/lib/state";
+import { getSessionUser } from "@/lib/auth/session";
+import { db } from "@/lib/db";
 
-// TODO(pankaj): replace with the signed-in user from the session once src/lib/auth is in.
-// The menu below is filtered by this role.
-async function currentUser(): Promise<{ name: string; role: Role }> {
-  return { name: "Admin", role: "ADMIN" };
+/** The signed-in user, using Pankaj's session check (signature, expiry, password version). */
+async function currentUser() {
+  const cookie = (await cookies()).toString();
+  const session = await getSessionUser(new Request("http://app.local", { headers: { cookie } }));
+  if (!session) return null;
+  const { name } = await db.user.findUniqueOrThrow({ where: { id: session.id }, select: { name: true } });
+  return { name, role: session.role };
 }
 
-export default async function AppLayout({ children }: { children: ReactNode }) {
+async function SignedInShell({ children }: { children: ReactNode }) {
+  // src/proxy.ts already redirects signed-out visitors; this covers a stale or tampered cookie.
   const user = await currentUser();
+  if (!user) redirect("/login");
+  return (
+    <AppShell role={user.role} userName={user.name}>
+      {children}
+    </AppShell>
+  );
+}
+
+// Shown for a moment while the session is read (Next 16 needs request data behind Suspense).
+function ShellPlaceholder() {
+  return (
+    <div className="flex min-h-screen w-full" aria-busy>
+      <div className="hidden w-60 shrink-0 border-r border-line bg-surface md:block" />
+      <div className="flex-1 animate-pulse p-6">
+        <div className="h-6 w-40 rounded bg-surface-2" />
+      </div>
+    </div>
+  );
+}
+
+export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <ToastProvider>
-      <AppShell role={user.role} userName={user.name}>
-        {children}
-      </AppShell>
+      <Suspense fallback={<ShellPlaceholder />}>
+        <SignedInShell>{children}</SignedInShell>
+      </Suspense>
     </ToastProvider>
   );
 }
