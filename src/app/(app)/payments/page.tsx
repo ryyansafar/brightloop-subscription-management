@@ -4,11 +4,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
-import { cookies } from "next/headers";
 import { DataTable, MobileMeta, PageHeader, formatDate, pageParam, param, type Column, type Params } from "@/components";
 import { db } from "@/lib/db";
 import { formatINR } from "@/lib/money";
-import { getSessionUser } from "@/lib/auth/session";
+import { getCurrentUser } from "@/lib/auth/current-user";
 import { PAYMENT_METHODS } from "@/lib/state";
 import { DateRangeFilter } from "./DateRangeFilter";
 import { readDateRange, type DateRange } from "./filters";
@@ -60,7 +59,7 @@ async function PaymentsPageContent({ searchParams }: { searchParams: Promise<Par
   const page = pageParam(params);
   const range = readDateRange(params);
   const { rows, total, amount } = await listPayments(param(params, "method"), param(params, "q")?.trim(), range, page);
-  const user = await getSessionUser(new Request("http://app.local", { headers: { cookie: (await cookies()).toString() } }));
+  const user = await getCurrentUser();
   const canRecord = user?.role === "ADMIN" || user?.role === "STAFF";
 
   const columns: Column<PaymentRow>[] = [
