@@ -122,7 +122,13 @@ export async function getMonthlySeries(f: DashboardFilters): Promise<MonthPoint[
       GROUP BY 1`,
   ]);
 
+  // Every month in the range gets a point, so empty months show as gaps, not missing columns.
   const points = new Map<string, MonthPoint>();
+  const last = new Date(to - 1);
+  for (let d = new Date(Date.UTC(f.from.getUTCFullYear(), f.from.getUTCMonth(), 1)); d <= last; d.setUTCMonth(d.getUTCMonth() + 1)) {
+    const m = d.toISOString().slice(0, 7);
+    points.set(m, { month: m, revenue: 0, payments: 0 });
+  }
   const at = (m: string) =>
     points.get(m) ?? points.set(m, { month: m, revenue: 0, payments: 0 }).get(m)!;
   for (const r of rev) at(r.month).revenue = num(r.total);

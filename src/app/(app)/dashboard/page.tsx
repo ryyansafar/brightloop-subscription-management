@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { connection } from "next/server";
 import { Button, Input, PageHeader, Select, StatCard, param, type Params } from "@/components";
 import { rupees } from "@/lib/money";
-import { getDashboardSummary, getPlanOptions } from "./queries";
+import { getDashboardSummary, getMonthlySeries, getPlanOptions } from "./queries";
+import { RevenueChart } from "./RevenueChart";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -32,7 +33,7 @@ function readFilters(params: Params, today: Date) {
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<Params> }) {
   await connection(); // live numbers: render per request, never prerender
   const f = readFilters(await searchParams, new Date());
-  const [s, plans] = await Promise.all([getDashboardSummary(f), getPlanOptions()]);
+  const [s, series, plans] = await Promise.all([getDashboardSummary(f), getMonthlySeries(f), getPlanOptions()]);
   const n = (v: number) => v.toLocaleString("en-IN");
 
   return (
@@ -84,6 +85,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             href="/invoices?filter=overdue"
           />
         </section>
+
+        <RevenueChart points={series} />
       </div>
     </>
   );
