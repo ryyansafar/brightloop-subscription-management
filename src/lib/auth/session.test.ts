@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createSession, SESSION_SECONDS, sessionCookie, verifySession } from "./session";
-import { assertSameOrigin, limitAuthAttempt } from "./security";
+import { assertSameOrigin, AttemptLimiter } from "./security";
 
 beforeEach(() => vi.stubEnv("AUTH_SESSION_SECRET", "test-secret-with-at-least-32-characters"));
 afterEach(() => vi.unstubAllEnvs());
@@ -52,8 +52,9 @@ describe("request safety", () => {
   });
 
   it("limits repeated attempts and resets after the window", () => {
-    for (let i = 0; i < 10; i++) limitAuthAttempt("unit", "rate@test.dev", 1000);
-    expect(() => limitAuthAttempt("unit", "rate@test.dev", 1000)).toThrow(/Too many attempts/);
-    expect(() => limitAuthAttempt("unit", "rate@test.dev", 1000 + 15 * 60_000)).not.toThrow();
+    const limiter = new AttemptLimiter(10, 100);
+    for (let i = 0; i < 10; i++) limiter.consume("rate@test.dev", 1000);
+    expect(() => limiter.consume("rate@test.dev", 1000)).toThrow(/Too many attempts/);
+    expect(() => limiter.consume("rate@test.dev", 1000 + 15 * 60_000)).not.toThrow();
   });
 });

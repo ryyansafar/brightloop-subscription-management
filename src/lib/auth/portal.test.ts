@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
+// This installed Next release still exports the older test-helper name.
+import { unstable_doesMiddlewareMatch as doesProxyMatch } from "next/experimental/testing/server";
 import { db } from "@/lib/db";
 import { resetDb, seedSubscription, utc } from "@/test/factory";
 import { runBilling } from "@/lib/billing";
@@ -10,7 +12,8 @@ import { GET as getSubscription } from "@/app/api/subscriptions/[id]/route";
 import { POST as transition } from "@/app/api/subscriptions/[id]/transition/route";
 import { POST as renew } from "@/app/api/subscriptions/[id]/renew/route";
 import { POST as billing } from "@/app/api/billing/run/route";
-import { proxy } from "@/proxy";
+import { GET as listPayments } from "@/app/api/payments/route";
+import { proxy, config } from "@/proxy";
 import { createSession, SESSION_COOKIE } from "./session";
 
 beforeEach(async () => {
@@ -35,6 +38,31 @@ async function identity(role = "CUSTOMER") {
 }
 
 describe("portal APIs with real signed sessions", () => {
+  it("keeps customer-owned nested invoice/payment filters when callers supply another customer's IDs", async () => {
+    const mine = await seedSubscription();
+    const other = await seedSubscription();
+    const { user, request } = await identity();
+    await db.customer.update({ where: { id: mine.customer.id }, data: { userId: user.id } });
+    await runBilling(utc("2026-01-15"));
+    const myInvoice = await db.invoice.findFirstOrThrow({ where: { customerId: mine.customer.id } });
+    const otherInvoice = await db.invoice.findFirstOrThrow({ where: { customerId: other.customer.id } });
+    for (const invoice of [myInvoice, otherInvoice]) {
+      await db.payment.create({ data: { invoiceId: invoice.id, method: "CASH", amount: 100, paidOn: utc("2026-01-16") } });
+    }
+    const cases = [
+      { handler: listPayments, path: "/api/payments", expected: 1 },
+      { handler: listPayments, path: `/api/payments?invoiceId=${otherInvoice.id}`, expected: 0 },
+      { handler: listPayments, path: `/api/payments?invoiceId=${myInvoice.id}`, expected: 1 },
+      { handler: listInvoices, path: `/api/invoices?subscriptionId=${other.subscription.id}`, expected: 0 },
+      { handler: listSubscriptions, path: `/api/subscriptions?customerId=${other.customer.id}`, expected: 1 },
+    ];
+    for (const { handler, path, expected } of cases) {
+      const response = await handler(request(path));
+      expect(response.status, path).toBe(200);
+      expect((await response.json()).data.total, path).toBe(expected);
+    }
+  });
+
   it("scopes lists and refuses another customer's invoice and subscription IDs", async () => {
     const mine = await seedSubscription();
     const other = await seedSubscription();
@@ -78,6 +106,30 @@ describe("portal APIs with real signed sessions", () => {
 });
 
 describe("page proxy", () => {
+  it.each(["/reports", "//reports", "/settings", "/new-page", "/reports.csv", "/subscriptions/", "/_next/data/build/reports.json"])(
+    "protects new and alternate page paths: %s", async (path) => {
+      expect(doesProxyMatch({ config, nextConfig: {}, url: path })).toBe(true);
+      expect((await proxy(new NextRequest(`http://localhost${path}`))).headers.get("location")).toContain("/login?");
+    },
+  );
+
+  it.each(["/api/auth/login", "/api/invoices", "/_next/static/chunk.js", "/_next/image?url=test", "/favicon.ico", "/next.svg"])(
+    "excludes separately authorized APIs and public assets: %s", (path) => {
+      expect(doesProxyMatch({ config, nextConfig: {}, url: path })).toBe(false);
+    },
+  );
+
+  it.each(["/", "/login", "/signup", "/forgot-password", "/reset-password", "/login/"])(
+    "keeps explicit public pages accessible: %s", async (path) => {
+      expect((await proxy(new NextRequest(`http://localhost${path}`))).headers.get("x-middleware-next")).toBe("1");
+    },
+  );
+
+  it("does not leak reset tokens through referrers", async () => {
+    const response = await proxy(new NextRequest("http://localhost/reset-password?token=secret"));
+    expect(response.headers.get("referrer-policy")).toBe("no-referrer");
+  });
+
   it("redirects unsigned requests to login with an internal return path", async () => {
     const response = await proxy(new NextRequest("http://localhost/subscriptions?status=ACTIVE"));
     const location = new URL(response.headers.get("location")!);
@@ -92,6 +144,7 @@ describe("page proxy", () => {
     expect((await proxy(request("/portal", customer.cookie))).headers.get("x-middleware-next")).toBe("1");
     const staff = await identity("STAFF");
     expect((await proxy(request("/admin/staff", staff.cookie))).headers.get("location")).toBe("http://localhost/dashboard");
+    expect((await proxy(request("/%61dmin/staff", staff.cookie))).headers.get("location")).toBe("http://localhost/dashboard");
     const admin = await identity("ADMIN");
     expect((await proxy(request("/admin/staff", admin.cookie))).headers.get("x-middleware-next")).toBe("1");
   });

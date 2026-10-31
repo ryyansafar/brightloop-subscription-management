@@ -1,7 +1,8 @@
 import { createHash, randomBytes } from "node:crypto";
-import { hash } from "bcryptjs";
 import { db } from "@/lib/db";
 import { AuthError, limitAuthAttempt } from "./security";
+import { appOrigin, devMailerEnabled } from "./config";
+import { hashPassword } from "./password-work";
 import { forgotPasswordSchema, resetPasswordSchema } from "./validation";
 
 export const RESET_MINUTES = 30;
@@ -9,10 +10,10 @@ const tokenHash = (token: string) => createHash("sha256").update(token).digest("
 const invalidToken = () => new AuthError("Reset link is invalid or expired. Request a new link", 400);
 
 /** Only development returns/logs a link; a production mail transport is a separate integration. */
-export async function requestPasswordReset(input: unknown) {
+export async function requestPasswordReset(input: unknown, source: string) {
   const { email } = forgotPasswordSchema.parse(input);
-  limitAuthAttempt("reset", email);
-  if (process.env.NODE_ENV === "production") {
+  limitAuthAttempt("reset", email, source);
+  if (!devMailerEnabled()) {
     throw new AuthError("Password recovery mail delivery is not configured", 503);
   }
   const user = await db.user.findUnique({ where: { email } });
@@ -26,7 +27,7 @@ export async function requestPasswordReset(input: unknown) {
     } });
   });
   // Never derive reset URLs from untrusted Host/Origin headers.
-  const url = new URL("/reset-password", process.env.APP_ORIGIN || "http://localhost:3000");
+  const url = new URL("/reset-password", appOrigin());
   url.searchParams.set("token", token);
   console.info(`[dev mailer] Password reset for ${email}: ${url.href}`);
   return { devResetUrl: url.href };
@@ -37,7 +38,7 @@ export async function resetPassword(input: unknown): Promise<void> {
   const digest = tokenHash(token);
   const record = await db.passwordReset.findUnique({ where: { tokenHash: digest } });
   if (!record || record.usedAt || record.expiresAt <= new Date()) throw invalidToken();
-  const passwordHash = await hash(password, 12);
+  const passwordHash = await hashPassword(password);
   await db.$transaction(async (tx) => {
     const now = new Date();
     // Conditional consumption makes concurrent redemption succeed at most once.

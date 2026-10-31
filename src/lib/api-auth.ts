@@ -18,7 +18,7 @@ export async function resolveUser(request: Request): Promise<SessionUser | null>
   const { assertSameOrigin } = await import("./auth/security");
   assertSameOrigin(request);
   // Existing API unit tests use header identities. Never trust them in a running app.
-  if (process.env.NODE_ENV === "test" && process.env.AUTH_DEV_BYPASS === "1") {
+  if (process.env.NODE_ENV === "test" && process.env.VITEST === "true" && process.env.AUTH_DEV_BYPASS === "1") {
     const role = request.headers.get("x-dev-role");
     const id = Number(request.headers.get("x-dev-user-id"));
     if ((role === "ADMIN" || role === "STAFF" || role === "CUSTOMER") && Number.isSafeInteger(id) && id > 0) {

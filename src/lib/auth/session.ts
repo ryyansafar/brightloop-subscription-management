@@ -1,10 +1,11 @@
-import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { ROLES } from "@/lib/state";
 import type { SessionUser } from "@/lib/api-auth";
 
 export const SESSION_COOKIE = "brightloop_session";
+export const sessionCookieName = () => process.env.NODE_ENV === "production" ? `__Host-${SESSION_COOKIE}` : SESSION_COOKIE;
 export const SESSION_SECONDS = 60 * 60 * 8;
 
 const claimsSchema = z.object({
@@ -21,7 +22,7 @@ function secret(): string {
 
 export function assertSessionConfigured(): void { secret(); }
 
-const version = (hash: string) => createHash("sha256").update(hash).digest("hex");
+const version = (hash: string) => createHmac("sha256", secret()).update(`password-version:${hash}`).digest("hex");
 const sign = (payload: string) => createHmac("sha256", secret()).update(payload).digest("base64url");
 
 export function createSession(user: { id: number; passwordHash: string }, now = Date.now()): string {
@@ -50,13 +51,15 @@ export function verifySession(token: string, now = Date.now()) {
 }
 
 export function sessionCookie(token: string, clear = false): string {
-  return `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${clear ? 0 : SESSION_SECONDS}${process.env.NODE_ENV === "production" ? "; Secure" : ""}`;
+  return `${sessionCookieName()}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${clear ? 0 : SESSION_SECONDS}${process.env.NODE_ENV === "production" ? "; Secure" : ""}`;
 }
 
 export async function getSessionUser(request: Request): Promise<SessionUser | null> {
-  const token = request.headers.get("cookie")?.split(";")
-    .map((part) => part.trim()).find((part) => part.startsWith(`${SESSION_COOKIE}=`))
-    ?.slice(SESSION_COOKIE.length + 1);
+  const name = sessionCookieName();
+  const matches = request.headers.get("cookie")?.split(";")
+    .map((part) => part.trim()).filter((part) => part.startsWith(`${name}=`)) ?? [];
+  if (matches.length !== 1) return null;
+  const token = matches[0].slice(name.length + 1);
   if (!token) return null;
   const claims = verifySession(token);
   if (!claims) return null;

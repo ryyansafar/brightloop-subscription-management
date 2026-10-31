@@ -1,7 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
 
+const publicPages = new Set(["/", "/login", "/signup", "/forgot-password", "/reset-password"]);
+
 export async function proxy(request: NextRequest) {
+  let path: string;
+  try {
+    path = decodeURIComponent(request.nextUrl.pathname).replace(/\/+$/, "") || "/";
+    if (path.includes("\\")) throw new Error("Ambiguous path");
+  } catch {
+    return new NextResponse(null, { status: 400 });
+  }
+  if (publicPages.has(path)) {
+    const response = NextResponse.next();
+    if (path === "/reset-password") response.headers.set("Referrer-Policy", "no-referrer");
+    return response;
+  }
   // Mutations are authorized in their route handlers and return JSON errors.
   if (!["GET", "HEAD"].includes(request.method)) return NextResponse.next();
   const user = await getSessionUser(request);
@@ -10,7 +24,6 @@ export async function proxy(request: NextRequest) {
     login.searchParams.set("next", request.nextUrl.pathname + request.nextUrl.search);
     return NextResponse.redirect(login);
   }
-  const path = request.nextUrl.pathname;
   const isAdmin = path === "/admin" || path.startsWith("/admin/");
   const isPortal = path === "/portal" || path.startsWith("/portal/");
   if ((isAdmin && user.role !== "ADMIN") || (!isPortal && user.role === "CUSTOMER")) {
@@ -21,5 +34,6 @@ export async function proxy(request: NextRequest) {
 
 // API handlers enforce their own roles and row ownership, including when called directly.
 export const config = {
-  matcher: ["/dashboard/:path*", "/subscriptions/:path*", "/invoices/:path*", "/payments/:path*", "/catalog/:path*", "/admin/:path*", "/portal/:path*"],
+  // Public assets are explicit: a new /reports.csv page must not accidentally bypass protection.
+  matcher: ["/((?!api(?:/|$)|_next/static(?:/|$)|_next/image(?:/|$)|favicon\\.ico$|(?:file|globe|next|vercel|window)\\.svg$).*)"],
 };

@@ -17,7 +17,7 @@ let email: string;
 const password = "Customer@123";
 const req = (body?: unknown, cookie?: string, path = "/api/auth/signup") => new Request(`http://localhost${path}`, {
   method: body === undefined ? "GET" : "POST",
-  headers: { "Content-Type": "application/json", ...(cookie ? { cookie } : {}) },
+  headers: { "Content-Type": "application/json", "x-test-client-ip": `192.0.2.${sequence}`, ...(cookie ? { cookie } : {}) },
   body: body === undefined ? undefined : JSON.stringify(body),
 });
 const cookieFrom = (response: Response) => response.headers.get("set-cookie")!.split(";")[0];
@@ -34,6 +34,9 @@ beforeEach(async () => {
   email = `auth-${++sequence}@test.dev`;
   vi.stubEnv("AUTH_SESSION_SECRET", "test-secret-with-at-least-32-characters");
   vi.stubEnv("AUTH_DEV_BYPASS", "0");
+  vi.stubEnv("NODE_ENV", "development");
+  vi.stubEnv("AUTH_DEV_MAILER", "1");
+  vi.stubEnv("AUTH_TRUSTED_IP_HEADER", "x-test-client-ip");
   vi.stubEnv("APP_ORIGIN", "http://localhost:3000");
   vi.spyOn(console, "info").mockImplementation(() => {});
 });
@@ -94,7 +97,9 @@ describe("account routes", () => {
   });
 
   it("returns JSON errors for malformed bodies and hostile origins", async () => {
-    expect((await signup(new Request("http://localhost/api/auth/signup", { method: "POST", body: "{" }))).status).toBe(400);
+    expect((await signup(new Request("http://localhost/api/auth/signup", {
+      method: "POST", body: "{", headers: { "content-type": "application/json", "x-test-client-ip": `192.0.2.${sequence}` },
+    }))).status).toBe(400);
     expect((await signup(new Request("http://localhost/api/auth/signup", {
       method: "POST", headers: { origin: "https://evil.test" }, body: JSON.stringify(credentials()),
     }))).status).toBe(403);
@@ -127,9 +132,57 @@ describe("account routes", () => {
     await db.user.update({ where: { email }, data: { role: "UNKNOWN" } });
     expect((await me(req(undefined, cookie))).status).toBe(401);
   });
+
+  it("ignores identity headers in a test-labelled server outside Vitest", async () => {
+    vi.stubEnv("NODE_ENV", "test");
+    vi.stubEnv("AUTH_DEV_BYPASS", "1");
+    vi.stubEnv("VITEST", "");
+    expect(await resolveUser(new Request("http://localhost/api/invoices", {
+      headers: { "x-dev-role": "ADMIN", "x-dev-user-id": "1" },
+    }))).toBeNull();
+  });
+
+  it("ignores duplicate session cookies rather than choosing an attacker-controlled one", async () => {
+    const cookie = cookieFrom(await signUp());
+    expect((await me(req(undefined, `${cookie}; ${cookie}`))).status).toBe(401);
+  });
+
+  it("uses only the __Host- cookie name in production", async () => {
+    await signUp();
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("APP_ORIGIN", "https://brightloop.test");
+    const response = await login(req({ email, password }));
+    expect(response.status).toBe(200);
+    const cookie = cookieFrom(response);
+    expect(cookie).toMatch(/^__Host-brightloop_session=/);
+    expect((await me(req(undefined, cookie))).status).toBe(200);
+    expect((await me(req(undefined, cookie.replace("__Host-", "")))).status).toBe(401);
+  });
+
+  it("limits rotating-email requests before account creation and preserves other sources", async () => {
+    for (let i = 0; i < 40; i++) {
+      const response = await signup(req({ name: "Probe", email: `rotate-${i}@test.dev`, password: "weak" }));
+      expect(response.status).toBe(400);
+    }
+    const blocked = await signup(req(credentials()));
+    expect(blocked.status).toBe(429);
+    expect(blocked.headers.get("retry-after")).toBe("900");
+    expect(await db.user.count()).toBe(0);
+    const separateSource = req(credentials());
+    separateSource.headers.set("x-test-client-ip", "198.51.100.2");
+    expect((await signup(separateSource)).status).toBe(201);
+  });
 });
 
 describe("password recovery", () => {
+  it("does not issue or disclose reset links without the explicit development opt-in", async () => {
+    await signUp();
+    vi.stubEnv("AUTH_DEV_MAILER", "");
+    expect((await forgot(req({ email }))).status).toBe(503);
+    expect(console.info).not.toHaveBeenCalled();
+    expect(await db.passwordReset.count()).toBe(0);
+  });
+
   it("stores only a token hash and returns/logs the dev link", async () => {
     await signUp();
     const token = await resetToken();
@@ -183,6 +236,7 @@ describe("password recovery", () => {
     expect((await unknown.json()).data.devResetUrl).toBeUndefined();
     await signUp();
     vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("APP_ORIGIN", "https://brightloop.test");
     expect((await forgot(req({ email }))).status).toBe(503);
     expect(console.info).not.toHaveBeenCalled();
     expect(await db.passwordReset.count()).toBe(0);

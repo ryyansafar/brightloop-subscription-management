@@ -3,6 +3,7 @@ import { z } from "zod";
 export const emailSchema = z.string().trim().toLowerCase().email("Enter a valid email address").max(254);
 
 export const passwordSchema = z.string()
+  .refine((value) => !value.includes("\0"), "Password must not contain a null character")
   .min(9, "Password must be longer than 8 characters")
   .regex(/[A-Z]/, "Password must contain an uppercase letter")
   .regex(/[a-z]/, "Password must contain a lowercase letter")

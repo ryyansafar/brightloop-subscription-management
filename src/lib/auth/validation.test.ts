@@ -8,6 +8,7 @@ describe("password policy", () => {
     ["UPPERCASE@123", "lowercase"],
     ["NoSpecial123", "special"],
     ["White Space123", "special"],
+    ["Null\0Pass@123", "null character"],
     ["Ab!" + "x".repeat(70), "72 UTF-8 bytes"],
     ["Ab!" + "é".repeat(35), "72 UTF-8 bytes"],
   ])("rejects %s", (password, message) => {
