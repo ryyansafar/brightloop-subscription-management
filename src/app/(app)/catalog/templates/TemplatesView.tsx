@@ -6,6 +6,7 @@ import type { Prisma } from "@prisma/client";
 import { Button, DataTable, PageHeader, type Column, type Params, useToast } from "@/components";
 import { CatalogSubNav } from "../catalog-nav";
 import { apiFetch } from "../client-api";
+import { ConfirmDialog } from "../ConfirmDialog";
 import { TemplateDialog } from "./TemplateDialog";
 
 type TemplateView = Prisma.QuoteTemplateGetPayload<{
@@ -40,13 +41,26 @@ export function TemplatesView({
 }) {
   const router = useRouter();
   const toast = useToast();
-  const [dialog, setDialog] = useState<{ open: boolean; item: TemplateView | null }>({ open: false, item: null });
+  // `nonce` changes on every open so the dialog remounts with fresh form and line state.
+  const [dialog, setDialog] = useState<{ open: boolean; item: TemplateView | null; nonce: number }>({
+    open: false,
+    item: null,
+    nonce: 0,
+  });
+  const [pendingDelete, setPendingDelete] = useState<TemplateView | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
-  async function handleDelete(template: TemplateView) {
-    if (!confirm(`Delete template "${template.name}"? Subscriptions will retain their lines.`)) return;
-    const res = await apiFetch(`/api/templates/${template.id}`, { method: "DELETE" });
+  const openDialog = (item: TemplateView | null) => setDialog((d) => ({ open: true, item, nonce: d.nonce + 1 }));
+  const closeDialog = () => setDialog((d) => ({ ...d, open: false }));
+
+  async function confirmDelete() {
+    if (!pendingDelete) return;
+    setDeleting(true);
+    const res = await apiFetch(`/api/templates/${pendingDelete.id}`, { method: "DELETE" });
+    setDeleting(false);
     if (!res.ok) return toast.error(res.error);
-    toast.success(`Deleted ${template.name}`);
+    toast.success(`Deleted ${pendingDelete.name}`);
+    setPendingDelete(null);
     router.refresh();
   }
 
@@ -61,11 +75,11 @@ export function TemplatesView({
       align: "right",
       render: (t) => (
         <div className="flex justify-end gap-1">
-          <Button size="sm" variant="ghost" onClick={() => setDialog({ open: true, item: t })}>
+          <Button size="sm" variant="ghost" onClick={() => openDialog(t)}>
             {canWrite ? "Edit" : "View"}
           </Button>
           {canWrite && (
-            <Button size="sm" variant="danger" onClick={() => handleDelete(t)}>
+            <Button size="sm" variant="danger" onClick={() => setPendingDelete(t)}>
               Delete
             </Button>
           )}
@@ -82,7 +96,7 @@ export function TemplatesView({
         description={`${total.toLocaleString("en-IN")} templates configured`}
         actions={
           canWrite && (
-            <Button variant="primary" onClick={() => setDialog({ open: true, item: null })}>
+            <Button variant="primary" onClick={() => openDialog(null)}>
               New template
             </Button>
           )
@@ -102,13 +116,24 @@ export function TemplatesView({
         />
       </div>
       <TemplateDialog
+        key={`${dialog.item?.id ?? "new"}-${dialog.nonce}`}
         open={dialog.open}
-        onClose={() => setDialog({ open: false, item: null })}
+        onClose={closeDialog}
         template={dialog.item}
         plans={plans}
         products={products}
         canWrite={canWrite}
       />
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="Delete template"
+        confirmLabel="Delete template"
+        busy={deleting}
+        onConfirm={confirmDelete}
+        onClose={() => setPendingDelete(null)}
+      >
+        Delete template &ldquo;{pendingDelete?.name}&rdquo;? Subscriptions created from it keep their lines.
+      </ConfirmDialog>
     </>
   );
 }

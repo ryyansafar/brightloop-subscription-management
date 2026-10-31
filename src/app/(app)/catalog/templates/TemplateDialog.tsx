@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Prisma } from "@prisma/client";
 import { Button, Dialog, FormField, Input, Select, useToast } from "@/components";
 import { apiFetch } from "../client-api";
+import { initialTemplateLines, type TemplateLineDraft } from "./lines";
 
 type TemplateView = Prisma.QuoteTemplateGetPayload<{
   include: { plan: { select: { id: true; name: true } }; lines: true };
@@ -19,12 +20,6 @@ interface ProductOption {
   id: number;
   name: string;
   variants: { id: number; attribute: string; value: string }[];
-}
-
-interface TemplateLineDraft {
-  productId: number;
-  variantOptionId?: number | null;
-  quantity: number;
 }
 
 export function TemplateDialog({
@@ -49,13 +44,7 @@ export function TemplateDialog({
   const isEdit = Boolean(template);
   const formId = `template-form-${template?.id ?? "new"}`;
 
-  const defaultLines: TemplateLineDraft[] = template?.lines?.length
-    ? template.lines.map((l) => ({ productId: l.productId, variantOptionId: l.variantOptionId, quantity: l.quantity }))
-    : products.length > 0
-    ? [{ productId: products[0].id, quantity: 1 }]
-    : [];
-
-  const [lines, setLines] = useState<TemplateLineDraft[]>(defaultLines);
+  const [lines, setLines] = useState<TemplateLineDraft[]>(() => initialTemplateLines(template, products));
 
   function addLine() {
     if (products.length === 0) return;
@@ -172,7 +161,7 @@ export function TemplateDialog({
 
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-foreground">Product Lines</label>
+            <span className="text-sm font-medium text-foreground">Product lines</span>
             {canWrite && (
               <Button type="button" size="sm" onClick={addLine}>
                 + Add line
@@ -186,6 +175,7 @@ export function TemplateDialog({
               return (
                 <div key={idx} className="p-3 flex flex-col sm:flex-row gap-2 items-center">
                   <select
+                    aria-label={`Product for line ${idx + 1}`}
                     className="w-full sm:w-1/2 h-9 rounded-md border border-line bg-surface px-2 text-sm"
                     value={line.productId}
                     disabled={!canWrite}
@@ -200,6 +190,7 @@ export function TemplateDialog({
 
                   {selectedProduct && selectedProduct.variants.length > 0 ? (
                     <select
+                      aria-label={`Variant for line ${idx + 1}`}
                       className="w-full sm:w-1/3 h-9 rounded-md border border-line bg-surface px-2 text-sm"
                       value={line.variantOptionId ?? ""}
                       disabled={!canWrite}
@@ -218,6 +209,7 @@ export function TemplateDialog({
 
                   <input
                     type="number"
+                    aria-label={`Quantity for line ${idx + 1}`}
                     min="1"
                     className="w-20 h-9 rounded-md border border-line bg-surface px-2 text-sm"
                     value={line.quantity}
@@ -226,7 +218,7 @@ export function TemplateDialog({
                   />
 
                   {canWrite && lines.length > 1 && (
-                    <Button type="button" size="sm" variant="danger" onClick={() => removeLine(idx)}>
+                    <Button type="button" size="sm" variant="danger" aria-label={`Remove line ${idx + 1}`} onClick={() => removeLine(idx)}>
                       ×
                     </Button>
                   )}

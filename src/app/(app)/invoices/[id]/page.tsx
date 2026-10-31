@@ -8,6 +8,7 @@ import { formatINR } from "@/lib/money";
 import { displayStatus, getInvoice } from "../queries";
 import { InvoiceActions } from "./InvoiceActions";
 import { InvoiceDocument } from "./InvoiceDocument";
+import { invoiceStepLabels } from "../status-labels";
 
 export const metadata: Metadata = { title: "Invoice" };
 
@@ -25,7 +26,7 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
       <StatusBar
         steps={["DRAFT", "CONFIRMED", "PAID"]}
         current={invoice.status}
-        labels={{ CONFIRMED: shown === "OVERDUE" ? "Overdue" : "Posted" }}
+        labels={invoiceStepLabels(shown)}
         actions={
           <InvoiceActions
             id={invoice.id}
