@@ -29,6 +29,7 @@ export function InvoiceDocument({ invoice }: { invoice: InvoiceDetail }) {
           </p>
           {invoice.status === "DRAFT" && <p className="font-medium text-warning">Draft</p>}
           {invoice.status === "CANCELLED" && <p className="font-medium text-danger">Cancelled</p>}
+          {invoice.status === "PAID" && <p className="font-medium text-success">Paid</p>}
         </div>
       </header>
 

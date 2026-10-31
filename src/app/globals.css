@@ -124,6 +124,11 @@ h3 {
 }
 
 /* Print: only the document itself (invoices). Mark chrome with .no-print. */
+@page {
+  size: A4;
+  margin: 15mm;
+}
+
 @media print {
   .no-print {
     display: none !important;
