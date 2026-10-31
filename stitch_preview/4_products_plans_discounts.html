@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Brightloop - Admin Plan, Product Variants &amp; Discount Rules Catalog</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-lowest": "#ffffff",
+            "surface-container": "#e5eeff",
+            "outline-variant": "#c7c4d8",
+            "on-secondary": "#ffffff",
+            "primary": "#3525cd",
+            "background": "#f8f9ff",
+            "on-secondary-fixed": "#131b2e",
+            "on-primary-fixed-variant": "#3323cc",
+            "on-error": "#ffffff",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary-fixed": "#85f8c4",
+            "surface": "#f8f9ff",
+            "tertiary": "#005338",
+            "surface-container-highest": "#d3e4fe",
+            "on-tertiary": "#ffffff",
+            "on-primary-fixed": "#0f0069",
+            "on-tertiary-fixed": "#002114",
+            "surface-dim": "#cbdbf5",
+            "surface-bright": "#f8f9ff",
+            "on-secondary-fixed-variant": "#3f465c",
+            "tertiary-fixed-dim": "#68dba9",
+            "tertiary-container": "#006e4c",
+            "secondary": "#565e74",
+            "surface-tint": "#4d44e3",
+            "surface-container-high": "#dce9ff",
+            "on-error-container": "#93000a",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "secondary-fixed": "#dae2fd",
+            "inverse-surface": "#213145",
+            "surface-container-low": "#eff4ff",
+            "on-tertiary-container": "#7df1bd",
+            "outline": "#777587",
+            "on-primary-container": "#dad7ff",
+            "on-background": "#0b1c30",
+            "on-tertiary-fixed-variant": "#005137",
+            "on-secondary-container": "#5c647a",
+            "on-surface-variant": "#464555",
+            "inverse-primary": "#c3c0ff",
+            "primary-fixed-dim": "#c3c0ff",
+            "secondary-fixed-dim": "#bec6e0",
+            "on-surface": "#0b1c30",
+            "on-primary": "#ffffff",
+            "secondary-container": "#dae2fd",
+            "primary-fixed": "#e2dfff",
+            "surface-variant": "#d3e4fe",
+            "primary-container": "#4f46e5"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-xs": "0.25rem",
+            "space-xl": "1.5rem",
+            "margin": "1rem",
+            "space-3xl": "3rem",
+            "gutter": "1rem",
+            "margin-md": "1.5rem",
+            "gutter-md": "1.25rem",
+            "space-md": "0.75rem",
+            "gutter-lg": "1.5rem",
+            "space-2xl": "2rem",
+            "margin-lg": "2rem",
+            "space-2xs": "0.125rem",
+            "space-lg": "1rem"
+          },
+          "fontFamily": {
+            "label-caps": ["Inter"],
+            "code-mono": ["JetBrains Mono"],
+            "body-md": ["Inter"],
+            "metric-numeral-md": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "label-badge": ["Inter"],
+            "body-sm": ["Inter"],
+            "display-hero-mobile": ["Plus Jakarta Sans"],
+            "metric-numeral-lg": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "display-hero": ["Plus Jakarta Sans"],
+            "body-lg": ["Inter"],
+            "headline-lg": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+            "code-mono": ["12px", { "lineHeight": "16px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "metric-numeral-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "label-badge": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "500" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "display-hero-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "metric-numeral-lg": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-hero": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.025em", "fontWeight": "700" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col font-body-sm text-body-sm selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- ================= TOP APP BAR (Canonical TopNavBar) ================= -->
+<header class="bg-surface-container-lowest border-b border-outline-variant sticky top-0 z-50 shadow-sm">
+<div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+<!-- Brand & Environment Left Cluster -->
+<div class="flex items-center space-x-6">
+<div class="flex items-center space-x-3">
+<!-- Sleek geometric indigo loop icon -->
+<div class="w-8 h-8 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-sm ring-1 ring-black/5">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 4a6 6 0 1 1-6 6 6 6 0 0 1 6-6z"></path>
+<path d="M18 12a6 6 0 0 0-6-6"></path>
+</svg>
+</div>
+<div class="flex items-center space-x-2">
+<span class="text-headline-md font-headline-md font-bold text-on-surface tracking-tight">Brightloop</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-secondary-container text-label-caps font-code-mono uppercase border border-outline-variant/60">PROD-EU-1</span>
+</div>
+</div>
+<!-- Global Search Bar -->
+<div class="relative hidden md:block w-72">
+<span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</span>
+<input class="w-full pl-8 pr-11 py-1.5 text-body-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-outline/70" placeholder="Search subscriptions, invoices, customers..." type="text"/>
+<div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+<kbd class="px-1.5 py-0.5 text-[10px] font-code-mono text-outline bg-surface-container border border-outline-variant rounded shadow-2xs">⌘K</kbd>
+</div>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="hidden lg:flex items-center space-x-6 text-body-sm h-full">
+<a class="text-secondary hover:text-on-surface font-medium py-5 transition-colors" href="1_dashboard.html">
+Dashboard
+</a>
+<a class="text-secondary hover:text-on-surface font-medium py-5 transition-colors" href="2_subscription_detail.html">
+Subscriptions
+</a>
+<a class="text-secondary hover:text-on-surface font-medium py-5 transition-colors" href="5_quotation_templates.html">
+Quotes
+</a>
+<a class="text-secondary hover:text-on-surface font-medium py-5 transition-colors" href="3_billing_invoices.html">
+Invoices
+</a>
+<a class="text-primary font-semibold border-b-2 border-primary py-5 inline-flex items-center space-x-1.5" href="4_products_plans_discounts.html">
+<span>Products &amp; Plans</span>
+</a>
+<a class="text-secondary hover:text-on-surface font-medium py-5 transition-colors" href="6_customer_portal.html">
+Customer Portal
+</a>
+</nav>
+<!-- Trailing Actions & User Profile -->
+<div class="flex items-center space-x-3.5">
+<button onclick="openBillingModal()" class="hidden sm:inline-flex items-center space-x-1.5 bg-primary-container hover:bg-primary text-on-primary px-3.5 py-1.5 rounded-lg text-body-sm font-medium shadow-xs active:scale-[0.99] transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+<span>Run Billing Engine</span>
+</button>
+<div class="flex items-center space-x-1">
+<button class="relative p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors" title="Notifications">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<button class="p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors" title="Help &amp; Documentation">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<div class="h-6 w-px bg-outline-variant mx-1"></div>
+<div class="flex items-center space-x-2.5 pl-1 cursor-pointer group">
+<div class="relative">
+<img alt="Finance Lead Admin Avatar" class="w-8 h-8 rounded-full ring-1 ring-outline-variant object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAajjpbNJmS12k8yPwgncPXPRbfRnj1Cu_ycGoCKKbq7tTaIVa2U3GFgfoNkDAOGpMO0_nlRvpHzUQToJMIm4E1NL-Uo0xcu1gfPCUeU3s3BCKTuE4bEtd0TPASnP0rfMTpV_SxdrZzOUyziK_fdDiIQUUnDr-7InmMqtUS9PbhfQ0fY-9cC0aWlhQKnFYwFpAjxF_Selo9YQUXEo3wVldxNkdPsRlR8kqfBewLBshpuexmu1A4J_FKRXNYLFy6-JSukZNiYqzgj6cD"/>
+<span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-tertiary-fixed-dim border-2 border-surface-container-lowest rounded-full"></span>
+</div>
+<div class="hidden xl:flex flex-col text-left">
+<span class="text-body-sm font-semibold text-on-surface group-hover:text-primary transition-colors leading-tight">Elena Vance</span>
+<span class="text-[11px] font-label-badge text-secondary leading-tight">Finance Lead / Admin</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- ================= SUB-HEADER & CONTEXT BAR ================= -->
+<div class="border-b border-outline-variant/60 bg-surface-container-lowest px-6 py-2.5">
+<div class="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+<div class="flex items-center gap-4 flex-wrap">
+<!-- Breadcrumb -->
+<div class="flex items-center gap-1.5 text-secondary font-body-sm text-body-sm">
+<span>Settings &amp; Catalog</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-medium">Products &amp; Pricing Architecture</span>
+</div>
+<div class="h-4 w-[1px] bg-outline-variant/50 hidden sm:block"></div>
+<!-- Sub-navigation Pills -->
+<nav class="flex items-center gap-1.5">
+<button class="px-3 py-1 rounded-lg text-label-badge font-label-badge font-semibold bg-primary-container text-on-primary shadow-xs">
+            Products &amp; Variants
+          </button>
+<button class="px-3 py-1 rounded-lg text-label-badge font-label-badge font-medium text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors">
+            Subscription Plans
+          </button>
+<button class="px-3 py-1 rounded-lg text-label-badge font-label-badge font-medium text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors">
+            Discount Rules
+          </button>
+<button class="px-3 py-1 rounded-lg text-label-badge font-label-badge font-medium text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors">
+            Taxes &amp; General
+          </button>
+</nav>
+</div>
+<!-- Operational Status Indicators -->
+<div class="flex items-center gap-3 text-secondary font-label-badge text-label-badge">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container-low border border-outline-variant/40">
+<span class="w-2 h-2 rounded-full bg-tertiary-container animate-pulse"></span>
+<span>Odoo Sync Status: <strong class="text-on-surface font-semibold">Synced 2m ago</strong></span>
+</div>
+<div class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container-low border border-outline-variant/40">
+<span class="material-symbols-outlined text-[14px] text-primary">payments</span>
+<span>Currency: <strong class="text-on-surface font-semibold">USD ($)</strong></span>
+</div>
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-primary-fixed text-on-primary-fixed-variant border border-primary-fixed-dim/50 font-medium">
+<span class="material-symbols-outlined text-[14px]">format_image_left</span>
+<span>Engine Mode: Production Enforcement</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= MAIN CONTENT WRAPPER ================= -->
+<main class="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+<!-- Header Title & Action Bar -->
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+<div>
+<h1 class="text-headline-lg font-headline-lg font-bold text-on-surface tracking-tight">Product Architecture, Plans &amp; Discount Catalog</h1>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">Manage billable SaaS entities, dynamic pricing matrices, recurring tier intervals, and algorithmic discount engines.</p>
+</div>
+<div class="flex items-center gap-2.5 self-start lg:self-auto">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 h-[34px] bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container-low font-label-badge text-label-badge font-medium rounded-lg shadow-xs transition-colors">
+<span class="material-symbols-outlined text-[16px] text-secondary">file_upload</span>
+<span>Import Catalog CSV</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 h-[34px] bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container-low font-label-badge text-label-badge font-medium rounded-lg shadow-xs transition-colors">
+<span class="material-symbols-outlined text-[16px] text-secondary">file_download</span>
+<span>Export Definitions</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3.5 py-1.5 h-[34px] bg-primary-container text-on-primary hover:bg-primary font-label-badge text-label-badge font-semibold rounded-lg shadow-sm transition-all active:scale-[0.99]">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Add New Product</span>
+</button>
+</div>
+</div>
+<!-- Executive Quick KPI Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider">Active Products</span>
+<span class="p-1 rounded bg-surface-container text-primary">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</span>
+</div>
+<div class="mt-2.5 flex items-baseline justify-between">
+<div class="text-metric-numeral-lg font-metric-numeral-lg text-on-surface tracking-tight">24</div>
+<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[11px] font-label-badge font-semibold bg-tertiary-container/10 text-tertiary-container border border-tertiary-fixed-dim/40">
+<span class="material-symbols-outlined text-[12px]">arrow_upward</span> +3 QoQ
+          </span>
+</div>
+<p class="text-[12px] text-secondary mt-1 font-body-sm">Software, Addons, Managed Services</p>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider">Configured Plans</span>
+<span class="p-1 rounded bg-surface-container text-primary">
+<span class="material-symbols-outlined text-[18px]">layers</span>
+</span>
+</div>
+<div class="mt-2.5 flex items-baseline justify-between">
+<div class="text-metric-numeral-lg font-metric-numeral-lg text-on-surface tracking-tight">12</div>
+<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[11px] font-label-badge font-semibold bg-surface-container text-primary border border-outline-variant/40">
+            Stable
+          </span>
+</div>
+<p class="text-[12px] text-secondary mt-1 font-body-sm">Active Recurring Cadences</p>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider">Active Discount Rules</span>
+<span class="p-1 rounded bg-surface-container text-primary">
+<span class="material-symbols-outlined text-[18px]">percent</span>
+</span>
+</div>
+<div class="mt-2.5 flex items-baseline justify-between">
+<div class="text-metric-numeral-lg font-metric-numeral-lg text-on-surface tracking-tight">6 Rules</div>
+<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[11px] font-label-badge font-semibold bg-tertiary-container/10 text-tertiary-container border border-tertiary-fixed-dim/40">
+            14 redeems
+          </span>
+</div>
+<p class="text-[12px] text-secondary mt-1 font-body-sm">14 redemptions this billing month</p>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider">Average Tier MRR Yield</span>
+<span class="p-1 rounded bg-surface-container text-primary">
+<span class="material-symbols-outlined text-[18px]">trending_up</span>
+</span>
+</div>
+<div class="mt-2.5 flex items-baseline justify-between">
+<div class="text-metric-numeral-lg font-metric-numeral-lg text-on-surface tracking-tight font-code-mono">$4,850.00</div>
+<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[11px] font-label-badge font-semibold bg-tertiary-container/10 text-tertiary-container border border-tertiary-fixed-dim/40">
+<span class="material-symbols-outlined text-[12px]">arrow_upward</span> +8.2%
+          </span>
+</div>
+<p class="text-[12px] text-secondary mt-1 font-body-sm">Per active Enterprise Account</p>
+</div>
+</div>
+<!-- ================= SECTION 1: PRODUCT & VARIANT CONFIGURATION ================= -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl shadow-sm overflow-hidden">
+<!-- Section Header -->
+<div class="px-6 py-4 border-b border-outline-variant/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-surface-container-lowest">
+<div>
+<div class="flex items-center gap-2">
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface">Product Master Catalog</h2>
+<span class="px-2 py-0.5 rounded text-[11px] font-label-caps font-semibold bg-tertiary-container/10 text-tertiary-container border border-tertiary-fixed-dim/40">MASTER SKU VALIDATED</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">Configure master inventory, base recurring costs, and multi-attribute variant matrices</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[12px] text-secondary font-label-badge">Quick Select:</span>
+<select class="h-8 px-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary">
+<option selected="">Enterprise ERP Suite (SKU-ERP-9021)</option>
+<option>Core Ledger API Engine (SKU-LED-104)</option>
+<option>Multi-Entity Tax Connector (SKU-TAX-88)</option>
+</select>
+</div>
+</div>
+<!-- Product Showcase & Form Fields -->
+<div class="p-6 space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4 rounded-xl bg-surface-container-low border border-outline-variant/50">
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1">Product Name</label>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">domain_verification</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">Enterprise ERP Suite</span>
+</div>
+</div>
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1">SKU / Identifier</label>
+<div class="flex items-center gap-1.5">
+<span class="font-code-mono text-code-mono text-on-surface font-semibold bg-surface-container-lowest px-2 py-0.5 rounded border border-outline-variant/60">SKU-ERP-9021</span>
+<button class="text-secondary hover:text-primary" title="Copy SKU"><span class="material-symbols-outlined text-[15px]">content_copy</span></button>
+</div>
+</div>
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1">Type</label>
+<div>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-label-badge font-semibold bg-primary-fixed text-on-primary-fixed-variant border border-primary-fixed-dim/60">
+<span class="material-symbols-outlined text-[13px]">terminal</span>
+                Software
+              </span>
+</div>
+</div>
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1">Sales &amp; Cost Price</label>
+<div class="flex items-baseline gap-2">
+<span class="text-on-surface font-semibold font-code-mono text-[14px]">$1,200.00<span class="text-secondary font-normal text-[11px]">/mo</span></span>
+<span class="text-secondary font-code-mono text-[12px]">(Cost: $350.00)</span>
+</div>
+</div>
+<div class="flex flex-col justify-center lg:items-end">
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1">Status</label>
+<div class="flex items-center gap-2">
+<span class="text-[12px] font-label-badge font-semibold text-tertiary-container">Active</span>
+<!-- Toggle Enabled -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Variant Configuration Matrix Table -->
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="text-headline-sm font-headline-sm font-semibold text-on-surface">Variant Configuration Matrix</h3>
+<p class="text-secondary text-[12px]">Define attribute surcharges, connector licenses, and white-label pricing delta</p>
+</div>
+<button class="inline-flex items-center gap-1 px-3 py-1 h-[30px] bg-surface-container-lowest border border-outline-variant hover:border-primary text-primary font-label-badge text-label-badge font-semibold rounded-lg shadow-2xs transition-colors">
+<span class="material-symbols-outlined text-[15px]">add_circle</span>
+<span>Add Variant Option</span>
+</button>
+</div>
+<div class="border border-outline-variant/70 rounded-xl overflow-hidden shadow-2xs">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="h-9 bg-surface-container-low border-b border-outline-variant/60 font-label-caps text-label-caps uppercase text-secondary">
+<th class="px-4 py-2">Variant Option</th>
+<th class="px-4 py-2">Attribute Type</th>
+<th class="px-4 py-2 text-right">Price Delta / Surcharge</th>
+<th class="px-4 py-2 text-right">Calculated Final Price</th>
+<th class="px-4 py-2 text-center">Stock / Availability</th>
+<th class="px-4 py-2 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/40 font-body-sm text-body-sm">
+<!-- Row 1 -->
+<tr class="h-11 hover:bg-surface-container-low/60 transition-colors">
+<td class="px-4 py-2.5 font-semibold text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[17px]">hub</span>
+<span>Odoo Edition</span>
+</td>
+<td class="px-4 py-2.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-secondary-fixed text-[11px] font-label-badge">Brand</span>
+</td>
+<td class="px-4 py-2.5 text-right font-code-mono font-medium text-tertiary-container">
+                    +$560.00
+                  </td>
+<td class="px-4 py-2.5 text-right font-code-mono font-semibold text-on-surface">
+                    $1,760.00 <span class="text-secondary font-normal text-[11px]">/mo</span>
+</td>
+<td class="px-4 py-2.5 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-label-badge font-semibold bg-tertiary-container/10 text-tertiary-container border border-tertiary-fixed-dim/40">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                      Active
+                    </span>
+</td>
+<td class="px-4 py-2.5 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1 text-secondary hover:text-primary transition-colors" title="Edit Variant"><span class="material-symbols-outlined text-[17px]">tune</span></button>
+<button class="p-1 text-secondary hover:text-error transition-colors" title="Delete Variant"><span class="material-symbols-outlined text-[17px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="h-11 hover:bg-surface-container-low/60 transition-colors bg-surface-container-lowest">
+<td class="px-4 py-2.5 font-semibold text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[17px]">all_inclusive</span>
+<span>Brightloop Native</span>
+</td>
+<td class="px-4 py-2.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-secondary-fixed text-[11px] font-label-badge">Brand</span>
+</td>
+<td class="px-4 py-2.5 text-right font-code-mono font-medium text-secondary">
+                    +$0.00
+                  </td>
+<td class="px-4 py-2.5 text-right font-code-mono font-semibold text-on-surface">
+                    $1,200.00 <span class="text-secondary font-normal text-[11px]">/mo</span>
+</td>
+<td class="px-4 py-2.5 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-label-badge font-semibold bg-primary-fixed text-on-primary-fixed-variant border border-primary-fixed-dim/60">
+<span class="material-symbols-outlined text-[12px]">check</span>
+                      Active (Default)
+                    </span>
+</td>
+<td class="px-4 py-2.5 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1 text-secondary hover:text-primary transition-colors" title="Edit Variant"><span class="material-symbols-outlined text-[17px]">tune</span></button>
+<button class="p-1 text-secondary hover:text-error transition-colors" title="Delete Variant"><span class="material-symbols-outlined text-[17px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="h-11 hover:bg-surface-container-low/60 transition-colors">
+<td class="px-4 py-2.5 font-semibold text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[17px]">verified</span>
+<span>Custom Enterprise White-label</span>
+</td>
+<td class="px-4 py-2.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-secondary-fixed text-[11px] font-label-badge">Brand</span>
+</td>
+<td class="px-4 py-2.5 text-right font-code-mono font-medium text-tertiary-container">
+                    +$1,200.00
+                  </td>
+<td class="px-4 py-2.5 text-right font-code-mono font-semibold text-on-surface">
+                    $2,400.00 <span class="text-secondary font-normal text-[11px]">/mo</span>
+</td>
+<td class="px-4 py-2.5 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-label-badge font-semibold bg-tertiary-container/10 text-tertiary-container border border-tertiary-fixed-dim/40">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                      Active
+                    </span>
+</td>
+<td class="px-4 py-2.5 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1 text-secondary hover:text-primary transition-colors" title="Edit Variant"><span class="material-symbols-outlined text-[17px]">tune</span></button>
+<button class="p-1 text-secondary hover:text-error transition-colors" title="Delete Variant"><span class="material-symbols-outlined text-[17px]">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= 2-COLUMN SECTION: PLAN BUILDER & DISCOUNT RULES ================= -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- ================= SECTION 2: SUBSCRIPTION PLAN BUILDER ================= -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl shadow-sm overflow-hidden flex flex-col justify-between">
+<div>
+<!-- Header -->
+<div class="px-6 py-4 border-b border-outline-variant/60 flex items-center justify-between bg-surface-container-lowest">
+<div>
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface">Subscription Plan Builder</h2>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">Recurring billing intervals, floor seats, and lifecycle contract rules</p>
+</div>
+<span class="px-2 py-0.5 rounded text-[11px] font-label-caps font-semibold bg-surface-container text-primary border border-outline-variant/40">
+              TIER DEFINITION
+            </span>
+</div>
+<!-- Form Content -->
+<div class="p-6 space-y-5">
+<!-- Plan Name & Code -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1">Plan Name</label>
+<input class="w-full h-[34px] px-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent font-medium" type="text" value="Growth Monthly Cloud Plan"/>
+</div>
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1">Plan Code</label>
+<div class="relative">
+<input class="w-full h-[34px] px-3 bg-surface-container-low border border-outline-variant rounded-lg font-code-mono text-code-mono text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent font-medium" type="text" value="PLAN-GROWTH-MTH-01"/>
+<span class="absolute right-2.5 top-2 material-symbols-outlined text-[16px] text-tertiary-container">lock</span>
+</div>
+</div>
+</div>
+<!-- Billing Frequency Selector -->
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1.5">Billing Frequency Selector</label>
+<div class="grid grid-cols-4 gap-1 p-1 bg-surface-container-low rounded-lg border border-outline-variant/60">
+<button class="py-1.5 text-center text-label-badge font-label-badge font-medium text-secondary hover:text-on-surface rounded transition-colors">Daily</button>
+<button class="py-1.5 text-center text-label-badge font-label-badge font-medium text-secondary hover:text-on-surface rounded transition-colors">Weekly</button>
+<button class="py-1.5 text-center text-label-badge font-label-badge font-semibold bg-surface-container-lowest text-primary shadow-xs border border-outline-variant/50 rounded">Monthly (Selected)</button>
+<button class="py-1.5 text-center text-label-badge font-label-badge font-medium text-secondary hover:text-on-surface rounded transition-colors">Yearly</button>
+</div>
+</div>
+<!-- Minimum Seats & Availability Window -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1">Minimum Seats / Quantity</label>
+<div class="relative">
+<input class="w-full h-[34px] pl-3 pr-12 bg-surface-container-lowest border border-outline-variant rounded-lg font-code-mono text-body-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent font-medium" type="number" value="5"/>
+<span class="absolute right-3 top-2 text-[12px] font-label-badge text-secondary">units</span>
+</div>
+</div>
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1">Availability Window</label>
+<div class="flex items-center gap-1.5">
+<div class="relative flex-1">
+<input class="w-full h-[34px] pl-8 pr-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-code-mono text-[12px] text-on-surface focus:outline-none focus:ring-2 focus:ring-primary" type="text" value="2026-01-01 to 2026-12-31"/>
+<span class="absolute left-2.5 top-2 material-symbols-outlined text-[15px] text-secondary">calendar_today</span>
+</div>
+<span class="inline-flex items-center px-1.5 py-1 rounded text-[10px] font-label-badge font-semibold bg-tertiary-container/10 text-tertiary-container border border-tertiary-fixed-dim/40 whitespace-nowrap">
+                    Active
+                  </span>
+</div>
+</div>
+</div>
+<!-- Plan Lifecycle Policies (Admin Toggles) -->
+<div class="space-y-3 pt-2">
+<h3 class="text-[12px] font-label-caps uppercase text-secondary tracking-wider">Plan Lifecycle Policies</h3>
+<div class="space-y-2.5 border border-outline-variant/60 rounded-xl p-3.5 bg-surface-container-low/40">
+<!-- Toggle 1: Auto-close (OFF) -->
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Auto-close when plan ends</span>
+<p class="text-[12px] font-body-sm text-secondary">Do not terminate subscription automatically upon expiration; renew or convert</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer mt-0.5">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<div class="h-[1px] bg-outline-variant/40"></div>
+<!-- Toggle 2: Allow Customer to Close Early (ON) -->
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Allow Customer to Close Early</span>
+<p class="text-[12px] font-body-sm text-secondary">Customers can initiate self-serve cancellation under MSA terms</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer mt-0.5">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<div class="h-[1px] bg-outline-variant/40"></div>
+<!-- Toggle 3: Allow Pause Subscription (ON) -->
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Allow Pause Subscription</span>
+<p class="text-[12px] font-body-sm text-secondary">Permits up to 90 days billing freeze per calendar year</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer mt-0.5">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<div class="h-[1px] bg-outline-variant/40"></div>
+<!-- Toggle 4: Auto-Renewable (ON) -->
+<div class="flex items-start justify-between gap-3">
+<div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Auto-Renewable</span>
+<p class="text-[12px] font-body-sm text-secondary">Default recurring billing continuous enrollment</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer mt-0.5">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Plan Builder Footer -->
+<div class="px-6 py-3.5 border-t border-outline-variant/60 bg-surface-container-low flex items-center justify-between">
+<button class="text-secondary hover:text-error text-body-sm font-medium transition-colors">Discard Draft Changes</button>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 h-[32px] bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container font-label-badge text-label-badge font-medium rounded-lg">Preview Plan Schedule</button>
+<button class="px-4 py-1.5 h-[32px] bg-primary-container text-on-primary hover:bg-primary font-label-badge text-label-badge font-semibold rounded-lg shadow-sm">Save Plan</button>
+</div>
+</div>
+</div>
+<!-- ================= SECTION 3: DISCOUNT RULES ENGINE (ADMIN ONLY) ================= -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl shadow-sm overflow-hidden flex flex-col justify-between">
+<div>
+<!-- Header -->
+<div class="px-6 py-4 border-b border-outline-variant/60 flex items-center justify-between bg-surface-container-lowest">
+<div>
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface">Discount Rules Engine</h2>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">Dynamic promo algorithms, tier thresholds &amp; revenue reconciliation</p>
+</div>
+<span class="px-2 py-0.5 rounded text-[11px] font-label-caps font-semibold bg-error-container/40 text-error border border-error-container">
+              ADMIN ONLY • BILLING LOGIC
+            </span>
+</div>
+<!-- Rule Configurator -->
+<div class="p-6 space-y-5">
+<!-- Rule Name -->
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1">Rule Name</label>
+<div class="relative">
+<input class="w-full h-[34px] px-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent font-medium" type="text" value="High-Volume Enterprise Tier Discount"/>
+<span class="absolute right-2.5 top-2 inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-code-mono bg-surface-container text-secondary">RULE-DISC-409</span>
+</div>
+</div>
+<!-- Mechanism & Scope -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Discount Mechanism -->
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1.5">Discount Mechanism</label>
+<div class="grid grid-cols-2 gap-1 p-1 bg-surface-container-low rounded-lg border border-outline-variant/60">
+<button class="py-1.5 text-center text-label-badge font-label-badge font-semibold bg-surface-container-lowest text-primary shadow-xs border border-outline-variant/50 rounded">
+                    Percentage (15%)
+                  </button>
+<button class="py-1.5 text-center text-label-badge font-label-badge font-medium text-secondary hover:text-on-surface rounded transition-colors">
+                    Fixed ($250 off)
+                  </button>
+</div>
+</div>
+<!-- Scope -->
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1.5">Application Scope</label>
+<div class="grid grid-cols-2 gap-1 p-1 bg-surface-container-low rounded-lg border border-outline-variant/60">
+<button class="py-1.5 text-center text-label-badge font-label-badge font-semibold bg-surface-container-lowest text-primary shadow-xs border border-outline-variant/50 rounded">
+                    Subscription Level
+                  </button>
+<button class="py-1.5 text-center text-label-badge font-label-badge font-medium text-secondary hover:text-on-surface rounded transition-colors">
+                    Product Level
+                  </button>
+</div>
+</div>
+</div>
+<!-- Constraints Grid -->
+<div class="p-4 rounded-xl bg-surface-container-low/60 border border-outline-variant/60 space-y-3.5">
+<div class="text-[11px] font-label-caps uppercase text-secondary tracking-wider font-semibold">Eligibility Constraints</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1">Minimum Purchase Amount</label>
+<div class="relative">
+<span class="absolute left-2.5 top-2 text-secondary font-code-mono">$</span>
+<input class="w-full h-[32px] pl-6 pr-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-code-mono text-body-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="3,000.00"/>
+</div>
+</div>
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1">Minimum Seats / Quantity</label>
+<div class="relative">
+<input class="w-full h-[32px] pl-3 pr-12 bg-surface-container-lowest border border-outline-variant rounded-lg font-code-mono text-body-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary" type="number" value="10"/>
+<span class="absolute right-3 top-2 text-[12px] font-label-badge text-secondary">seats</span>
+</div>
+</div>
+</div>
+<!-- Validity Window -->
+<div>
+<label class="block text-[11px] font-label-caps uppercase text-secondary mb-1">Validity Window</label>
+<div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest border border-outline-variant/70">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">date_range</span>
+<span class="font-body-sm text-body-sm font-medium text-on-surface">March 1, 2026 — June 30, 2026</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-label-badge font-semibold bg-tertiary-container/10 text-tertiary-container border border-tertiary-fixed-dim/40">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container animate-pulse"></span>
+                    Live
+                  </span>
+</div>
+</div>
+<!-- Usage Limit & Quota -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between text-[12px]">
+<span class="text-secondary font-label-badge">Usage Limit &amp; Quota: <strong class="text-on-surface">50 Total redemptions</strong></span>
+<span class="font-code-mono font-medium text-on-surface">14 used / 36 remaining <span class="text-primary font-semibold">(28% capacity)</span></span>
+</div>
+<!-- Progress Bar -->
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 28%"></div>
+</div>
+</div>
+</div>
+<!-- Callout / Info Box -->
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant/70 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[18px] text-primary shrink-0 mt-0.5">info</span>
+<p class="text-[12px] font-body-sm text-secondary leading-relaxed">
+                Rules automatically calculate on invoice generation and expire when limit or date is reached. Engine validates in real-time against <span class="font-semibold text-on-surface">Odoo General Ledger</span> rules.
+              </p>
+</div>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="px-6 py-3.5 border-t border-outline-variant/60 bg-surface-container-low flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 h-[32px] bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container font-label-badge text-label-badge font-medium rounded-lg shadow-2xs">
+<span class="material-symbols-outlined text-[16px] text-secondary">science</span>
+<span>Test Rule against Sample Invoice</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-4 py-1.5 h-[32px] bg-primary-container text-on-primary hover:bg-primary font-label-badge text-label-badge font-semibold rounded-lg shadow-sm">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span>Save &amp; Deploy Rule</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- ================= COMPLIANCE & FOOTER AUDIT BAR ================= -->
+<footer class="mt-auto border-t border-outline-variant/70 bg-surface-container-lowest py-3.5 px-6">
+<div class="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-secondary text-[12px] font-body-sm">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">verified_user</span>
+<span class="font-medium text-on-surface">SOC-2 Type II Certified</span>
+<span class="text-outline-variant">•</span>
+<span>PCI DSS Level 1 Compliant Engine</span>
+<span class="text-outline-variant">•</span>
+<span class="font-code-mono text-[11px] bg-surface-container px-1.5 py-0.5 rounded text-on-surface font-medium">Double-Entry Ledger Verified (Odoo Accounting Sync #4829)</span>
+</div>
+<div class="flex items-center gap-4 text-[12px] font-label-badge">
+<a class="hover:text-primary transition-colors" href="#">API Docs</a>
+<a class="hover:text-primary transition-colors" href="#">Audit Vault</a>
+<a class="hover:text-primary transition-colors" href="#">Emergency Support</a>
+<span class="text-outline-variant/80">|</span>
+<span class="font-code-mono text-[11px] text-secondary">Brightloop Core v4.18.2</span>
+</div>
+</div>
+</footer>
+
+<!-- Interactive Recurring Billing Engine Modal -->
+<div id="billingModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-2xl max-w-2xl w-full overflow-hidden transform transition-all">
+    <div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-low/40">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center shadow-xs">
+          <span class="material-symbols-outlined text-[18px]">bolt</span>
+        </div>
+        <div>
+          <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Automated Recurring Billing Engine</h3>
+          <p class="text-xs text-secondary">Batch Cycle Run &amp; Idempotent Deduplication</p>
+        </div>
+      </div>
+      <button onclick="closeBillingModal()" class="w-8 h-8 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low flex items-center justify-center transition-colors">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <div class="p-6 space-y-5">
+      <div id="billingInitialState" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4 p-4 rounded-xl bg-surface-container-low/60 border border-outline-variant">
+          <div>
+            <label class="block text-xs font-semibold text-secondary uppercase tracking-wider mb-1">Execution Reference Date</label>
+            <div class="font-code-mono font-bold text-on-surface text-sm">March 31, 2026 (Month-End)</div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-secondary uppercase tracking-wider mb-1">Catch-Up Strategy</label>
+            <div class="font-code-mono font-medium text-on-surface text-sm">Prisma Transaction Catch-Up</div>
+          </div>
+        </div>
+        <p class="text-body-sm text-secondary">
+          Scans all active subscriptions where nextInvoiceDate &le; 2026-03-31 and guarantees zero duplicate invoices.
+        </p>
+        <div class="flex items-center justify-end space-x-3 pt-2">
+          <button onclick="closeBillingModal()" class="px-4 py-2 rounded-lg border border-outline-variant text-secondary hover:text-on-surface hover:bg-surface-container-low text-body-sm font-medium transition-colors">Cancel</button>
+          <button onclick="simulateBillingRun()" class="px-5 py-2 rounded-lg bg-primary hover:bg-primary/90 text-white text-body-sm font-semibold inline-flex items-center space-x-2 shadow-sm transition-all active:scale-[0.98]">
+            <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+            <span>Execute Billing Run</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="billingProgressState" class="hidden py-6 space-y-4 text-center">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary-fixed text-primary animate-spin">
+          <span class="material-symbols-outlined text-[24px]">sync</span>
+        </div>
+        <div class="font-headline-sm font-bold text-on-surface text-base">Processing Recurring Invoices...</div>
+        <div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+          <div id="billingProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 25%"></div>
+        </div>
+      </div>
+
+      <div id="billingResultsState" class="hidden space-y-4">
+        <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            <span class="material-symbols-outlined text-emerald-600 text-[20px]">check_circle</span>
+            <span class="font-semibold text-sm">Batch Billing Run Completed</span>
+          </div>
+          <span class="text-xs font-code-mono font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">40 Invoices Created</span>
+        </div>
+        <div class="flex items-center justify-end space-x-2 pt-2">
+          <button onclick="closeBillingModal()" class="px-4 py-1.5 rounded-lg border border-outline-variant text-secondary hover:text-on-surface hover:bg-surface-container-low text-body-sm transition-colors">Close</button>
+          <a href="3_billing_invoices.html" class="px-4 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-body-sm font-semibold inline-flex items-center space-x-1.5 transition-colors">
+            <span>View Invoices</span>
+            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openBillingModal() {
+    document.getElementById('billingModal').classList.remove('hidden');
+    document.getElementById('billingInitialState').classList.remove('hidden');
+    document.getElementById('billingProgressState').classList.add('hidden');
+    document.getElementById('billingResultsState').classList.add('hidden');
+  }
+  function closeBillingModal() {
+    document.getElementById('billingModal').classList.add('hidden');
+  }
+  function simulateBillingRun() {
+    document.getElementById('billingInitialState').classList.add('hidden');
+    document.getElementById('billingProgressState').classList.remove('hidden');
+    var bar = document.getElementById('billingProgressBar');
+    setTimeout(function() { bar.style.width = '60%'; }, 400);
+    setTimeout(function() { bar.style.width = '100%'; }, 900);
+    setTimeout(function() {
+      document.getElementById('billingProgressState').classList.add('hidden');
+      document.getElementById('billingResultsState').classList.remove('hidden');
+    }, 1200);
+  }
+</script>
+</body></html>

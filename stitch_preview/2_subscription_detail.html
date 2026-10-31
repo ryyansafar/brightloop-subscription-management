@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Brightloop - SUB-2026-0891 Subscription &amp; Quotation Detail</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "error-container": "#ffdad6",
+            "secondary-container": "#dae2fd",
+            "on-error": "#ffffff",
+            "background": "#f8f9ff",
+            "surface-tint": "#4d44e3",
+            "on-secondary": "#ffffff",
+            "on-primary": "#ffffff",
+            "inverse-on-surface": "#eaf1ff",
+            "on-secondary-fixed": "#131b2e",
+            "error": "#ba1a1a",
+            "primary": "#3525cd",
+            "tertiary": "#005338",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed": "#dae2fd",
+            "on-primary-fixed-variant": "#3323cc",
+            "inverse-primary": "#c3c0ff",
+            "on-primary-fixed": "#0f0069",
+            "surface-variant": "#d3e4fe",
+            "on-background": "#0b1c30",
+            "inverse-surface": "#213145",
+            "on-tertiary-fixed-variant": "#005137",
+            "outline": "#777587",
+            "on-surface-variant": "#464555",
+            "tertiary-fixed": "#85f8c4",
+            "primary-fixed": "#e2dfff",
+            "on-tertiary-container": "#7df1bd",
+            "secondary": "#565e74",
+            "surface": "#f8f9ff",
+            "surface-container": "#e5eeff",
+            "surface-dim": "#cbdbf5",
+            "surface-container-high": "#dce9ff",
+            "surface-bright": "#f8f9ff",
+            "surface-container-highest": "#d3e4fe",
+            "on-secondary-container": "#5c647a",
+            "on-error-container": "#93000a",
+            "on-surface": "#0b1c30",
+            "primary-fixed-dim": "#c3c0ff",
+            "tertiary-container": "#006e4c",
+            "on-secondary-fixed-variant": "#3f465c",
+            "tertiary-fixed-dim": "#68dba9",
+            "secondary-fixed-dim": "#bec6e0",
+            "outline-variant": "#c7c4d8",
+            "on-tertiary": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "primary-container": "#4f46e5",
+            "on-tertiary-fixed": "#002114",
+            "on-primary-container": "#dad7ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-2xl": "2rem",
+            "space-md": "0.75rem",
+            "space-xl": "1.5rem",
+            "margin-lg": "2rem",
+            "space-2xs": "0.125rem",
+            "gutter-md": "1.25rem",
+            "space-sm": "0.5rem",
+            "margin": "1rem",
+            "space-3xl": "3rem",
+            "margin-md": "1.5rem",
+            "gutter-lg": "1.5rem",
+            "gutter": "1rem",
+            "space-lg": "1rem",
+            "space-xs": "0.25rem"
+          },
+          "fontFamily": {
+            "body-md": ["Inter"],
+            "code-mono": ["JetBrains Mono"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "display-hero": ["Plus Jakarta Sans"],
+            "body-lg": ["Inter"],
+            "metric-numeral-md": ["Plus Jakarta Sans"],
+            "metric-numeral-lg": ["Plus Jakarta Sans"],
+            "body-sm": ["Inter"],
+            "label-badge": ["Inter"],
+            "label-caps": ["Inter"],
+            "display-hero-mobile": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "code-mono": ["12px", { "lineHeight": "16px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-hero": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.025em", "fontWeight": "700" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "metric-numeral-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "metric-numeral-lg": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "label-badge": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "500" }],
+            "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+            "display-hero-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased selection:bg-primary-fixed selection:text-primary min-h-screen flex flex-col">
+<!-- TOP APP BAR (Shared Component: Canonical TopNavBar) -->
+<header class="bg-surface-container-lowest border-b border-outline-variant sticky top-0 z-50 shadow-sm">
+<div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+<!-- Brand & Environment Left Cluster -->
+<div class="flex items-center space-x-6">
+<div class="flex items-center space-x-3">
+<!-- Sleek geometric indigo loop icon -->
+<div class="w-8 h-8 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-sm ring-1 ring-black/5">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 4a6 6 0 1 1-6 6 6 6 0 0 1 6-6z"></path>
+<path d="M18 12a6 6 0 0 0-6-6"></path>
+</svg>
+</div>
+<div class="flex items-center space-x-2">
+<span class="text-headline-md font-headline-md font-bold text-on-surface tracking-tight">Brightloop</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-secondary-container text-label-caps font-code-mono uppercase border border-outline-variant/60">PROD-EU-1</span>
+</div>
+</div>
+<!-- Global Search Bar -->
+<div class="relative hidden md:block w-72">
+<span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</span>
+<input class="w-full pl-8 pr-11 py-1.5 text-body-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-outline/70" placeholder="Search subscriptions, invoices, customers..." type="text"/>
+<div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+<kbd class="px-1.5 py-0.5 text-[10px] font-code-mono text-outline bg-surface-container border border-outline-variant rounded shadow-2xs">⌘K</kbd>
+</div>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="hidden lg:flex items-center space-x-6 text-body-sm h-full">
+<a class="text-secondary hover:text-on-surface font-medium py-5 transition-colors" href="1_dashboard.html">
+Dashboard
+</a>
+<a class="text-primary font-semibold border-b-2 border-primary py-5 inline-flex items-center space-x-1.5" href="2_subscription_detail.html">
+<span>Subscriptions</span>
+</a>
+<a class="text-secondary hover:text-on-surface font-medium py-5 transition-colors" href="5_quotation_templates.html">
+Quotes
+</a>
+<a class="text-secondary hover:text-on-surface font-medium py-5 transition-colors" href="3_billing_invoices.html">
+Invoices
+</a>
+<a class="text-secondary hover:text-on-surface font-medium py-5 transition-colors" href="4_products_plans_discounts.html">
+Products &amp; Plans
+</a>
+<a class="text-secondary hover:text-on-surface font-medium py-5 transition-colors" href="6_customer_portal.html">
+Customer Portal
+</a>
+</nav>
+<!-- Trailing Actions & User Profile -->
+<div class="flex items-center space-x-3.5">
+<button onclick="openBillingModal()" class="hidden sm:inline-flex items-center space-x-1.5 bg-primary-container hover:bg-primary text-on-primary px-3.5 py-1.5 rounded-lg text-body-sm font-medium shadow-xs active:scale-[0.99] transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+<span>Run Billing Engine</span>
+</button>
+<div class="flex items-center space-x-1">
+<button class="relative p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors" title="Notifications">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<button class="p-2 rounded-lg text-secondary hover:bg-surface-container-low transition-colors" title="Help &amp; Documentation">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<div class="h-6 w-px bg-outline-variant mx-1"></div>
+<div class="flex items-center space-x-2.5 pl-1 cursor-pointer group">
+<div class="relative">
+<img alt="Finance Lead Admin Avatar" class="w-8 h-8 rounded-full ring-1 ring-outline-variant object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAajjpbNJmS12k8yPwgncPXPRbfRnj1Cu_ycGoCKKbq7tTaIVa2U3GFgfoNkDAOGpMO0_nlRvpHzUQToJMIm4E1NL-Uo0xcu1gfPCUeU3s3BCKTuE4bEtd0TPASnP0rfMTpV_SxdrZzOUyziK_fdDiIQUUnDr-7InmMqtUS9PbhfQ0fY-9cC0aWlhQKnFYwFpAjxF_Selo9YQUXEo3wVldxNkdPsRlR8kqfBewLBshpuexmu1A4J_FKRXNYLFy6-JSukZNiYqzgj6cD"/>
+<span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-tertiary-fixed-dim border-2 border-surface-container-lowest rounded-full"></span>
+</div>
+<div class="hidden xl:flex flex-col text-left">
+<span class="text-body-sm font-semibold text-on-surface group-hover:text-primary transition-colors leading-tight">Elena Vance</span>
+<span class="text-[11px] font-label-badge text-secondary leading-tight">Finance Lead / Admin</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- SUB-HEADER & CONTEXT BAR -->
+<div class="bg-surface-container-lowest border-b border-outline-variant px-6 py-3">
+<div class="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+<!-- Breadcrumb & Back -->
+<div class="flex items-center gap-2">
+<a class="p-1 rounded text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_back">arrow_back</span>
+</a>
+<div class="flex items-center gap-1.5 text-body-sm font-body-sm">
+<a class="text-secondary hover:text-primary transition-colors" href="#">Subscriptions</a>
+<span class="text-outline text-xs">/</span>
+<span class="font-code-mono font-medium text-on-surface">SUB-2026-0891</span>
+<span class="text-outline text-xs">-</span>
+<span class="text-on-surface font-medium">Acme Cloud Technologies</span>
+</div>
+</div>
+<!-- Quick Document State Indicators -->
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container text-primary font-code-mono text-[11px] font-semibold border border-outline-variant/60">
+<span class="material-symbols-outlined text-[12px]" data-icon="sync">sync</span>
+          AUTOMATED CYCLE
+        </span>
+<span id="subStatusBadge" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-label-caps text-label-caps border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+          Recurring Active
+        </span>
+<div class="h-4 w-px bg-outline-variant"></div>
+<span class="text-body-sm font-body-sm text-secondary">Currency: <span class="font-semibold text-on-surface">USD ($)</span></span>
+</div>
+</div>
+</div>
+<!-- TITLE & LIFECYCLE STEPPER STRIP -->
+<div class="bg-surface-container-lowest border-b border-outline-variant px-6 py-4">
+<div class="max-w-[1600px] mx-auto space-y-4">
+<!-- Row: Identity & Primary Execution Buttons -->
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight">SUB-2026-0891</h1>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-secondary-container font-label-badge text-label-badge border border-outline-variant">Tier 1 Contract</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">
+            Customer: <strong class="text-on-surface font-semibold">Acme Cloud Technologies (Pvt Ltd)</strong> • Master Services Agreement #MSA-2024-81
+          </p>
+</div>
+<!-- Action Strip Toolbar -->
+<div class="flex flex-wrap items-center gap-2">
+<!-- Primary action -->
+<button id="btnCreateInvoice" onclick="createNextInvoiceNow()" class="h-9 px-3.5 rounded-lg bg-primary hover:bg-primary/90 text-white flex items-center gap-1.5 font-label-badge text-label-badge shadow-sm active:scale-[0.99] transition-all cursor-pointer">
+<span class="material-symbols-outlined text-[17px]" data-icon="receipt_long">receipt_long</span>
+<span>Create Next Invoice Now</span>
+</button>
+<!-- Secondary Toolbar Actions -->
+<button id="btnPauseSub" onclick="openPauseModal()" class="h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-badge text-label-badge flex items-center gap-1.5 transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="pause_circle">pause_circle</span>
+<span>Pause Subscription</span>
+</button>
+<button id="btnRenewSub" onclick="openRenewModal()" class="h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-badge text-label-badge flex items-center gap-1.5 transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="autorenew">autorenew</span>
+<span>Renew Subscription</span>
+</button>
+<button id="btnCloseEarly" onclick="openCloseEarlyModal()" class="h-9 px-3 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-label-badge text-label-badge flex items-center gap-1.5 transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[16px]" data-icon="cancel">cancel</span>
+<span>Close Early</span>
+</button>
+<div class="h-6 w-px bg-outline-variant mx-0.5"></div>
+<button onclick="showToast('Downloading Contract PDF summary...', 'info')" class="h-9 px-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-secondary hover:text-on-surface transition-colors cursor-pointer" title="Download PDF Summary">
+<span class="material-symbols-outlined text-[18px]" data-icon="download">download</span>
+</button>
+<a href="6_customer_portal.html" class="h-9 px-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-secondary hover:text-on-surface inline-flex items-center transition-colors cursor-pointer" title="Open Customer Portal View">
+<span class="material-symbols-outlined text-[18px]" data-icon="forward_to_inbox">forward_to_inbox</span>
+</a>
+<button class="h-9 px-2 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-secondary hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Lifecycle Status Pipeline Stepper -->
+<div class="pt-2">
+<div class="w-full bg-surface-container-low/50 p-2.5 rounded-xl border border-outline-variant">
+<div class="grid grid-cols-5 gap-2 text-center text-body-sm">
+<!-- Step 1: Draft -->
+<div class="flex items-center gap-2 p-2 rounded-lg bg-surface-container-lowest border border-outline-variant">
+<span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center text-xs">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+</span>
+<div class="text-left leading-tight">
+<span class="font-medium text-xs text-on-surface block">Draft</span>
+<span class="font-code-mono text-[10px] text-outline">Jan 12, 2026</span>
+</div>
+</div>
+<!-- Step 2: Quotation -->
+<div class="flex items-center gap-2 p-2 rounded-lg bg-surface-container-lowest border border-outline-variant">
+<span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center text-xs">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+</span>
+<div class="text-left leading-tight">
+<span class="font-medium text-xs text-on-surface block">Quotation</span>
+<span class="font-code-mono text-[10px] text-outline">Jan 13, 2026</span>
+</div>
+</div>
+<!-- Step 3: Confirmed -->
+<div class="flex items-center gap-2 p-2 rounded-lg bg-surface-container-lowest border border-outline-variant">
+<span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center text-xs">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+</span>
+<div class="text-left leading-tight">
+<span class="font-medium text-xs text-on-surface block">Confirmed</span>
+<span class="font-code-mono text-[10px] text-outline">Jan 14, 2026</span>
+</div>
+</div>
+<!-- Step 4: Active (Current Active highlight) -->
+<div id="stepActive" class="flex items-center gap-2 p-2 rounded-lg bg-primary text-white shadow-xs border border-primary transition-all">
+<span id="stepActiveIcon" class="w-5 h-5 rounded-full bg-white/20 text-white flex items-center justify-center text-xs ring-2 ring-white/30">
+<span class="material-symbols-outlined text-[14px]" data-icon="sync">sync</span>
+</span>
+<div class="text-left leading-tight">
+<div class="flex items-center gap-1.5">
+<span id="stepActiveTitle" class="font-semibold text-xs block">Active Pipeline</span>
+<span id="stepActivePulse" class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed animate-ping"></span>
+</div>
+<span id="stepActiveSub" class="font-code-mono text-[10px] text-inverse-primary">Current Execution</span>
+</div>
+</div>
+<!-- Step 5: Closed -->
+<div id="stepClosed" class="flex items-center gap-2 p-2 rounded-lg bg-surface-container-low/50 border border-transparent opacity-60 transition-all">
+<span id="stepClosedIcon" class="w-5 h-5 rounded-full bg-outline-variant/30 text-outline flex items-center justify-center text-xs">
+<span class="material-symbols-outlined text-[13px]" data-icon="lock">lock</span>
+</span>
+<div class="text-left leading-tight">
+<span id="stepClosedTitle" class="font-medium text-xs text-outline block">Closed</span>
+<span id="stepClosedSub" class="font-code-mono text-[10px] text-outline">Dec 31, 2026</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- MAIN VIEWPORT CONTAINER -->
+<main class="max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 flex-1 flex flex-col gap-6">
+<!-- TOP EXECUTIVE METADATA CARDS (Bento Grid Style) -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1: Customer Details -->
+<div class="bg-surface-container-lowest border border-[#e2e8f0] rounded-xl p-4 shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between pb-2 border-b border-[#f1f5f9]">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider">Customer Entity</span>
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="domain">domain</span>
+</div>
+<div class="pt-3 space-y-1.5">
+<div class="font-headline-sm font-headline-sm text-on-surface truncate">Acme Cloud Technologies</div>
+<div class="flex items-center gap-1.5 text-body-sm font-body-sm text-secondary">
+<span class="material-symbols-outlined text-[14px]" data-icon="mail">mail</span>
+<span class="truncate">billing@acme.io</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm pt-1">
+<span class="text-outline text-xs">Tax / VAT ID:</span>
+<span class="font-code-mono text-xs font-semibold text-on-surface">US-94810294</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-outline text-xs">Payment Rail:</span>
+<span class="inline-flex items-center gap-1 font-code-mono text-xs text-on-surface font-medium">
+<span class="material-symbols-outlined text-[13px] text-primary" data-icon="credit_card">credit_card</span>
+              Stripe •••• 4291
+            </span>
+</div>
+</div>
+</div>
+<!-- Card 2: Plan & Terms -->
+<div class="bg-surface-container-lowest border border-[#e2e8f0] rounded-xl p-4 shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between pb-2 border-b border-[#f1f5f9]">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider">Plan Architecture</span>
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="layers">layers</span>
+</div>
+<div class="pt-3 space-y-1.5">
+<div class="font-headline-sm font-headline-sm text-on-surface truncate">Enterprise Cloud Platform</div>
+<div class="flex items-center gap-1.5 text-body-sm font-body-sm text-secondary">
+<span class="material-symbols-outlined text-[14px]" data-icon="event_repeat">event_repeat</span>
+<span>Billed Monthly, $4,850/mo base</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm pt-1">
+<span class="text-outline text-xs">Payment Terms:</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container font-label-badge text-xs font-semibold text-primary">15 Days (Net 15)</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-outline text-xs">Auto-Close on End:</span>
+<span class="text-xs font-medium text-secondary">Off (Renewable)</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Cycle Schedule & Dates -->
+<div class="bg-surface-container-lowest border border-[#e2e8f0] rounded-xl p-4 shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between pb-2 border-b border-[#f1f5f9]">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider">Contract Chronology</span>
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="calendar_month">calendar_month</span>
+</div>
+<div class="pt-3 space-y-1.5">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-outline text-xs">Effective Start:</span>
+<span class="font-code-mono text-xs font-semibold text-on-surface">Jan 15, 2026</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-outline text-xs">Contract Renewal:</span>
+<span class="font-code-mono text-xs font-semibold text-on-surface">Jan 14, 2027</span>
+</div>
+<div class="pt-1.5 mt-1 border-t border-[#f1f5f9]">
+<div class="text-xs text-outline mb-0.5">Next Billing Target:</div>
+<div class="flex items-center justify-between">
+<span class="font-headline-sm font-headline-sm text-primary font-bold">Apr 15, 2026</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-code-mono text-[10px] font-bold">
+                in 18 days
+              </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 4: Financial Summary Pill -->
+<div class="bg-surface-container-lowest border border-[#e2e8f0] rounded-xl p-4 shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between pb-2 border-b border-[#f1f5f9]">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider">Financial Posture</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<div class="pt-2">
+<div class="text-xs text-secondary mb-0.5">Active Monthly Run:</div>
+<div class="text-metric-numeral-md font-metric-numeral-md text-on-surface font-bold tracking-tight">
+            $4,893.10 <span class="text-xs font-normal text-secondary">/mo</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm pt-2 border-t border-[#f1f5f9] mt-2">
+<span class="text-outline text-xs">Invoiced YTD:</span>
+<span class="font-code-mono text-xs font-bold text-on-surface">$14,679.30</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm pt-1">
+<span class="text-outline text-xs">Outstanding:</span>
+<span class="inline-flex items-center gap-1 px-1.5 py-0.2 rounded bg-[#ecfdf5] text-[#059669] font-code-mono text-[11px] font-semibold">
+              $0.00 (Good Standing)
+            </span>
+</div>
+</div>
+</div>
+</section>
+<!-- MAIN TWO-COLUMN WORKSPACE: 8 Columns Main, 4 Columns Sidebar -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT COLUMN: 8 Columns Operational Workbench -->
+<div class="lg:col-span-8 space-y-6">
+<!-- Applied Rules & Discount Verification Banner -->
+<div class="bg-[#eff4ff] border border-outline-variant/50 rounded-xl p-3.5 flex items-start justify-between gap-3 shadow-xs">
+<div class="flex items-start gap-3">
+<div class="w-7 h-7 rounded-lg bg-primary-container text-white flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[17px]" data-icon="verified">verified</span>
+</div>
+<div>
+<h4 class="text-body-sm font-body-sm font-semibold text-on-surface">
+                Rule Applied: Volume Expansion 10%
+              </h4>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">
+                Admin rule active until Dec 2026. Automatic tax calculations active (18% basis rate GST/VAT). Applied uniformly to all seat-based software line items.
+              </p>
+</div>
+</div>
+<button class="text-secondary hover:text-on-surface transition-colors p-1" title="Dismiss Notice">
+<span class="material-symbols-outlined text-[18px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- PRODUCT & ADDON LINES TABLE CONTAINER -->
+<div class="bg-surface-container-lowest border border-[#e2e8f0] rounded-xl shadow-sm overflow-hidden">
+<div class="px-5 py-3.5 border-b border-[#e2e8f0] flex items-center justify-between bg-surface-container-lowest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="inventory_2">inventory_2</span>
+<h3 class="font-headline-sm font-headline-sm text-on-surface">Contracted Product Lines &amp; Recurring Charges</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-secondary-container text-xs font-semibold">3 Items</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="h-7 px-2.5 rounded border border-[#cbd5e1] hover:bg-[#f8fafc] text-secondary hover:text-on-surface font-label-badge text-xs flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[14px]" data-icon="add">add</span>
+<span>Add Product</span>
+</button>
+<button class="h-7 px-2 rounded border border-[#cbd5e1] hover:bg-[#f8fafc] text-secondary hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="filter_list">filter_list</span>
+</button>
+</div>
+</div>
+<!-- Enterprise High-Density Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#f8fafc] border-b border-[#e2e8f0] text-outline text-[11px] font-label-caps uppercase tracking-wider">
+<th class="py-2.5 px-4 font-semibold">Line Item &amp; Description</th>
+<th class="py-2.5 px-3 font-semibold">Type</th>
+<th class="py-2.5 px-3 font-semibold">Variant / Specs</th>
+<th class="py-2.5 px-3 font-semibold text-right">Qty</th>
+<th class="py-2.5 px-3 font-semibold text-right">Unit Price</th>
+<th class="py-2.5 px-3 font-semibold text-center">Taxes</th>
+<th class="py-2.5 px-3 font-semibold text-right">Discount</th>
+<th class="py-2.5 px-4 font-semibold text-right">Net Total</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#f1f5f9] text-body-sm font-body-sm">
+<!-- Line 1: Core SaaS Business Platform -->
+<tr class="hover:bg-[#f8fafc] transition-colors group">
+<td class="py-3 px-4">
+<div class="font-semibold text-on-surface">Core SaaS Business Platform</div>
+<div class="text-xs text-outline">Enterprise Multi-tenant Instance with API gateway access</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-surface-container text-primary border border-outline-variant/40">
+                      Software
+                    </span>
+</td>
+<td class="py-3 px-3">
+<span class="font-code-mono text-xs text-secondary">Odoo Enterprise Brand (+$560)</span>
+</td>
+<td class="py-3 px-3 text-right font-code-mono font-medium text-on-surface">
+                    50 seats
+                  </td>
+<td class="py-3 px-3 text-right font-code-mono text-on-surface">
+                    $65.00
+                  </td>
+<td class="py-3 px-3 text-center">
+<span class="font-code-mono text-xs text-secondary">18% GST</span>
+</td>
+<td class="py-3 px-3 text-right font-code-mono text-[#059669]">
+                    -$325.00 <span class="text-[10px] text-outline block">(10% Vol)</span>
+</td>
+<td class="py-3 px-4 text-right font-code-mono font-semibold text-on-surface">
+                    $3,217.50
+                  </td>
+</tr>
+<!-- Line 2: Dedicated Account Support & SLA -->
+<tr class="hover:bg-[#f8fafc] transition-colors group">
+<td class="py-3 px-4">
+<div class="font-semibold text-on-surface">Dedicated Account Support &amp; SLA</div>
+<div class="text-xs text-outline">15-minute response time &amp; dedicated TAM escalation engineer</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-[#e0f2fe] text-[#0369a1] border border-[#bae6fd]">
+                      Service
+                    </span>
+</td>
+<td class="py-3 px-3">
+<span class="font-code-mono text-xs text-secondary">Standard 24/7 Priority SLA</span>
+</td>
+<td class="py-3 px-3 text-right font-code-mono font-medium text-on-surface">
+                    1
+                  </td>
+<td class="py-3 px-3 text-right font-code-mono text-on-surface">
+                    $1,200.00
+                  </td>
+<td class="py-3 px-3 text-center">
+<span class="font-code-mono text-xs text-secondary">18%</span>
+</td>
+<td class="py-3 px-3 text-right font-code-mono text-outline">
+                    $0.00
+                  </td>
+<td class="py-3 px-4 text-right font-code-mono font-semibold text-on-surface">
+                    $1,416.00
+                  </td>
+</tr>
+<!-- Line 3: Automated Daily Backups & Cold Storage -->
+<tr class="hover:bg-[#f8fafc] transition-colors group">
+<td class="py-3 px-4">
+<div class="font-semibold text-on-surface">Automated Daily Backups &amp; Cold Storage</div>
+<div class="text-xs text-outline">Point-in-time database snapshot replication with AES-256</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-[#f3e8ff] text-[#7e22ce] border border-[#e9d5ff]">
+                      Addon
+                    </span>
+</td>
+<td class="py-3 px-3">
+<span class="font-code-mono text-xs text-secondary">High Availability Multi-Region</span>
+</td>
+<td class="py-3 px-3 text-right font-code-mono font-medium text-on-surface">
+                    2 TB
+                  </td>
+<td class="py-3 px-3 text-right font-code-mono text-on-surface">
+                    $110.00
+                  </td>
+<td class="py-3 px-3 text-center">
+<span class="font-code-mono text-xs text-secondary">18%</span>
+</td>
+<td class="py-3 px-3 text-right font-code-mono text-outline">
+                    $0.00
+                  </td>
+<td class="py-3 px-4 text-right font-code-mono font-semibold text-on-surface">
+                    $259.60
+                  </td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- TABLE FOOTER & ORDER TOTALS RECONCILIATION -->
+<div class="border-t border-[#e2e8f0] p-4 bg-[#f8fafc]/60 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+<div class="text-xs text-secondary space-y-1">
+<div class="flex items-center gap-1.5 font-medium text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-tertiary" data-icon="lock">lock</span>
+                Rate Locked under Master Subscription Agreement MSA-2024-81
+              </div>
+<p>Charges apply automatically to the registered payment method every 15th of the month.</p>
+</div>
+<!-- Totals Calculation Block -->
+<div class="w-full md:w-72 bg-surface-container-lowest border border-[#e2e8f0] rounded-lg p-3 space-y-2 shadow-xs">
+<div class="flex justify-between text-body-sm font-body-sm text-secondary">
+<span>Untaxed Subtotal:</span>
+<span class="font-code-mono font-medium text-on-surface">$4,147.10</span>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm text-[#059669]">
+<span>Discount Savings:</span>
+<span class="font-code-mono font-medium">-$325.00</span>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm text-secondary">
+<span>Taxes (18% Basis GST):</span>
+<span class="font-code-mono font-medium text-on-surface">$746.00</span>
+</div>
+<div class="border-t border-[#e2e8f0] pt-2 flex justify-between items-baseline">
+<span class="font-headline-sm font-headline-sm text-on-surface">Total Per Cycle:</span>
+<div class="text-right">
+<span class="font-metric-numeral-md font-metric-numeral-md text-primary font-bold">$4,893.10</span>
+<span class="text-xs text-secondary block font-normal">USD / month</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- LINKED INVOICE HISTORY TABLE -->
+<div class="bg-surface-container-lowest border border-[#e2e8f0] rounded-xl shadow-sm overflow-hidden">
+<div class="px-5 py-3.5 border-b border-[#e2e8f0] flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="receipt">receipt</span>
+<h3 class="font-headline-sm font-headline-sm text-on-surface">Invoice History &amp; Settlement Records</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-secondary-container text-xs font-semibold">3 Invoices</span>
+</div>
+<a class="text-body-sm font-body-sm text-primary hover:underline font-medium" href="#">View All Ledgers</a>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#f8fafc] border-b border-[#e2e8f0] text-outline text-[11px] font-label-caps uppercase tracking-wider">
+<th class="py-2.5 px-4 font-semibold">Invoice Ref</th>
+<th class="py-2.5 px-4 font-semibold">Billing Date</th>
+<th class="py-2.5 px-4 font-semibold">Due Date</th>
+<th class="py-2.5 px-4 font-semibold text-right">Amount</th>
+<th class="py-2.5 px-4 font-semibold text-center">Status</th>
+<th class="py-2.5 px-4 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#f1f5f9] text-body-sm font-body-sm">
+<!-- Invoice 1 -->
+<tr class="hover:bg-[#f8fafc] transition-colors">
+<td class="py-3 px-4 font-code-mono font-semibold text-primary">
+                    INV-2026-0012
+                  </td>
+<td class="py-3 px-4 font-code-mono text-secondary">
+                    Jan 15, 2026
+                  </td>
+<td class="py-3 px-4 font-code-mono text-secondary">
+                    Jan 30, 2026
+                  </td>
+<td class="py-3 px-4 text-right font-code-mono font-semibold text-on-surface">
+                    $4,893.10
+                  </td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#ecfdf5] text-[#059669] text-xs font-semibold border border-[#a7f3d0]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+                      Paid (Stripe)
+                    </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-2 text-xs">
+<button class="px-2 py-1 rounded border border-[#cbd5e1] hover:bg-[#f8fafc] text-secondary hover:text-on-surface transition-colors">
+                        View PDF
+                      </button>
+<button class="px-2 py-1 rounded border border-[#cbd5e1] hover:bg-[#f8fafc] text-secondary hover:text-on-surface transition-colors">
+                        Receipt
+                      </button>
+</div>
+</td>
+</tr>
+<!-- Invoice 2 -->
+<tr class="hover:bg-[#f8fafc] transition-colors">
+<td class="py-3 px-4 font-code-mono font-semibold text-primary">
+                    INV-2026-0045
+                  </td>
+<td class="py-3 px-4 font-code-mono text-secondary">
+                    Feb 15, 2026
+                  </td>
+<td class="py-3 px-4 font-code-mono text-secondary">
+                    Mar 02, 2026
+                  </td>
+<td class="py-3 px-4 text-right font-code-mono font-semibold text-on-surface">
+                    $4,893.10
+                  </td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#ecfdf5] text-[#059669] text-xs font-semibold border border-[#a7f3d0]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+                      Paid (Stripe)
+                    </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-2 text-xs">
+<button class="px-2 py-1 rounded border border-[#cbd5e1] hover:bg-[#f8fafc] text-secondary hover:text-on-surface transition-colors">
+                        View PDF
+                      </button>
+<button class="px-2 py-1 rounded border border-[#cbd5e1] hover:bg-[#f8fafc] text-secondary hover:text-on-surface transition-colors">
+                        Receipt
+                      </button>
+</div>
+</td>
+</tr>
+<!-- Invoice 3: Upcoming / Scheduled -->
+<tr class="hover:bg-[#f8fafc] transition-colors bg-[#fffbeb]/20">
+<td class="py-3 px-4 font-code-mono font-semibold text-secondary">
+                    INV-2026-0089
+                  </td>
+<td class="py-3 px-4 font-code-mono text-secondary">
+                    Mar 15, 2026
+                  </td>
+<td class="py-3 px-4 font-code-mono text-secondary">
+                    Mar 30, 2026
+                  </td>
+<td class="py-3 px-4 text-right font-code-mono font-semibold text-on-surface">
+                    $4,893.10
+                  </td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#fffbeb] text-[#d97706] text-xs font-semibold border border-[#fde68a]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#d97706] animate-pulse"></span>
+                      Auto-Charge Apr 15
+                    </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-2 text-xs">
+<button class="px-2.5 py-1 rounded bg-primary text-white hover:bg-[#2b1ea7] transition-colors font-medium">
+                        Preview Run
+                      </button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: 4 Columns Audit Log, Compliance & Automation Sidecar -->
+<div class="lg:col-span-4 space-y-6">
+<!-- AUDIT TIMELINE CARD -->
+<div class="bg-surface-container-lowest border border-[#e2e8f0] rounded-xl shadow-sm p-4 space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-[#f1f5f9]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="history">history</span>
+<h3 class="font-headline-sm font-headline-sm text-on-surface">Activity &amp; Audit Trail</h3>
+</div>
+<select class="text-xs border border-[#cbd5e1] rounded px-2 py-1 bg-surface-container-lowest text-secondary focus:outline-none focus:ring-1 focus:ring-primary">
+<option>All Events</option>
+<option>Billing Only</option>
+<option>Status Changes</option>
+</select>
+</div>
+<!-- Vertical Step Timeline -->
+<div class="relative pl-6 space-y-5 before:content-[''] before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#e2e8f0]">
+<!-- Event 1 -->
+<div class="relative">
+<div class="absolute -left-6 top-0.5 w-3.5 h-3.5 rounded-full bg-[#ecfdf5] border-2 border-[#059669]"></div>
+<div>
+<p class="text-body-sm font-body-sm font-semibold text-on-surface leading-snug">
+                  Invoice #0045 generated &amp; settled via Stripe Vault
+                </p>
+<div class="flex items-center gap-2 text-xs text-outline mt-1 font-code-mono">
+<span>28 days ago</span>
+<span>•</span>
+<span class="text-secondary font-medium">Automated Engine</span>
+</div>
+</div>
+</div>
+<!-- Event 2 -->
+<div class="relative">
+<div class="absolute -left-6 top-0.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-surface-container-lowest"></div>
+<div>
+<p class="text-body-sm font-body-sm font-semibold text-on-surface leading-snug">
+                  Subscription Activated
+                </p>
+<p class="text-xs text-secondary mt-0.5">Recurring billing engine registered cron job for Day 15.</p>
+<div class="flex items-center gap-2 text-xs text-outline mt-1 font-code-mono">
+<span>Jan 15, 2026, 09:30 AM</span>
+<span>•</span>
+<span class="text-secondary font-medium">System Orchestrator</span>
+</div>
+</div>
+</div>
+<!-- Event 3 -->
+<div class="relative">
+<div class="absolute -left-6 top-0.5 w-3.5 h-3.5 rounded-full bg-surface-container-high border-2 border-outline-variant"></div>
+<div>
+<div class="flex items-center gap-1.5">
+<p class="text-body-sm font-body-sm font-semibold text-on-surface leading-snug">Quote Confirmed</p>
+<span class="px-1.5 py-0.2 rounded bg-[#ecfdf5] text-[#059669] text-[10px] font-semibold border border-[#a7f3d0]">Signature Verified</span>
+</div>
+<div class="flex items-center gap-2 text-xs text-outline mt-1 font-code-mono">
+<span>Jan 14, 2026, 04:15 PM</span>
+<span>•</span>
+<span class="text-on-surface font-medium">Ryyan Vance (Finance Lead)</span>
+</div>
+</div>
+</div>
+<!-- Event 4 -->
+<div class="relative">
+<div class="absolute -left-6 top-0.5 w-3.5 h-3.5 rounded-full bg-surface-container-high border-2 border-outline-variant"></div>
+<div>
+<p class="text-body-sm font-body-sm font-semibold text-on-surface leading-snug">
+                  Created from Quote Template 'Enterprise Standard v2'
+                </p>
+<div class="flex items-center gap-2 text-xs text-outline mt-1 font-code-mono">
+<span>Jan 12, 2026, 11:20 AM</span>
+<span>•</span>
+<span class="text-secondary font-medium">Pankaj Sharma (Account Exec)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Add Internal Note Quick Input -->
+<div class="pt-3 border-t border-[#f1f5f9] space-y-2">
+<label class="block text-xs font-semibold text-secondary uppercase font-label-caps">Internal Audit Memo</label>
+<textarea class="w-full text-xs p-2 rounded-lg border border-[#cbd5e1] focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-outline/70 bg-surface-container-lowest" placeholder="Record operational note, billing exception, or SLA credit agreement..." rows="2"></textarea>
+<div class="flex justify-end">
+<button class="h-7 px-3 rounded bg-secondary hover:bg-on-surface text-white text-xs font-semibold transition-colors">
+                Post Note
+              </button>
+</div>
+</div>
+</div>
+<!-- COMPLIANCE & INTEGRATION STATUS CARD -->
+<div class="bg-surface-container-lowest border border-[#e2e8f0] rounded-xl shadow-sm p-4 space-y-3">
+<div class="flex items-center justify-between pb-2 border-b border-[#f1f5f9]">
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider">Engine Compliance</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-icon="security">security</span>
+</div>
+<div class="space-y-2.5 text-body-sm font-body-sm">
+<div class="flex items-center justify-between p-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-tertiary" data-icon="shield">shield</span>
+<span class="text-xs font-medium text-on-surface">Dunning Protection</span>
+</div>
+<span class="font-code-mono text-xs text-[#059669] font-semibold">Smart Retry (3 Left)</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="sync_alt">sync_alt</span>
+<span class="text-xs font-medium text-on-surface">Contract Engine</span>
+</div>
+<span class="font-code-mono text-xs text-on-surface font-semibold">Odoo Sync #4829</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="token">token</span>
+<span class="text-xs font-medium text-on-surface">SOC-2 / PCI Tokenized</span>
+</div>
+<span class="inline-flex items-center gap-1 font-code-mono text-xs text-[#059669] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+                Verified Vault
+              </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BOTTOM STICKY AUDIT FOOTER STRIP -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant px-6 py-3 mt-auto">
+<div class="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-secondary font-body-sm">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>SOC-2 Type II Certified • PCI DSS Level 1 Compliant Engine | Double-Entry Ledger Verified (Odoo Accounting Sync #4829)</span>
+</div>
+<div class="flex items-center gap-4">
+<a class="hover:text-primary transition-colors" href="#">API Docs</a>
+<span class="text-outline">•</span>
+<a class="hover:text-primary transition-colors" href="#">Audit Vault</a>
+<span class="text-outline">•</span>
+<a class="hover:text-primary transition-colors" href="#">Emergency Support</a>
+<span class="text-outline">•</span>
+<span class="font-code-mono text-outline font-semibold">Brightloop Core v4.18.2</span>
+</div>
+</div>
+</footer>
+
+<!-- Toast Notification Container -->
+<div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+<!-- Modal 1: Early Close Dialog with Mandatory Reason -->
+<div id="closeEarlyModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-2xl max-w-lg w-full overflow-hidden transform transition-all">
+    <div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-rose-50/60">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]" data-icon="warning">warning</span>
+        </div>
+        <div>
+          <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Terminate Subscription Early</h3>
+          <p class="text-xs text-secondary">Contract SUB-2026-0891 • Acme Cloud Technologies</p>
+        </div>
+      </div>
+      <button onclick="closeCloseEarlyModal()" class="w-8 h-8 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low flex items-center justify-center transition-colors">
+        <span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+      </button>
+    </div>
+
+    <form id="closeEarlyForm" onsubmit="event.preventDefault(); submitCloseEarly();" class="p-6 space-y-4">
+      <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs leading-relaxed">
+        <strong>Warning:</strong> Early closure will immediately halt all future recurring billing cycles. Unissued invoices will be voided, and this contract will move to the terminal <code>CLOSED</code> state.
+      </div>
+
+      <div class="space-y-1.5">
+        <label class="block text-body-sm font-medium text-on-surface">
+          Termination Reason <span class="text-rose-600">* (Mandatory per Spec)</span>
+        </label>
+        <select id="closeReasonSelect" class="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm font-body-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-rose-500 cursor-pointer">
+          <option value="">-- Select Audited Close Reason --</option>
+          <option value="Customer Downsizing / Seat Reduction">Customer Downsizing / Seat Reduction</option>
+          <option value="Customer Migrated to Alternative Competitor">Customer Migrated to Alternative Competitor</option>
+          <option value="Contract Terminated by Mutual Agreement">Contract Terminated by Mutual Agreement</option>
+          <option value="Project Cancelled / Budget Revocation">Project Cancelled / Budget Revocation</option>
+          <option value="Breach of Contract / Non-Payment">Breach of Contract / Non-Payment</option>
+          <option value="Other">Other (Specify below)</option>
+        </select>
+        <p id="closeReasonError" class="text-xs text-rose-600 hidden font-medium">Please select a valid close reason to proceed.</p>
+      </div>
+
+      <div class="space-y-1.5">
+        <label class="block text-body-sm font-medium text-on-surface">Detailed Termination Notes</label>
+        <textarea id="closeNotesInput" rows="3" class="w-full p-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm font-body-sm text-on-surface placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Provide audit trail details, stakeholder approvals, or settlement terms..."></textarea>
+      </div>
+
+      <div class="flex items-start space-x-2.5 pt-1">
+        <input id="closeConfirmCheck" type="checkbox" required class="mt-1 rounded border-outline-variant text-rose-600 focus:ring-rose-500">
+        <label for="closeConfirmCheck" class="text-xs text-secondary leading-tight cursor-pointer">
+          I confirm that I have reviewed the active cycle ($18,450.00 / yr) and authorize immediate terminal closure for SUB-2026-0891.
+        </label>
+      </div>
+
+      <div class="flex items-center justify-end space-x-3 pt-3 border-t border-outline-variant">
+        <button type="button" onclick="closeCloseEarlyModal()" class="px-4 py-2 rounded-lg border border-outline-variant text-secondary hover:text-on-surface hover:bg-surface-container-low text-body-sm font-medium transition-colors">
+          Cancel
+        </button>
+        <button type="submit" class="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-body-sm font-semibold inline-flex items-center space-x-1.5 shadow-sm transition-all active:scale-[0.98]">
+          <span class="material-symbols-outlined text-[16px]" data-icon="cancel">cancel</span>
+          <span>Confirm Early Termination</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal 2: Pause Subscription Dialog -->
+<div id="pauseModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-2xl max-w-md w-full overflow-hidden transform transition-all">
+    <div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-amber-50/60">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]" data-icon="pause_circle">pause_circle</span>
+        </div>
+        <div>
+          <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Pause Subscription</h3>
+          <p class="text-xs text-secondary">Freezes billing schedule without catch-up burst</p>
+        </div>
+      </div>
+      <button onclick="closePauseModal()" class="w-8 h-8 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low flex items-center justify-center transition-colors">
+        <span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+      </button>
+    </div>
+
+    <div class="p-6 space-y-4">
+      <p class="text-body-sm text-secondary">
+        Pausing SUB-2026-0891 places recurring invoices on hold. When resumed, <code class="bg-surface-container px-1 py-0.5 rounded text-xs font-code-mono text-primary">nextInvoiceDate</code> clamps to today so missed days are skipped rather than billed all at once.
+      </p>
+
+      <div class="space-y-1.5">
+        <label class="block text-body-sm font-medium text-on-surface">Pause Duration Window</label>
+        <select id="pauseDurationSelect" class="w-full h-10 px-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm font-body-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary">
+          <option value="30">30 Days (Resumes automatically April 30, 2026)</option>
+          <option value="60">60 Days (Resumes automatically May 30, 2026)</option>
+          <option value="90">90 Days (Maximum allowable freeze per policy)</option>
+          <option value="manual">Indefinite (Manual resume required)</option>
+        </select>
+      </div>
+
+      <div class="flex items-center justify-end space-x-3 pt-3 border-t border-outline-variant">
+        <button type="button" onclick="closePauseModal()" class="px-4 py-2 rounded-lg border border-outline-variant text-secondary hover:text-on-surface hover:bg-surface-container-low text-body-sm font-medium transition-colors">
+          Cancel
+        </button>
+        <button type="button" onclick="submitPause()" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-body-sm font-semibold inline-flex items-center space-x-1.5 shadow-sm transition-all active:scale-[0.98]">
+          <span class="material-symbols-outlined text-[16px]" data-icon="pause">pause</span>
+          <span>Confirm Pause</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 3: Renewal Confirmation Dialog -->
+<div id="renewModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-2xl max-w-md w-full overflow-hidden transform transition-all">
+    <div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-primary-fixed/30">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]" data-icon="autorenew">autorenew</span>
+        </div>
+        <div>
+          <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Renew Subscription Term</h3>
+          <p class="text-xs text-secondary">Extend End Date by One Plan Period</p>
+        </div>
+      </div>
+      <button onclick="closeRenewModal()" class="w-8 h-8 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low flex items-center justify-center transition-colors">
+        <span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+      </button>
+    </div>
+
+    <div class="p-6 space-y-4">
+      <div class="p-3.5 rounded-xl bg-surface-container-low border border-outline-variant space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-secondary font-medium">Current Period End:</span>
+          <span class="font-code-mono font-bold text-on-surface">Dec 31, 2026</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-secondary font-medium">Plan Period:</span>
+          <span class="font-semibold text-primary">1 Year (Annual Enterprise Cloud)</span>
+        </div>
+        <div class="h-px bg-outline-variant"></div>
+        <div class="flex items-center justify-between text-sm">
+          <span class="font-semibold text-on-surface">New Extended End Date:</span>
+          <span class="font-code-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Dec 31, 2027</span>
+        </div>
+      </div>
+
+      <p class="text-xs text-secondary">
+        Renewal applies the exact current catalog contract terms ($18,450.00 / yr) and extends scheduled invoicing anchors without service disruption.
+      </p>
+
+      <div class="flex items-center justify-end space-x-3 pt-3 border-t border-outline-variant">
+        <button type="button" onclick="closeRenewModal()" class="px-4 py-2 rounded-lg border border-outline-variant text-secondary hover:text-on-surface hover:bg-surface-container-low text-body-sm font-medium transition-colors">
+          Cancel
+        </button>
+        <button type="button" onclick="submitRenew()" class="px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 text-white text-body-sm font-semibold inline-flex items-center space-x-1.5 shadow-sm transition-all active:scale-[0.98]">
+          <span class="material-symbols-outlined text-[16px]" data-icon="check">check</span>
+          <span>Confirm 1-Year Extension</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 4: Billing Run Execution Modal (Global) -->
+<div id="billingModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-200">
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-2xl max-w-2xl w-full overflow-hidden transform transition-all">
+    <div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-low/40">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center shadow-xs">
+          <span class="material-symbols-outlined text-[18px]">bolt</span>
+        </div>
+        <div>
+          <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Automated Recurring Billing Engine</h3>
+          <p class="text-xs text-secondary">Batch Cycle Run &amp; Idempotent Deduplication</p>
+        </div>
+      </div>
+      <button onclick="closeBillingModal()" class="w-8 h-8 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low flex items-center justify-center transition-colors">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <div class="p-6 space-y-5">
+      <div id="billingInitialState" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4 p-4 rounded-xl bg-surface-container-low/60 border border-outline-variant">
+          <div>
+            <label class="block text-xs font-semibold text-secondary uppercase tracking-wider mb-1">Execution Date</label>
+            <div class="font-code-mono font-bold text-on-surface text-sm">March 31, 2026</div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-secondary uppercase tracking-wider mb-1">Batch Strategy</label>
+            <div class="font-code-mono font-medium text-on-surface text-sm">Prisma Transaction Catch-Up</div>
+          </div>
+        </div>
+        <p class="text-body-sm text-secondary">
+          Scans all active subscriptions where nextInvoiceDate &le; 2026-03-31 and verifies unique key <code>[subscriptionId, periodStart]</code>.
+        </p>
+        <div class="flex items-center justify-end space-x-3 pt-2">
+          <button onclick="closeBillingModal()" class="px-4 py-2 rounded-lg border border-outline-variant text-secondary hover:text-on-surface hover:bg-surface-container-low text-body-sm font-medium transition-colors">Cancel</button>
+          <button onclick="simulateBillingRun()" class="px-5 py-2 rounded-lg bg-primary hover:bg-primary/90 text-white text-body-sm font-semibold inline-flex items-center space-x-2 shadow-sm transition-all active:scale-[0.98]">
+            <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+            <span>Execute Billing Run</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="billingProgressState" class="hidden py-6 space-y-4 text-center">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary-fixed text-primary animate-spin">
+          <span class="material-symbols-outlined text-[24px]">sync</span>
+        </div>
+        <div class="font-headline-sm font-bold text-on-surface text-base">Processing Recurring Invoices...</div>
+        <div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+          <div id="billingProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 20%"></div>
+        </div>
+      </div>
+
+      <div id="billingResultsState" class="hidden space-y-4">
+        <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            <span class="material-symbols-outlined text-emerald-600 text-[20px]">check_circle</span>
+            <span class="font-semibold text-sm">Batch Billing Run Completed</span>
+          </div>
+          <span class="text-xs font-code-mono font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">40 Invoices Created</span>
+        </div>
+        <div class="flex items-center justify-end space-x-2 pt-2">
+          <button onclick="closeBillingModal()" class="px-4 py-1.5 rounded-lg border border-outline-variant text-secondary hover:text-on-surface hover:bg-surface-container-low text-body-sm transition-colors">Close</button>
+          <a href="3_billing_invoices.html" class="px-4 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-body-sm font-semibold inline-flex items-center space-x-1.5 transition-colors">
+            <span>View Invoices</span>
+            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showToast(message, type) {
+    var container = document.getElementById('toastContainer');
+    var toast = document.createElement('div');
+    var bg = type === 'error' ? 'bg-rose-600 text-white' : (type === 'amber' ? 'bg-amber-600 text-white' : 'bg-slate-900 text-white');
+    toast.className = 'pointer-events-auto flex items-center space-x-2 px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium transition-all duration-300 transform translate-y-2 opacity-0 ' + bg;
+    toast.innerHTML = '<span class="material-symbols-outlined text-[18px]">' + (type === 'error' ? 'error' : (type === 'amber' ? 'pause' : 'check_circle')) + '</span><span>' + message + '</span>';
+    container.appendChild(toast);
+    setTimeout(function() {
+      toast.classList.remove('translate-y-2', 'opacity-0');
+    }, 50);
+    setTimeout(function() {
+      toast.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(function() { toast.remove(); }, 300);
+    }, 4000);
+  }
+
+  function openCloseEarlyModal() {
+    document.getElementById('closeEarlyModal').classList.remove('hidden');
+    document.getElementById('closeReasonError').classList.add('hidden');
+    document.getElementById('closeReasonSelect').value = '';
+    document.getElementById('closeNotesInput').value = '';
+    document.getElementById('closeConfirmCheck').checked = false;
+  }
+  function closeCloseEarlyModal() {
+    document.getElementById('closeEarlyModal').classList.add('hidden');
+  }
+  function submitCloseEarly() {
+    var reason = document.getElementById('closeReasonSelect').value;
+    if (!reason || reason.trim() === '') {
+      document.getElementById('closeReasonError').classList.remove('hidden');
+      document.getElementById('closeReasonSelect').focus();
+      return;
+    }
+    closeCloseEarlyModal();
+    // Transition status to CLOSED per spec
+    var badge = document.getElementById('subStatusBadge');
+    badge.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 font-label-caps text-label-caps border border-rose-200';
+    badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span> Closed Early (' + reason + ')';
+    
+    // Update Stepper
+    var stepActive = document.getElementById('stepActive');
+    stepActive.className = 'flex items-center gap-2 p-2 rounded-lg bg-surface-container-low/60 border border-outline-variant text-secondary';
+    document.getElementById('stepActiveTitle').innerText = 'Prior Active';
+    document.getElementById('stepActivePulse').classList.add('hidden');
+    
+    var stepClosed = document.getElementById('stepClosed');
+    stepClosed.className = 'flex items-center gap-2 p-2 rounded-lg bg-rose-600 text-white shadow-xs border border-rose-600 opacity-100';
+    document.getElementById('stepClosedTitle').className = 'font-semibold text-xs block text-white';
+    document.getElementById('stepClosedTitle').innerText = 'Closed Early';
+    document.getElementById('stepClosedSub').className = 'font-code-mono text-[10px] text-rose-100';
+    document.getElementById('stepClosedSub').innerText = reason;
+    
+    // Disable active billing buttons
+    document.getElementById('btnCreateInvoice').disabled = true;
+    document.getElementById('btnCreateInvoice').classList.add('opacity-50', 'cursor-not-allowed');
+    document.getElementById('btnCloseEarly').disabled = true;
+    document.getElementById('btnCloseEarly').classList.add('opacity-50', 'cursor-not-allowed');
+    
+    showToast('Subscription SUB-2026-0891 closed early. Reason recorded: ' + reason, 'error');
+  }
+
+  function openPauseModal() {
+    document.getElementById('pauseModal').classList.remove('hidden');
+  }
+  function closePauseModal() {
+    document.getElementById('pauseModal').classList.add('hidden');
+  }
+  function submitPause() {
+    var days = document.getElementById('pauseDurationSelect').value;
+    closePauseModal();
+    var badge = document.getElementById('subStatusBadge');
+    badge.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 font-label-caps text-label-caps border border-amber-200';
+    badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span> Paused (' + (days === 'manual' ? 'Indefinite' : days + ' Days') + ')';
+    
+    showToast('Subscription SUB-2026-0891 paused. Billing schedule frozen.', 'amber');
+  }
+
+  function openRenewModal() {
+    document.getElementById('renewModal').classList.remove('hidden');
+  }
+  function closeRenewModal() {
+    document.getElementById('renewModal').classList.add('hidden');
+  }
+  function submitRenew() {
+    closeRenewModal();
+    document.getElementById('stepClosedSub').innerText = 'Dec 31, 2027';
+    showToast('Subscription SUB-2026-0891 renewed for 1 year (Dec 31, 2027).', 'success');
+  }
+
+  function createNextInvoiceNow() {
+    showToast('Next Invoice INV-2026-0092 generated for period Feb 01 - Dec 31 ($18,450.00).', 'success');
+  }
+
+  function openBillingModal() {
+    document.getElementById('billingModal').classList.remove('hidden');
+    document.getElementById('billingInitialState').classList.remove('hidden');
+    document.getElementById('billingProgressState').classList.add('hidden');
+    document.getElementById('billingResultsState').classList.add('hidden');
+  }
+  function closeBillingModal() {
+    document.getElementById('billingModal').classList.add('hidden');
+  }
+  function simulateBillingRun() {
+    document.getElementById('billingInitialState').classList.add('hidden');
+    document.getElementById('billingProgressState').classList.remove('hidden');
+    var bar = document.getElementById('billingProgressBar');
+    setTimeout(function() { bar.style.width = '60%'; }, 400);
+    setTimeout(function() { bar.style.width = '100%'; }, 900);
+    setTimeout(function() {
+      document.getElementById('billingProgressState').classList.add('hidden');
+      document.getElementById('billingResultsState').classList.remove('hidden');
+    }, 1200);
+  }
+</script>
+</body></html>

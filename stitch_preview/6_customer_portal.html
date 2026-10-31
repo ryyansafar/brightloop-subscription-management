@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Brightloop - Customer Self-Service Portal</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Plus Jakarta Sans, Inter, JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-tint": "#4d44e3",
+            "inverse-on-surface": "#eaf1ff",
+            "on-secondary": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "on-primary-container": "#dad7ff",
+            "tertiary-fixed-dim": "#68dba9",
+            "surface-bright": "#f8f9ff",
+            "inverse-primary": "#c3c0ff",
+            "outline-variant": "#c7c4d8",
+            "error-container": "#ffdad6",
+            "secondary-fixed-dim": "#bec6e0",
+            "on-tertiary-container": "#7df1bd",
+            "on-primary-fixed": "#0f0069",
+            "surface-dim": "#cbdbf5",
+            "outline": "#777587",
+            "on-secondary-container": "#5c647a",
+            "error": "#ba1a1a",
+            "secondary-container": "#dae2fd",
+            "on-secondary-fixed-variant": "#3f465c",
+            "secondary": "#565e74",
+            "primary": "#3525cd",
+            "on-tertiary": "#ffffff",
+            "on-surface-variant": "#464555",
+            "primary-fixed": "#e2dfff",
+            "surface-variant": "#d3e4fe",
+            "on-tertiary-fixed-variant": "#005137",
+            "on-tertiary-fixed": "#002114",
+            "surface-container": "#e5eeff",
+            "on-primary-fixed-variant": "#3323cc",
+            "background": "#f8f9ff",
+            "primary-fixed-dim": "#c3c0ff",
+            "primary-container": "#4f46e5",
+            "surface-container-highest": "#d3e4fe",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed": "#dae2fd",
+            "on-background": "#0b1c30",
+            "surface": "#f8f9ff",
+            "tertiary": "#005338",
+            "surface-container-high": "#dce9ff",
+            "inverse-surface": "#213145",
+            "tertiary-fixed": "#85f8c4",
+            "on-surface": "#0b1c30",
+            "tertiary-container": "#006e4c",
+            "on-primary": "#ffffff",
+            "on-secondary-fixed": "#131b2e",
+            "on-error": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-3xl": "3rem",
+            "space-xs": "0.25rem",
+            "space-xl": "1.5rem",
+            "margin": "1rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1rem",
+            "space-md": "0.75rem",
+            "space-2xl": "2rem",
+            "gutter-lg": "1.5rem",
+            "margin-lg": "2rem",
+            "margin-md": "1.5rem",
+            "space-2xs": "0.125rem",
+            "gutter": "1rem",
+            "gutter-md": "1.25rem"
+          },
+          "fontFamily": {
+            "display-hero-mobile": ["Plus Jakarta Sans"],
+            "label-badge": ["Inter"],
+            "metric-numeral-lg": ["Plus Jakarta Sans"],
+            "label-caps": ["Inter"],
+            "display-hero": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "body-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "code-mono": ["JetBrains Mono"],
+            "metric-numeral-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "display-hero-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-badge": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "500" }],
+            "metric-numeral-lg": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+            "display-hero": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.025em", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "code-mono": ["12px", { "lineHeight": "16px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "metric-numeral-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col font-body-md text-body-md selection:bg-primary-container selection:text-white">
+<!-- TopNavBar (Shared Component) -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-6 h-16 w-full border-b border-outline-variant bg-surface-container-lowest shadow-sm">
+<!-- Brand & Left Cluster -->
+<div class="flex items-center space-x-6">
+<div class="flex items-center space-x-3">
+<div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center text-white shadow-sm ring-1 ring-primary/20">
+<span class="material-symbols-outlined text-[20px]" data-icon="all_inclusive">all_inclusive</span>
+</div>
+<div class="flex items-center space-x-2">
+<span class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">Brightloop</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed-variant text-[11px] font-label-badge font-semibold tracking-wide border border-outline-variant/30">PROD-EU-1</span>
+</div>
+</div>
+<!-- Search Input with ⌘K Badge -->
+<div class="relative w-80 hidden lg:block">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[18px]" data-icon="search">search</span>
+</div>
+<input class="w-full h-[34px] pl-9 pr-12 text-body-sm font-body-sm rounded-xl border border-outline-variant/70 bg-surface-bright focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-secondary/70" placeholder="Search portal, invoices, payments..." type="text"/>
+<div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+<kbd class="px-1.5 py-0.5 text-[10px] font-code-mono font-medium text-secondary bg-surface-container rounded border border-outline-variant">⌘K</kbd>
+</div>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="hidden xl:flex items-center space-x-7 h-full">
+<a class="text-secondary hover:text-on-surface font-medium py-4 transition-colors font-body-sm text-body-sm" href="1_dashboard.html">Dashboard</a>
+<a class="text-secondary hover:text-on-surface font-medium py-4 transition-colors font-body-sm text-body-sm" href="2_subscription_detail.html">Subscriptions</a>
+<a class="text-secondary hover:text-on-surface font-medium py-4 transition-colors font-body-sm text-body-sm" href="5_quotation_templates.html">Quotes</a>
+<a class="text-secondary hover:text-on-surface font-medium py-4 transition-colors font-body-sm text-body-sm" href="3_billing_invoices.html">Invoices</a>
+<a class="text-secondary hover:text-on-surface font-medium py-4 transition-colors font-body-sm text-body-sm" href="4_products_plans_discounts.html">Products &amp; Plans</a>
+<!-- Active Tab: Customer Portal -->
+<a class="text-primary font-semibold border-b-2 border-primary py-4 font-body-sm text-body-sm" href="6_customer_portal.html">Customer Portal</a>
+</nav>
+<!-- Trailing Actions & User Profile -->
+<div class="flex items-center space-x-3.5">
+<button class="inline-flex items-center space-x-1.5 px-3.5 h-[36px] bg-primary-container hover:bg-primary text-white text-body-sm font-medium rounded-xl shadow-sm transition-all duration-150 active:scale-[0.99] border-t border-white/20" type="button">
+<span class="material-symbols-outlined text-[17px]" data-icon="bolt">bolt</span>
+<span>Run Billing Engine</span>
+</button>
+<div class="h-6 w-px bg-outline-variant/60 mx-1"></div>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors relative" title="Notifications" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors" title="Help &amp; Documentation" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="help_outline">help_outline</span>
+</button>
+<!-- Elena Vance Admin Profile -->
+<div class="flex items-center space-x-2.5 pl-2">
+<div class="relative">
+<img alt="Finance Lead Admin Avatar" class="w-8 h-8 rounded-full object-cover ring-1 ring-outline-variant" data-alt="A sophisticated corporate executive headshot of Elena Vance, a finance professional wearing modern business attire in a sleek glass office setting. The lighting is crisp, soft-edge studio illumination, creating an authoritative, clean fintech enterprise atmosphere with cool neutral tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaPLv0-SpcJVGMi1BZC3ISNIugg2-ej2FaXro4lIFx4_6_v3JcsBgukQvJOwv6FZLWJZsMfDncdV_Z1oOIy5PCJlo51PAKfd1rl83hZ0HDBhg08aak6FrgvqemOnRFKSmzMEbbnMEkqajYc28lnpYVN3hifmmsRpAJmn6SH2wtguslaBOK_7RY2njd2ds8mo-wAVS0MNuKziMqEBnHx_c0krs3iW6MPpPPIkJJgvQqro-oux9lXI_pslqKS-cYR6471O5ybfbepq33"/>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white"></span>
+</div>
+<div class="hidden 2xl:block text-left leading-tight">
+<div class="text-body-sm font-semibold text-on-surface">Elena Vance</div>
+<div class="text-[11px] font-label-badge text-secondary">Finance Lead / Admin</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Container -->
+<main class="flex-1 max-w-[1600px] w-full mx-auto px-6 py-6 space-y-6">
+<!-- 1. Sub-Header Context Bar & Portal Mode Banner -->
+<div class="space-y-3">
+<!-- Breadcrumbs & Meta Context -->
+<div class="flex items-center justify-between">
+<nav class="flex items-center space-x-2 text-body-sm font-body-sm text-secondary">
+<span class="hover:text-on-surface transition-colors cursor-pointer">Portal</span>
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="chevron_right">chevron_right</span>
+<span class="hover:text-on-surface transition-colors cursor-pointer">Customer Accounts</span>
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="chevron_right">chevron_right</span>
+<span class="font-medium text-on-surface">Acme Cloud Technologies</span>
+<span class="px-2 py-0.5 text-[11px] font-code-mono rounded-lg bg-surface-container text-secondary font-medium">CUST-ACME-0192</span>
+</nav>
+<div class="flex items-center space-x-2 text-body-sm text-secondary">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container" data-icon="lock">lock</span>
+<span class="text-label-caps font-label-caps text-secondary uppercase">256-Bit Ledger Encrypted</span>
+</div>
+</div>
+<!-- Portal Mode Banner -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between px-4 py-3 bg-surface-container-low border border-primary/20 rounded-xl shadow-sm gap-3">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</div>
+<div>
+<div class="font-body-sm font-semibold text-on-surface flex items-center gap-2">
+<span>Viewing in Customer Tenant Mode: Acme Cloud Technologies</span>
+<span class="px-1.5 py-0.2 bg-white text-secondary text-[11px] font-code-mono rounded border border-outline-variant/60">Tenant ID: TNT-84920</span>
+</div>
+<div class="text-[12px] font-body-sm text-secondary">
+              This live view mirrors what David Chen and authorized corporate billing users inspect in their organization portal.
+            </div>
+</div>
+</div>
+<div class="flex items-center space-x-2 shrink-0">
+<button class="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-surface-container-lowest hover:bg-surface-bright text-primary border border-outline-variant font-label-badge text-label-badge rounded-xl font-semibold transition-all duration-150 shadow-xs" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_back">arrow_back</span>
+<span>Switch back to Admin Console</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 2. Customer Tenant Header & KPIs -->
+<section class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-6 shadow-sm space-y-6">
+<!-- Header Top Row -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-outline-variant/40">
+<div class="space-y-1.5">
+<div class="flex items-center space-x-3">
+<h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Acme Cloud Technologies (Pvt Ltd)</h1>
+<span class="inline-flex items-center space-x-1 px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-label-badge font-label-badge font-semibold">
+<span class="material-symbols-outlined text-[14px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span>Verified Enterprise</span>
+</span>
+</div>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-body-sm font-body-sm text-secondary">
+<div class="flex items-center space-x-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="person">person</span>
+<span>Primary Contact: <strong class="text-on-surface font-medium">David Chen</strong> (VP Technology, dchen@acmecloud.tech)</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center space-x-1.5">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="badge">badge</span>
+<span>Account Manager: <strong class="text-on-surface font-medium">Elena Vance</strong></span>
+</div>
+</div>
+</div>
+<!-- Quick actions -->
+<div class="flex items-center space-x-3">
+<button class="inline-flex items-center space-x-1.5 px-3.5 h-[34px] bg-surface-container-lowest hover:bg-surface-bright text-on-surface border border-outline-variant rounded-xl text-body-sm font-medium transition-all shadow-xs" type="button">
+<span class="material-symbols-outlined text-[17px] text-secondary" data-icon="receipt_long">receipt_long</span>
+<span>Download Master Statement</span>
+</button>
+<button class="inline-flex items-center space-x-1.5 px-3.5 h-[34px] bg-primary-container hover:bg-primary text-white rounded-xl text-body-sm font-medium shadow-sm transition-all duration-150" type="button">
+<span class="material-symbols-outlined text-[17px]" data-icon="share">share</span>
+<span>Share Portal Access</span>
+</button>
+</div>
+</div>
+<!-- 4-Column Key Metrics Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+<!-- Metric Tile 1 -->
+<div class="p-4 rounded-xl bg-surface-bright border border-outline-variant/60 flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-secondary">Active Subscriptions</span>
+<span class="flex h-2 w-2 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">1 Active Contract</div>
+<div class="text-body-sm font-body-sm text-secondary mt-1 flex items-center space-x-1">
+<span class="material-symbols-outlined text-[16px] text-emerald-600" data-icon="check_circle">check_circle</span>
+<span class="truncate">Annual Enterprise Cloud Tier 1</span>
+</div>
+</div>
+</div>
+<!-- Metric Tile 2 -->
+<div class="p-4 rounded-xl bg-surface-bright border border-outline-variant/60 flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-secondary">Current ARR</span>
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="trending_up">trending_up</span>
+</div>
+<div>
+<div class="font-metric-numeral-lg text-metric-numeral-lg font-bold text-on-surface tracking-tight">$18,450.00 <span class="text-body-sm font-normal text-secondary font-body-sm">/ yr</span></div>
+<div class="text-body-sm font-body-sm text-secondary mt-1 flex items-center space-x-1">
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="credit_card">credit_card</span>
+<span>Auto-debit active (Visa •••• 4242)</span>
+</div>
+</div>
+</div>
+<!-- Metric Tile 3 -->
+<div class="p-4 rounded-xl bg-surface-bright border border-outline-variant/60 flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-secondary">Next Invoice Due</span>
+<span class="material-symbols-outlined text-[18px] text-amber-600" data-icon="calendar_month">calendar_month</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Feb 15, 2026</div>
+<div class="text-body-sm font-body-sm text-secondary mt-1 flex items-center space-x-1">
+<span class="material-symbols-outlined text-[16px] text-amber-600" data-icon="schedule">schedule</span>
+<span>$1,537.50 scheduled auto-pay</span>
+</div>
+</div>
+</div>
+<!-- Metric Tile 4 -->
+<div class="p-4 rounded-xl bg-surface-bright border border-outline-variant/60 flex flex-col justify-between">
+<div class="flex items-center justify-between text-secondary mb-2">
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-secondary">Total Billed YTD</span>
+<span class="material-symbols-outlined text-[18px] text-emerald-600" data-icon="verified_user">verified_user</span>
+</div>
+<div>
+<div class="font-metric-numeral-lg text-metric-numeral-lg font-bold text-on-surface tracking-tight">$36,900.00</div>
+<div class="text-body-sm font-body-sm text-emerald-700 mt-1 flex items-center space-x-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="shield" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span class="font-medium">100% On-Time (0 Dunning flags)</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Main Content 2-Column Grid (8-col main / 4-col sidebar) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left / Main Column (8 cols) -->
+<div class="lg:col-span-8 space-y-6">
+<!-- Card 1: Active Subscription Card -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl shadow-sm overflow-hidden">
+<!-- Card Header -->
+<div class="p-6 border-b border-outline-variant/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface-container-lowest">
+<div>
+<div class="flex items-center space-x-2.5">
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface">Annual Enterprise Cloud - Production Suite</h2>
+<span class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-label-badge font-label-badge font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+<span>Active</span>
+</span>
+</div>
+<div class="text-body-sm font-body-sm text-secondary mt-1 flex items-center space-x-2">
+<span>Contract ID:</span>
+<span class="font-code-mono font-medium text-on-surface">SUB-2026-0891</span>
+<span>•</span>
+<span class="text-secondary">Billing Schedule: Annual Pre-Paid with Monthly Overage Surcharge</span>
+</div>
+</div>
+<div class="text-right">
+<span class="text-headline-md font-headline-md font-bold text-on-surface">$18,450.00</span>
+<span class="text-body-sm font-body-sm text-secondary block">per contract year</span>
+</div>
+</div>
+<!-- Subscription Details Body -->
+<div class="p-6 space-y-6">
+<!-- Plan specs bento tags -->
+<div>
+<div class="text-label-caps font-label-caps uppercase text-secondary tracking-wider mb-3">Provisioned Enterprise Entitlements</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<div class="p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant/40 flex items-start space-x-3">
+<span class="material-symbols-outlined text-primary text-[22px] shrink-0 mt-0.5" data-icon="group">group</span>
+<div>
+<div class="font-body-sm font-semibold text-on-surface">50 Core SaaS Seats</div>
+<div class="text-[12px] font-body-sm text-secondary">Odoo Integration (+₹560/seat pooled)</div>
+</div>
+</div>
+<div class="p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant/40 flex items-start space-x-3">
+<span class="material-symbols-outlined text-primary text-[22px] shrink-0 mt-0.5" data-icon="speed">speed</span>
+<div>
+<div class="font-body-sm font-semibold text-on-surface">24/7 Priority SLA</div>
+<div class="text-[12px] font-body-sm text-secondary">15-min emergency response escalation</div>
+</div>
+</div>
+<div class="p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant/40 flex items-start space-x-3">
+<span class="material-symbols-outlined text-primary text-[22px] shrink-0 mt-0.5" data-icon="cloud_sync">cloud_sync</span>
+<div>
+<div class="font-body-sm font-semibold text-on-surface">2TB Daily Backup</div>
+<div class="text-[12px] font-body-sm text-secondary">Point-in-time recovery &amp; audit snapshots</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Term Dates & Lifecycle Details Grid -->
+<div class="p-4 rounded-xl bg-surface-bright border border-outline-variant/50 grid grid-cols-2 md:grid-cols-4 gap-4">
+<div>
+<div class="text-[11px] font-label-caps uppercase tracking-wider text-secondary">Contract Term</div>
+<div class="font-body-md font-semibold text-on-surface mt-0.5">Jan 01, 2026 - Dec 31, 2026</div>
+<div class="text-[12px] font-body-sm text-secondary">365 Calendar Days</div>
+</div>
+<div>
+<div class="text-[11px] font-label-caps uppercase tracking-wider text-secondary">Renewal Cadence</div>
+<div class="font-body-md font-semibold text-on-surface mt-0.5">Annual Evergreen</div>
+<div class="text-[12px] font-body-sm text-emerald-600 font-medium">Auto-renew enabled</div>
+</div>
+<div>
+<div class="text-[11px] font-label-caps uppercase tracking-wider text-secondary">Next Anchor Date</div>
+<div class="font-body-md font-semibold text-on-surface mt-0.5">Jan 01, 2027</div>
+<div class="text-[12px] font-body-sm text-secondary">Scheduled billing cycle</div>
+</div>
+<div>
+<div class="text-[11px] font-label-caps uppercase tracking-wider text-secondary">Contract Status</div>
+<div class="font-body-md font-semibold text-on-surface mt-0.5">Renewable &amp; Closable</div>
+<div class="text-[12px] font-body-sm text-secondary">60-day notice window</div>
+</div>
+</div>
+<!-- Self-service action bar -->
+<div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+<div class="flex items-center space-x-2.5">
+<button class="inline-flex items-center space-x-1.5 px-4 h-[36px] bg-primary-container hover:bg-primary text-white text-body-sm font-semibold rounded-xl shadow-sm transition-all duration-150 border-t border-white/20" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="autorenew">autorenew</span>
+<span>Self-Serve Renew Contract</span>
+</button>
+<button class="inline-flex items-center space-x-1.5 px-3.5 h-[36px] bg-surface-container-lowest hover:bg-surface-bright text-on-surface border border-outline-variant rounded-xl text-body-sm font-medium transition-all shadow-xs" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="group_add">group_add</span>
+<span>Adjust Seat Licenses</span>
+</button>
+</div>
+<div>
+<button class="inline-flex items-center space-x-1 px-3 py-1.5 text-secondary hover:text-error hover:bg-rose-50 rounded-xl text-body-sm font-medium transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="cancel">cancel</span>
+<span>Request Early Cancellation</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2: Invoices & Payment History Table Card -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl shadow-sm overflow-hidden">
+<div class="p-6 border-b border-outline-variant/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface">Billing Invoices &amp; Payment Receipts</h2>
+<p class="text-body-sm font-body-sm text-secondary mt-0.5">Audit-grade ledger statement with downloadable PDF invoices and tax receipts.</p>
+</div>
+<div class="flex items-center space-x-2.5">
+<button class="inline-flex items-center space-x-1.5 px-3 h-[32px] bg-surface-container-lowest hover:bg-surface-bright text-on-surface border border-outline-variant rounded-xl text-body-sm font-medium transition-all shadow-xs" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="download">download</span>
+<span>Download All Receipts</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface border border-outline-variant rounded-xl hover:bg-surface-bright transition-colors" title="Filter Invoices" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+</button>
+</div>
+</div>
+<!-- Table with Fixed Spacing & Explicit Typography -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="h-9 bg-surface-bright text-secondary text-[11px] font-label-caps uppercase tracking-wider border-b border-outline-variant/60">
+<th class="px-6 py-2">Invoice #</th>
+<th class="px-4 py-2">Billing Period</th>
+<th class="px-4 py-2">Issue Date</th>
+<th class="px-4 py-2">Payment Method</th>
+<th class="px-4 py-2 text-right">Amount</th>
+<th class="px-4 py-2 text-center">Status</th>
+<th class="px-6 py-2 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30 text-body-sm font-body-sm">
+<!-- Row 1: Paid -->
+<tr class="hover:bg-surface-bright/80 transition-colors">
+<td class="px-6 py-3.5">
+<div class="font-code-mono font-semibold text-primary">INV-2026-0042</div>
+<div class="text-[11px] text-secondary">Annual Base Retainer</div>
+</td>
+<td class="px-4 py-3.5 text-secondary">Jan 01, 2026 - Dec 31, 2026</td>
+<td class="px-4 py-3.5 text-on-surface">Jan 01, 2026</td>
+<td class="px-4 py-3.5">
+<div class="flex items-center space-x-1.5 text-secondary">
+<span class="material-symbols-outlined text-[16px]" data-icon="credit_card">credit_card</span>
+<span class="font-code-mono text-[12px]">Visa •••• 4242</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-right font-code-mono font-semibold text-on-surface">$18,450.00</td>
+<td class="px-4 py-3.5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-label-badge font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      Paid
+                    </span>
+</td>
+<td class="px-6 py-3.5 text-right">
+<div class="flex items-center justify-end space-x-1.5">
+<button class="inline-flex items-center space-x-1 px-2 py-1 text-[12px] font-medium text-secondary hover:text-primary hover:bg-surface-container rounded-lg transition-colors" title="Download PDF" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span>PDF</span>
+</button>
+<button class="inline-flex items-center space-x-1 px-2 py-1 text-[12px] font-medium text-secondary hover:text-primary hover:bg-surface-container rounded-lg transition-colors" title="Download Receipt" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="receipt">receipt</span>
+<span>Receipt</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Paid (Previous Year) -->
+<tr class="hover:bg-surface-bright/80 transition-colors">
+<td class="px-6 py-3.5">
+<div class="font-code-mono font-semibold text-on-surface">INV-2025-0089</div>
+<div class="text-[11px] text-secondary">Pre-Renewal Retainer</div>
+</td>
+<td class="px-4 py-3.5 text-secondary">Jan 01, 2025 - Dec 31, 2025</td>
+<td class="px-4 py-3.5 text-on-surface">Jan 01, 2025</td>
+<td class="px-4 py-3.5">
+<div class="flex items-center space-x-1.5 text-secondary">
+<span class="material-symbols-outlined text-[16px]" data-icon="credit_card">credit_card</span>
+<span class="font-code-mono text-[12px]">Visa •••• 4242</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-right font-code-mono font-semibold text-on-surface">$16,200.00</td>
+<td class="px-4 py-3.5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-label-badge font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      Paid
+                    </span>
+</td>
+<td class="px-6 py-3.5 text-right">
+<div class="flex items-center justify-end space-x-1.5">
+<button class="inline-flex items-center space-x-1 px-2 py-1 text-[12px] font-medium text-secondary hover:text-primary hover:bg-surface-container rounded-lg transition-colors" title="Download PDF" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span>PDF</span>
+</button>
+<button class="inline-flex items-center space-x-1 px-2 py-1 text-[12px] font-medium text-secondary hover:text-primary hover:bg-surface-container rounded-lg transition-colors" title="Download Receipt" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="receipt">receipt</span>
+<span>Receipt</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Upcoming / Pending -->
+<tr class="bg-amber-50/20 hover:bg-amber-50/40 transition-colors">
+<td class="px-6 py-3.5">
+<div class="font-code-mono font-semibold text-amber-700 flex items-center space-x-1.5">
+<span>INV-2026-0091</span>
+<span class="text-[10px] font-label-badge font-bold px-1.5 py-0.2 bg-amber-100 text-amber-800 rounded">Upcoming</span>
+</div>
+<div class="text-[11px] text-secondary">Feb 15, 2026 Addon Surcharge</div>
+</td>
+<td class="px-4 py-3.5 text-secondary">Scheduled Auto-Debit</td>
+<td class="px-4 py-3.5 text-amber-700 font-medium">Scheduled</td>
+<td class="px-4 py-3.5">
+<div class="flex items-center space-x-1.5 text-secondary">
+<span class="material-symbols-outlined text-[16px] text-amber-600" data-icon="account_balance">account_balance</span>
+<span class="text-[12px]">Auto-Debit</span>
+</div>
+</td>
+<td class="px-4 py-3.5 text-right font-code-mono font-bold text-on-surface">$450.00</td>
+<td class="px-4 py-3.5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-label-badge font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                      Pending
+                    </span>
+</td>
+<td class="px-6 py-3.5 text-right">
+<div class="flex items-center justify-end space-x-2">
+<button class="inline-flex items-center space-x-1 px-2.5 py-1 bg-primary-container hover:bg-primary text-white text-[12px] font-semibold rounded-lg shadow-2xs transition-all" type="button">
+<span class="material-symbols-outlined text-[14px]" data-icon="bolt">bolt</span>
+<span>Pay Now</span>
+</button>
+<button class="text-[12px] font-medium text-secondary hover:text-on-surface underline" type="button">
+                        Details
+                      </button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 bg-surface-bright border-t border-outline-variant/40 flex items-center justify-between text-[12px] font-body-sm text-secondary">
+<span>Showing 3 billing events • Statements retained for 7 calendar years</span>
+<span class="font-code-mono text-outline">Reconciliation ID: 9482-TX-ACME</span>
+</div>
+</div>
+</div>
+<!-- Right / Sidebar Column (4 cols) -->
+<div class="lg:col-span-4 space-y-6">
+<!-- Card 1: Saved Payment Methods Card -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-6 shadow-sm space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/40">
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Saved Payment Methods</h3>
+<button class="text-primary hover:text-primary-container text-body-sm font-semibold inline-flex items-center space-x-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="add_circle">add_circle</span>
+<span>Add Method</span>
+</button>
+</div>
+<!-- Method 1: Default Visa -->
+<div class="p-3.5 rounded-xl border border-primary/30 bg-surface-bright flex flex-col space-y-2">
+<div class="flex items-start justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-8 rounded-lg bg-surface-container flex items-center justify-center border border-outline-variant/60 font-code-mono font-bold text-primary text-[12px]">
+                  VISA
+                </div>
+<div>
+<div class="text-body-sm font-semibold text-on-surface">Corporate Visa ending in 4242</div>
+<div class="text-[11px] font-body-sm text-secondary">Expires 08/28 • Acme FinOps Central</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[11px] font-label-badge font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>Default / Auto-Pay Enabled</span>
+</span>
+<button class="text-secondary hover:text-on-surface text-[12px] font-medium" type="button">Edit</button>
+</div>
+</div>
+<!-- Method 2: Backup ACH -->
+<div class="p-3.5 rounded-xl border border-outline-variant/50 bg-surface-bright flex flex-col space-y-2">
+<div class="flex items-start justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-8 rounded-lg bg-surface-container flex items-center justify-center border border-outline-variant/60">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="account_balance">account_balance</span>
+</div>
+<div>
+<div class="text-body-sm font-semibold text-on-surface">Silicon Valley Bank ACH</div>
+<div class="text-[11px] font-body-sm text-secondary">Account •••• 9102 • Routing 121000358</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-label-badge font-semibold bg-surface-container text-secondary border border-outline-variant/40">
+                Backup Method
+              </span>
+<button class="text-secondary hover:text-on-surface text-[12px] font-medium" type="button">Set Default</button>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="pt-2 text-center">
+<a class="text-[13px] text-primary hover:underline font-medium inline-flex items-center space-x-1" href="#">
+<span>Update Billing Address &amp; Tax Residency</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Card 2: Company Billing Details Card -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-6 shadow-sm space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/40">
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Company Billing Details</h3>
+<button class="text-secondary hover:text-primary p-1 rounded-lg hover:bg-surface-bright transition-colors" title="Edit Company Details" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit_note">edit_note</span>
+</button>
+</div>
+<div class="space-y-3 text-body-sm font-body-sm">
+<div>
+<div class="text-[11px] font-label-caps uppercase text-secondary">Legal Business Name</div>
+<div class="font-semibold text-on-surface mt-0.5">Acme Cloud Technologies Inc.</div>
+</div>
+<div>
+<div class="text-[11px] font-label-caps uppercase text-secondary">Registered Billing Address</div>
+<div class="text-on-surface mt-0.5 leading-relaxed">
+                742 Market Street, Suite 800<br/>
+                San Francisco, CA 94103, United States
+              </div>
+</div>
+<div class="grid grid-cols-2 gap-2 pt-1 border-t border-outline-variant/30">
+<div>
+<div class="text-[11px] font-label-caps uppercase text-secondary">Tax ID / VAT</div>
+<div class="font-code-mono text-on-surface font-medium text-[12px] mt-0.5">US-EIN-94-8291048</div>
+</div>
+<div>
+<div class="text-[11px] font-label-caps uppercase text-secondary">Ledger Currency</div>
+<div class="text-on-surface font-medium mt-0.5">USD ($ - US Dollar)</div>
+</div>
+</div>
+<div class="pt-1 border-t border-outline-variant/30">
+<div class="text-[11px] font-label-caps uppercase text-secondary">Billing Contact Email</div>
+<div class="text-on-surface font-medium mt-0.5 flex items-center space-x-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="mail">mail</span>
+<span class="text-primary font-code-mono text-[12px]">billing@acmecloud.tech</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3: Support & Account Rep Card -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-xl p-6 shadow-sm space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/40">
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Customer Success &amp; Support</h3>
+<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-label-badge font-semibold border border-emerald-200">SLA 99.99%</span>
+</div>
+<!-- CSM Profile -->
+<div class="p-3.5 rounded-xl bg-surface-bright border border-outline-variant/40 flex items-center space-x-3.5">
+<img alt="Sarah Jenkins Headshot Avatar" class="w-11 h-11 rounded-full object-cover ring-1 ring-outline-variant" data-alt="A polished professional portrait of Sarah Jenkins, a Customer Success Manager with friendly executive presence. She is seated in a modern bright corporate tech campus with soft natural backlighting, dressed in smart casual attire, reflecting institutional reliability and dedicated enterprise service." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvxkLossbhE1vbBc4COhYkfngcPKTlgWVBelZIl_ibUm1yf-4cLSTVnVSVdbOm6psBrSNTZC5VjETvBm13fPKpm_H0shlWpNzn1LpASIMerX0yg5pF8r4VC_yDW86NOG3ZTqpZGCX4KDn4jfAaNWSp34uDf2R77vGQ5M31zh83SvH3na6R73yEIfub-9FG-ZdCIyICa6WP4ZTokjUfbk0-s5wjBCO91jp8smkWCck0viXamZeSQeos8e81VIM7-RaDRckXO4QKv5dm"/>
+<div class="space-y-0.5 flex-1 min-w-0">
+<div class="text-body-sm font-bold text-on-surface truncate">Sarah Jenkins</div>
+<div class="text-[12px] font-body-sm text-secondary truncate">Dedicated Customer Success Manager</div>
+<div class="text-[11px] font-code-mono text-primary truncate">sjenkins@brightloop.io</div>
+</div>
+</div>
+<!-- Emergency Hotline & Channels -->
+<div class="space-y-2 text-body-sm">
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low/80 border border-outline-variant/30">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="support_agent">support_agent</span>
+<div>
+<div class="text-[11px] font-label-caps uppercase text-secondary">24/7 Priority Hotline</div>
+<div class="font-code-mono font-bold text-on-surface text-[13px]">+1 (888) 492-LOOP</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-emerald-600 text-[18px]" data-icon="phone_in_talk">phone_in_talk</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-tertiary-container text-[20px]" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<div>
+<div class="text-body-sm font-semibold text-on-surface">SOC-2 Type II Certified</div>
+<div class="text-[11px] text-secondary">Annual compliance audit cleared</div>
+</div>
+</div>
+<a class="text-[12px] font-medium text-primary hover:underline" href="#">View Report</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- 4. Footer -->
+<footer class="mt-auto border-t border-outline-variant/50 bg-surface-container-lowest py-5 px-6">
+<div class="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-[12px] font-body-sm text-secondary">
+<div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+<span class="font-semibold text-on-surface">Brightloop Customer Portal</span>
+<span>•</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-emerald-600" data-icon="shield">shield</span>
+          SOC-2 Type II Certified
+        </span>
+<span>•</span>
+<span>PCI DSS Level 1 Compliant Engine</span>
+</div>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+<span class="font-code-mono text-outline">Ledger Sync: #4829</span>
+<a class="hover:text-on-surface transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-on-surface transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-on-surface transition-colors" href="#">Customer Help Center</a>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-outline text-[11px] font-code-mono">v4.18.2-cloud</span>
+</div>
+</div>
+</footer>
+</body></html>
