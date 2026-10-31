@@ -12,7 +12,8 @@
     "db:setup": "prisma migrate dev && tsx prisma/seed.ts",
     "sync": "./scripts/sync.sh",
     "handoff": "./scripts/handoff.sh",
-    "test": "vitest run"
+    "test": "vitest run",
+    "seed:full": "SEED_SIZE=3000 tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
