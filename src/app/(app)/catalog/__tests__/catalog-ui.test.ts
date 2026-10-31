@@ -342,6 +342,96 @@ describe("Zod schema validations for catalog dialog inputs", () => {
       expect(() => templateSchema.parse({ ...validTemplate, validityDays: 366 })).toThrow();
     });
   });
+
+  describe("Client-side dialog validation edge cases", () => {
+    it("validates discount usageLimit boundaries", () => {
+      const validateUsageLimit = (limit: number | null, isEdit: boolean, usedCount: number) => {
+        if (limit !== null && (limit < 1 || !Number.isInteger(limit))) {
+          return "Usage limit must be at least 1 (or leave blank for unlimited)";
+        }
+        if (isEdit && limit !== null && limit < usedCount) {
+          return `Limit cannot be less than existing ${usedCount} uses`;
+        }
+        return null;
+      };
+
+      expect(validateUsageLimit(0, false, 0)).toBe("Usage limit must be at least 1 (or leave blank for unlimited)");
+      expect(validateUsageLimit(-5, false, 0)).toBe("Usage limit must be at least 1 (or leave blank for unlimited)");
+      expect(validateUsageLimit(2.5, false, 0)).toBe("Usage limit must be at least 1 (or leave blank for unlimited)");
+      expect(validateUsageLimit(null, false, 0)).toBeNull();
+      expect(validateUsageLimit(10, false, 0)).toBeNull();
+      expect(validateUsageLimit(3, true, 5)).toBe("Limit cannot be less than existing 5 uses");
+      expect(validateUsageLimit(5, true, 5)).toBeNull();
+    });
+
+    it("validates discount minAmount and minQuantity", () => {
+      const validateMinAmount = (raw: string) => {
+        const val = raw.trim() ? parseRupeesToPaise(raw.trim()) : 0;
+        return val === null ? "Enter a valid minimum purchase amount (cannot be negative)" : null;
+      };
+
+      const validateMinQuantity = (raw: string) => {
+        const val = raw.trim() ? Number(raw.trim()) : 0;
+        return Number.isNaN(val) || val < 0 || !Number.isInteger(val) ? "Minimum quantity cannot be negative" : null;
+      };
+
+      expect(validateMinAmount("-50")).toBe("Enter a valid minimum purchase amount (cannot be negative)");
+      expect(validateMinAmount("abc")).toBe("Enter a valid minimum purchase amount (cannot be negative)");
+      expect(validateMinAmount("0")).toBeNull();
+      expect(validateMinAmount("100.50")).toBeNull();
+      expect(validateMinAmount("")).toBeNull();
+
+      expect(validateMinQuantity("-1")).toBe("Minimum quantity cannot be negative");
+      expect(validateMinQuantity("abc")).toBe("Minimum quantity cannot be negative");
+      expect(validateMinQuantity("1.5")).toBe("Minimum quantity cannot be negative");
+      expect(validateMinQuantity("0")).toBeNull();
+      expect(validateMinQuantity("5")).toBeNull();
+      expect(validateMinQuantity("")).toBeNull();
+    });
+
+    it("validates plan periodCount and minQuantity boundaries", () => {
+      const validatePlanPeriod = (raw: string) => {
+        const val = raw.trim() ? Number(raw.trim()) : 1;
+        return Number.isNaN(val) || val < 1 || val > 120 || !Number.isInteger(val)
+          ? "Billing period count must be between 1 and 120"
+          : null;
+      };
+
+      const validatePlanMinQty = (raw: string) => {
+        const val = raw.trim() ? Number(raw.trim()) : 1;
+        return Number.isNaN(val) || val < 1 || !Number.isInteger(val)
+          ? "Minimum quantity must be at least 1"
+          : null;
+      };
+
+      expect(validatePlanPeriod("0")).toBe("Billing period count must be between 1 and 120");
+      expect(validatePlanPeriod("-1")).toBe("Billing period count must be between 1 and 120");
+      expect(validatePlanPeriod("121")).toBe("Billing period count must be between 1 and 120");
+      expect(validatePlanPeriod("1")).toBeNull();
+      expect(validatePlanPeriod("12")).toBeNull();
+
+      expect(validatePlanMinQty("0")).toBe("Minimum quantity must be at least 1");
+      expect(validatePlanMinQty("-3")).toBe("Minimum quantity must be at least 1");
+      expect(validatePlanMinQty("1")).toBeNull();
+      expect(validatePlanMinQty("10")).toBeNull();
+    });
+
+    it("validates template validityDays boundaries", () => {
+      const validateValidity = (raw: string) => {
+        const val = raw.trim() ? Number(raw.trim()) : 30;
+        return Number.isNaN(val) || val < 1 || val > 365 || !Number.isInteger(val)
+          ? "Validity must be between 1 and 365 days"
+          : null;
+      };
+
+      expect(validateValidity("0")).toBe("Validity must be between 1 and 365 days");
+      expect(validateValidity("-10")).toBe("Validity must be between 1 and 365 days");
+      expect(validateValidity("366")).toBe("Validity must be between 1 and 365 days");
+      expect(validateValidity("1")).toBeNull();
+      expect(validateValidity("30")).toBeNull();
+      expect(validateValidity("365")).toBeNull();
+    });
+  });
 });
 
 describe("Re-export verification: src/lib/discounts.ts", () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Prisma } from "@prisma/client";
 import { Button, Dialog, FormField, Input, Select, useToast } from "@/components";
@@ -46,6 +46,13 @@ export function TemplateDialog({
 
   const [lines, setLines] = useState<TemplateLineDraft[]>(() => initialTemplateLines(template, products));
 
+  useEffect(() => {
+    if (open) {
+      setLines(initialTemplateLines(template, products));
+      setErrors({});
+    }
+  }, [open, template, products]);
+
   function addLine() {
     if (products.length === 0) return;
     setLines([...lines, { productId: products[0].id, quantity: 1 }]);
@@ -71,12 +78,16 @@ export function TemplateDialog({
     const form = new FormData(e.currentTarget);
     const name = String(form.get("name") ?? "").trim();
     const planId = Number(form.get("planId"));
-    const validityDays = Number(form.get("validityDays") ?? 30);
+    const validityDaysRaw = String(form.get("validityDays") ?? "").trim();
+    const validityDays = validityDaysRaw ? Number(validityDaysRaw) : 30;
 
     const next: Record<string, string> = {};
     if (!name) next.name = "Template name is required";
     if (!planId) next.planId = "Select a plan";
     if (lines.length === 0) next.lines = "Add at least one product line";
+    if (Number.isNaN(validityDays) || validityDays < 1 || validityDays > 365 || !Number.isInteger(validityDays)) {
+      next.validityDays = "Validity must be between 1 and 365 days";
+    }
 
     setErrors(next);
     if (Object.keys(next).length > 0) return;
@@ -144,7 +155,7 @@ export function TemplateDialog({
               </Select>
             )}
           </FormField>
-          <FormField label="Validity in days">
+          <FormField label="Validity in days" error={errors.validityDays}>
             {(f) => (
               <Input
                 {...f}

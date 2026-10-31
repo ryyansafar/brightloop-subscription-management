@@ -169,7 +169,7 @@ export function ProductsView({
         <VariantManager
           open={Boolean(variantProduct)}
           onClose={() => setVariantProduct(null)}
-          product={variantProduct}
+          product={products.find((p) => p.id === variantProduct.id) ?? variantProduct}
           canWrite={canWrite}
         />
       )}

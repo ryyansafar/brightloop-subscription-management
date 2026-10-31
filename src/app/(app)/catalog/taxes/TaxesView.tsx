@@ -111,7 +111,12 @@ export function TaxesView({
           emptyMessage="No tax rates configured."
         />
       </div>
-      <TaxDialog open={dialog.open} onClose={() => setDialog({ open: false, item: null })} tax={dialog.item} />
+      <TaxDialog
+        open={dialog.open}
+        onClose={() => setDialog({ open: false, item: null })}
+        tax={dialog.item}
+        canWrite={canWrite}
+      />
     </>
   );
 }

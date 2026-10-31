@@ -32,8 +32,10 @@ export function PlanDialog({
     const name = String(form.get("name") ?? "").trim();
     const price = parseRupeesToPaise(form.get("price") as string);
     const periodUnit = String(form.get("periodUnit") ?? "MONTH");
-    const periodCount = Number(form.get("periodCount") ?? 1);
-    const minQuantity = Number(form.get("minQuantity") ?? 1);
+    const periodCountRaw = String(form.get("periodCount") ?? "").trim();
+    const periodCount = periodCountRaw ? Number(periodCountRaw) : 1;
+    const minQuantityRaw = String(form.get("minQuantity") ?? "").trim();
+    const minQuantity = minQuantityRaw ? Number(minQuantityRaw) : 1;
     const availableFromStr = form.get("availableFrom") as string;
     const availableToStr = form.get("availableTo") as string;
     const autoClose = form.get("autoClose") === "on";
@@ -45,6 +47,12 @@ export function PlanDialog({
     const next: Record<string, string> = {};
     if (!name) next.name = "Name is required";
     if (price === null) next.price = "Enter a valid positive price in rupees";
+    if (Number.isNaN(minQuantity) || minQuantity < 1 || !Number.isInteger(minQuantity)) {
+      next.minQuantity = "Minimum quantity must be at least 1";
+    }
+    if (Number.isNaN(periodCount) || periodCount < 1 || periodCount > 120 || !Number.isInteger(periodCount)) {
+      next.periodCount = "Billing period count must be between 1 and 120";
+    }
     if (availableFromStr && availableToStr && availableToStr < availableFromStr) {
       next.availableTo = "Available-to date cannot be before available-from";
     }
@@ -120,7 +128,7 @@ export function PlanDialog({
               />
             )}
           </FormField>
-          <FormField label="Minimum quantity">
+          <FormField label="Minimum quantity" error={errors.minQuantity}>
             {(f) => (
               <Input
                 {...f}
@@ -144,7 +152,7 @@ export function PlanDialog({
               </Select>
             )}
           </FormField>
-          <FormField label="Period count" hint="e.g. Every 1 month or 3 months">
+          <FormField label="Period count" hint="e.g. Every 1 month or 3 months" error={errors.periodCount}>
             {(f) => (
               <Input
                 {...f}

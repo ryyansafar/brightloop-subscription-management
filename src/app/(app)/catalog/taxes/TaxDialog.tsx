@@ -11,10 +11,12 @@ export function TaxDialog({
   open,
   onClose,
   tax,
+  canWrite = true,
 }: {
   open: boolean;
   onClose: () => void;
   tax: TaxRate | null;
+  canWrite?: boolean;
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -25,6 +27,7 @@ export function TaxDialog({
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!canWrite) return;
     const form = new FormData(e.currentTarget);
     const name = String(form.get("name") ?? "").trim();
     const rateBps = parsePercentToBps(form.get("rate") as string);
@@ -61,9 +64,11 @@ export function TaxDialog({
       footer={
         <>
           <Button onClick={onClose}>Cancel</Button>
-          <Button type="submit" form={formId} variant="primary" loading={saving}>
-            {isEdit ? "Save changes" : "Create tax rate"}
-          </Button>
+          {canWrite && (
+            <Button type="submit" form={formId} variant="primary" loading={saving}>
+              {isEdit ? "Save changes" : "Create tax rate"}
+            </Button>
+          )}
         </>
       }
     >
@@ -74,7 +79,7 @@ export function TaxDialog({
           </p>
         )}
         <FormField label="Tax rate name" required error={errors.name}>
-          {(f) => <Input {...f} name="name" defaultValue={tax?.name ?? ""} placeholder="e.g. GST 18%" />}
+          {(f) => <Input {...f} name="name" defaultValue={tax?.name ?? ""} placeholder="e.g. GST 18%" disabled={!canWrite} />}
         </FormField>
         <FormField label="Rate percentage (%)" required error={errors.rate} hint="Enter percentage, e.g. 18 for 18%">
           {(f) => (
@@ -84,12 +89,13 @@ export function TaxDialog({
               inputMode="decimal"
               defaultValue={tax ? toPercentInput(tax.rateBps) : ""}
               placeholder="18"
+              disabled={!canWrite}
             />
           )}
         </FormField>
         <FormField label="Status">
           {(f) => (
-            <Select {...f} name="active" defaultValue={tax?.active !== false ? "true" : "false"}>
+            <Select {...f} name="active" defaultValue={tax?.active !== false ? "true" : "false"} disabled={!canWrite}>
               <option value="true">Active</option>
               <option value="false">Archived</option>
             </Select>

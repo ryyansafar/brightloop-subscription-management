@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Prisma } from "@prisma/client";
 import { Button, Dialog, FormField, Input, Select, useToast } from "@/components";
@@ -37,14 +37,24 @@ export function DiscountDialog({
   const [kind, setKind] = useState<"FIXED" | "PERCENT">(discount?.kind === "PERCENT" ? "PERCENT" : "FIXED");
   const [scope, setScope] = useState<"SUBSCRIPTION" | "PRODUCT">(discount?.scope === "PRODUCT" ? "PRODUCT" : "SUBSCRIPTION");
 
+  useEffect(() => {
+    if (open) {
+      setKind(discount?.kind === "PERCENT" ? "PERCENT" : "FIXED");
+      setScope(discount?.scope === "PRODUCT" ? "PRODUCT" : "SUBSCRIPTION");
+      setErrors({});
+    }
+  }, [open, discount]);
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const name = String(form.get("name") ?? "").trim();
     const valueRaw = form.get("value") as string;
     const value = kind === "PERCENT" ? parsePercentToBps(valueRaw) : parseRupeesToPaise(valueRaw);
-    const minAmount = parseRupeesToPaise(form.get("minAmount") as string) ?? 0;
-    const minQuantity = Number(form.get("minQuantity") ?? 0);
+    const minAmountRaw = String(form.get("minAmount") ?? "").trim();
+    const minAmount = minAmountRaw ? parseRupeesToPaise(minAmountRaw) : 0;
+    const minQuantityRaw = String(form.get("minQuantity") ?? "").trim();
+    const minQuantity = minQuantityRaw ? Number(minQuantityRaw) : 0;
     const startsAtStr = form.get("startsAt") as string;
     const endsAtStr = form.get("endsAt") as string;
     const usageLimitStr = form.get("usageLimit") as string;
@@ -57,6 +67,12 @@ export function DiscountDialog({
     if (value === null || value <= 0) {
       next.value = kind === "PERCENT" ? "Enter a valid percentage (1-100%)" : "Enter a valid rupee discount greater than 0";
     }
+    if (minAmount === null) {
+      next.minAmount = "Enter a valid minimum purchase amount (cannot be negative)";
+    }
+    if (Number.isNaN(minQuantity) || minQuantity < 0 || !Number.isInteger(minQuantity)) {
+      next.minQuantity = "Minimum quantity cannot be negative";
+    }
     if (!startsAtStr) next.startsAt = "Start date is required";
     if (!endsAtStr) next.endsAt = "End date is required";
     if (startsAtStr && endsAtStr && endsAtStr <= startsAtStr) {
@@ -65,7 +81,9 @@ export function DiscountDialog({
     if (scope === "PRODUCT" && (!productId || productId <= 0)) {
       next.productId = "Select a product for product-scoped discount";
     }
-    if (isEdit && usageLimit != null && usageLimit < discount!.usedCount) {
+    if (usageLimit !== null && (usageLimit < 1 || !Number.isInteger(usageLimit))) {
+      next.usageLimit = "Usage limit must be at least 1 (or leave blank for unlimited)";
+    } else if (isEdit && usageLimit !== null && usageLimit < discount!.usedCount) {
       next.usageLimit = `Limit cannot be less than existing ${discount!.usedCount} uses`;
     }
 
@@ -137,6 +155,7 @@ export function DiscountDialog({
             {(f) => (
               <Input
                 {...f}
+                key={kind}
                 name="value"
                 inputMode="decimal"
                 defaultValue={discount ? (kind === "PERCENT" ? toPercentInput(discount.value) : toRupeesInput(discount.value)) : ""}
@@ -169,7 +188,7 @@ export function DiscountDialog({
           )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FormField label="Min purchase amount (₹)" hint="Minimum subscription total">
+          <FormField label="Min purchase amount (₹)" hint="Minimum subscription total" error={errors.minAmount}>
             {(f) => (
               <Input
                 {...f}
@@ -180,7 +199,7 @@ export function DiscountDialog({
               />
             )}
           </FormField>
-          <FormField label="Min quantity" hint="Minimum items required">
+          <FormField label="Min quantity" hint="Minimum items required" error={errors.minQuantity}>
             {(f) => (
               <Input
                 {...f}

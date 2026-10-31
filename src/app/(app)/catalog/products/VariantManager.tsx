@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Prisma } from "@prisma/client";
 import { Button, Dialog, FormField, Input, useToast } from "@/components";
 import { apiFetch } from "../client-api";
-import { formatPaiseToRupees, parseRupeesToPaise } from "../helpers";
+import { formatPaiseToRupees, parseRupeesToPaise, toRupeesInput } from "../helpers";
 
 type ProductWithVariants = Prisma.ProductGetPayload<{ include: { variants: true } }>;
 
@@ -22,8 +22,15 @@ export function VariantManager({
 }) {
   const router = useRouter();
   const toast = useToast();
+  const [variants, setVariants] = useState(product.variants);
   const [adding, setAdding] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editPrice, setEditPrice] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setVariants(product.variants);
+  }, [product.variants]);
 
   async function handleAddVariant(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,7 +52,7 @@ export function VariantManager({
 
     setAdding(true);
     setError(null);
-    const res = await apiFetch(`/api/products/${product.id}/variants`, {
+    const res = await apiFetch<any>(`/api/products/${product.id}/variants`, {
       method: "POST",
       body: { attribute, value, extraPrice },
     });
@@ -55,8 +62,29 @@ export function VariantManager({
       setError(res.error);
       return;
     }
+    setVariants((prev) => [...prev, res.data]);
     (e.target as HTMLFormElement).reset();
     toast.success(`Variant ${attribute}: ${value} added`);
+    router.refresh();
+  }
+
+  async function handleUpdateVariant(variantId: number) {
+    const extraPrice = parseRupeesToPaise(editPrice);
+    if (extraPrice === null) {
+      toast.error("Enter a valid extra price");
+      return;
+    }
+    const res = await apiFetch<any>(`/api/products/${product.id}/variants/${variantId}`, {
+      method: "PATCH",
+      body: { extraPrice },
+    });
+    if (!res.ok) {
+      toast.error(res.error);
+      return;
+    }
+    setVariants((prev) => prev.map((v) => (v.id === variantId ? { ...v, extraPrice } : v)));
+    setEditingId(null);
+    toast.success("Variant price updated");
     router.refresh();
   }
 
@@ -69,6 +97,7 @@ export function VariantManager({
       toast.error(res.error);
       return;
     }
+    setVariants((prev) => prev.filter((v) => v.id !== variantId));
     toast.success("Variant removed");
     router.refresh();
   }
@@ -83,21 +112,43 @@ export function VariantManager({
         )}
 
         <div className="rounded-md border border-line divide-y divide-line overflow-hidden">
-          {product.variants.length === 0 ? (
+          {variants.length === 0 ? (
             <p className="px-3 py-4 text-center text-sm text-muted">No variants configured for this product.</p>
           ) : (
-            product.variants.map((v) => (
-              <div key={v.id} className="flex items-center justify-between px-3 py-2 text-sm">
-                <div>
-                  <span className="font-medium text-foreground">{v.attribute}:</span> {v.value}
-                  {v.extraPrice > 0 && (
-                    <span className="ml-2 text-xs text-muted">(+{formatPaiseToRupees(v.extraPrice)})</span>
-                  )}
-                </div>
-                {canWrite && (
-                  <Button size="sm" variant="danger" onClick={() => handleDeleteVariant(v.id)}>
-                    Remove
-                  </Button>
+            variants.map((v) => (
+              <div key={v.id} className="flex items-center justify-between px-3 py-2 text-sm gap-2">
+                {editingId === v.id ? (
+                  <div className="flex items-center gap-2 flex-1">
+                    <span className="font-medium text-foreground">{v.attribute}: {v.value}</span>
+                    <Input
+                      className="w-28 h-8 text-xs"
+                      defaultValue={toRupeesInput(v.extraPrice)}
+                      onChange={(e) => setEditPrice(e.target.value)}
+                      placeholder="Extra ₹"
+                      inputMode="decimal"
+                    />
+                    <Button size="sm" variant="primary" onClick={() => handleUpdateVariant(v.id)}>Save</Button>
+                    <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>Cancel</Button>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <span className="font-medium text-foreground">{v.attribute}:</span> {v.value}
+                      {v.extraPrice > 0 && (
+                        <span className="ml-2 text-xs text-muted">(+{formatPaiseToRupees(v.extraPrice)})</span>
+                      )}
+                    </div>
+                    {canWrite && (
+                      <div className="flex gap-1">
+                        <Button size="sm" variant="ghost" onClick={() => { setEditingId(v.id); setEditPrice(toRupeesInput(v.extraPrice)); }}>
+                          Edit
+                        </Button>
+                        <Button size="sm" variant="danger" onClick={() => handleDeleteVariant(v.id)}>
+                          Remove
+                        </Button>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             ))

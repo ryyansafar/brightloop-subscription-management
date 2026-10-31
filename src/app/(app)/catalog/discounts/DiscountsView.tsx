@@ -154,6 +154,7 @@ export function DiscountsView({
                 { label: "Running", value: "running" },
                 { label: "Upcoming", value: "upcoming" },
                 { label: "Expired", value: "expired" },
+                { label: "Exhausted", value: "exhausted" },
               ],
             },
             {
@@ -170,6 +171,7 @@ export function DiscountsView({
         />
       </div>
       <DiscountDialog
+        key={dialog.item?.id ?? "new"}
         open={dialog.open}
         onClose={() => setDialog({ open: false, item: null })}
         discount={dialog.item}

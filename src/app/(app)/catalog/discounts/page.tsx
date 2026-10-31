@@ -27,17 +27,28 @@ export default async function DiscountsPage({ searchParams }: { searchParams: Pr
     ...(state === "upcoming" ? { startsAt: { gt: now } } : {}),
   };
 
-  const [discounts, total, products] = await Promise.all([
+  const isExhausted = state === "exhausted";
+
+  const [allMatchingDiscounts, totalCount, products] = await Promise.all([
     db.discount.findMany({
       where,
       include: { product: { select: { id: true, name: true } } },
       orderBy: { id: "asc" },
-      take: PAGE_SIZE,
-      skip: (page - 1) * PAGE_SIZE,
+      ...(isExhausted ? {} : { take: PAGE_SIZE, skip: (page - 1) * PAGE_SIZE }),
     }),
-    db.discount.count({ where }),
+    isExhausted ? 0 : db.discount.count({ where }),
     db.product.findMany({ where: { active: true }, select: { id: true, name: true }, orderBy: { name: "asc" } }),
   ]);
+
+  const discounts = isExhausted
+    ? allMatchingDiscounts
+        .filter((d) => d.usageLimit !== null && d.usedCount >= d.usageLimit)
+        .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+    : allMatchingDiscounts;
+
+  const total = isExhausted
+    ? allMatchingDiscounts.filter((d) => d.usageLimit !== null && d.usedCount >= d.usageLimit).length
+    : totalCount;
 
   const role = await getCatalogUserRole();
   const canWrite = role === "ADMIN";
