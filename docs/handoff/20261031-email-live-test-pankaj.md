@@ -7,10 +7,11 @@
 
 ## Verification
 - Live application transport invocation completed with exit code 0 and provider acceptance. This establishes working provider connectivity/credentials and test-sender authorization, not proof of inbox arrival.
+- User subsequently confirmed actual inbox receipt by sharing the test email's contents. Live transport delivery is now verified end to end.
 - Last source verification remains 342 tests, lint and TypeScript passing. This task changes progress documentation only; whitespace checked before push.
 
 ## Needs action from others
-- @pankaj/user: confirm receipt of the Brightloop email delivery test in inbox/Spam. Live password-reset and invoice-flow testing still requires a corresponding Brightloop user/customer with the authorized test recipient. Do not send seeded .test addresses through this sender.
+- @pankaj/user: test email receipt is confirmed. Live password-reset and invoice-flow testing still requires a corresponding Brightloop user/customer with the authorized test recipient. Do not send seeded .test addresses through this sender.
 - @ryyan @fathima: Resend test transport is now configured and provider acceptance was verified. Arbitrary recipient delivery still requires a verified domain; no credentials are committed.
 
 ## Breaking / contract changes

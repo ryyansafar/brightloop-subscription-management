@@ -25,7 +25,8 @@ Frontend work was resumed by the user after the security review. Auth screens, t
 - [x] Pankaj frontend integration (resumed by user; shared global restyling remains with Fathima)
 - [x] Resend transport, password-reset email and invoice email integration (see docs/EMAIL.md)
 - [x] User configures Resend test account/key/sender; live transport submission accepted
-- [ ] Confirm actual inbox receipt and run live reset/invoice flows for the matching test account
+- [x] Confirm actual inbox receipt (user shared the received test email)
+- [ ] Run live reset/invoice flows for the matching test account
 
 ## Initial backend verification (historical)
 
