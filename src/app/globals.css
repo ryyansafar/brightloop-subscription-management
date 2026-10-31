@@ -4,7 +4,7 @@
  * Design tokens (owner: fathima). Components only use these names
  * (bg-primary, text-muted, border-line, ...), so a new look from the Stitch
  * design is applied by changing the values here, not the components.
- * Palette: Stitch preview (stitch_preview/), indigo on slate. Dark mode is derived
+ * Palette: Stitch preview (stitch_preview/) surfaces and type with the Odoo plum accent. Dark mode is derived
  * from it (Stitch has no dark set); every text pair is >= 4.5:1.
  */
 :root {
@@ -14,9 +14,9 @@
   --surface-2: #eff4ff;
   --line: #dcdbe9;
   --muted: #565e74;
-  --primary: #4f46e5; /* Stitch indigo */
-  --primary-hover: #3525cd;
-  --primary-soft: #ecebff;
+  --primary: #714b67; /* Odoo plum (kept by team request) */
+  --primary-hover: #5e3d55;
+  --primary-soft: #f3edf2;
   --on-primary: #ffffff;
   --success: #047857;
   --success-soft: #ecfdf5;
@@ -41,10 +41,10 @@
   --surface-2: #18233a;
   --line: #2a3650;
   --muted: #9aa6bf;
-  --primary: #a5a1ff;
-  --primary-hover: #c3c0ff;
-  --primary-soft: #221f4a;
-  --on-primary: #0f0069;
+  --primary: #c28fb5;
+  --primary-hover: #d3a6c7;
+  --primary-soft: #2e2230;
+  --on-primary: #1a1116;
   --success: #5cc795;
   --success-soft: #12271d;
   --warning: #e3a944;
@@ -66,10 +66,10 @@
     --surface-2: #18233a;
     --line: #2a3650;
     --muted: #9aa6bf;
-    --primary: #a5a1ff;
-    --primary-hover: #c3c0ff;
-    --primary-soft: #221f4a;
-    --on-primary: #0f0069;
+    --primary: #c28fb5;
+    --primary-hover: #d3a6c7;
+    --primary-soft: #2e2230;
+    --on-primary: #1a1116;
     --success: #5cc795;
     --success-soft: #12271d;
     --warning: #e3a944;
