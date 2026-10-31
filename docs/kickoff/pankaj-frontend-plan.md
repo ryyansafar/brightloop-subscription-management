@@ -1,5 +1,7 @@
 # Frontend integration — 31 October 2026
 
+Current status: the frontend, shared logout/themes and route consolidation were pushed through 8bcdcc4 with explicit authorization. Resend recovery/invoice mail is now implemented; provider activation/live delivery remains pending user configuration (docs/EMAIL.md). The original planning and verification record below is historical.
+
 The user resumed UI work and authorized pushing the saved authentication/security changes. That commit was synced with main and pushed as 6ef3381 before frontend work began. Future frontend pushes still need separate user authorization.
 
 ## Design and ownership

@@ -7,6 +7,12 @@
 4. Customer portal `/portal`: own subscriptions and invoices, close/renew actions that call Ryyan's APIs.
 5. Subscriptions UI `src/app/(app)/subscriptions/**`: list with filters, form (customer, plan, template, lines), a status bar showing Draft → Quotation → Confirmed → Active → Closed with transition buttons.
 
+## Current integration update — 31 October 2026
+- Core deliverables above are implemented, integrated and pushed. Shared Sign out and System/Light/Dark controls are available.
+- Real password-reset and invoice email delivery is now implemented using Resend; configuration and test-sender restrictions are in docs/EMAIL.md. Live delivery awaits the user's provider account, API key and approved sender. No credentials are committed.
+- Invoice Send records provider acceptance rather than only updating a timestamp. Development reset previews remain an explicit local-only opt-in. Delivery failures, privacy and retry behavior have automated tests with no real email sends.
+- Email verification, durable session revocation, a durable mail outbox and delivery webhooks remain separate work.
+
 ## Dependencies
 - Needs the schema from Ryyan (about 30 minutes in). Start with auth screens and validation while waiting.
 - Use Fathima's components in `src/components/**`; request missing ones via a handoff note.

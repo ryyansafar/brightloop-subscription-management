@@ -23,6 +23,8 @@ Frontend work was resumed by the user after the security review. Auth screens, t
 - [x] Authorization and integration
 - [x] Verification and teammate handoff (existing build blockers recorded in the handoff)
 - [x] Pankaj frontend integration (resumed by user; shared global restyling remains with Fathima)
+- [x] Resend transport, password-reset email and invoice email integration (see docs/EMAIL.md)
+- [ ] User configures Resend account/key/sender and verifies real inbox delivery
 
 ## Initial backend verification (historical)
 
