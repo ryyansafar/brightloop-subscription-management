@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { connection } from "next/server";
+import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { DataTable, MobileMeta, PageHeader, formatDate, pageParam, param, type Column, type Params } from "@/components";
 import { db } from "@/lib/db";
@@ -44,7 +45,16 @@ async function listPayments(method: string | undefined, q: string | undefined, r
 
 type PaymentRow = Awaited<ReturnType<typeof listPayments>>["rows"][number];
 
-export default async function PaymentsPage({ searchParams }: { searchParams: Promise<Params> }) {
+// Page-local Suspense (same pattern as the dashboard), so navigation shows the shell instantly.
+export default function PaymentsPage(props: { searchParams: Promise<Params> }) {
+  return (
+    <Suspense fallback={<div role="status" className="p-6 text-muted">Loading…</div>}>
+      <PaymentsPageContent {...props} />
+    </Suspense>
+  );
+}
+
+async function PaymentsPageContent({ searchParams }: { searchParams: Promise<Params> }) {
   await connection();
   const params = await searchParams;
   const page = pageParam(params);
@@ -61,7 +71,7 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Pro
       render: (r) => (
         <>
           <Link href={`/invoices/${r.invoice.id}`} className="inline-flex min-h-10 items-center text-primary hover:underline md:min-h-0">
-            {r.invoice.number}
+            <span className="font-mono text-[13px]">{r.invoice.number}</span>
           </Link>
           <MobileMeta>{r.invoice.customer.name}</MobileMeta>
         </>

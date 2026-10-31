@@ -74,7 +74,7 @@ export function DataTable<T>({
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="border-b border-line bg-surface-2 text-xs uppercase tracking-wide text-muted">
+          <thead className="border-b border-line bg-surface-2 text-[11px] font-semibold uppercase tracking-[0.05em] text-muted">
             <tr>
               {columns.map((c) => {
                 const active = c.sortable && sort.sort === c.key;

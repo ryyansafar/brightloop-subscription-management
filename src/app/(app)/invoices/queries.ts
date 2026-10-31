@@ -35,11 +35,33 @@ export function displayStatus(invoice: { status: string; dueDate: Date }, today:
   return invoice.status === "CONFIRMED" && invoice.dueDate < today ? "OVERDUE" : invoice.status;
 }
 
+function searchWhere(q: string | undefined): Prisma.InvoiceWhereInput {
+  const term = q?.trim();
+  return term ? { OR: [{ number: { contains: term } }, { customer: { name: { contains: term } } }] } : {};
+}
+
+/** Counts for the filter tabs, honouring the current search: one grouped query plus the overdue count. */
+export async function countInvoicesByFilter(q: string | undefined, today: Date) {
+  const search = searchWhere(q);
+  const [byStatus, overdue] = await Promise.all([
+    db.invoice.groupBy({ by: ["status"], where: search, _count: { _all: true } }),
+    db.invoice.count({ where: { ...search, ...filterWhere("overdue", today) } }),
+  ]);
+  const n = (status: string) => byStatus.find((g) => g.status === status)?._count._all ?? 0;
+  return {
+    all: byStatus.reduce((sum, g) => sum + g._count._all, 0),
+    draft: n("DRAFT"),
+    outstanding: n("CONFIRMED"),
+    overdue,
+    paid: n("PAID"),
+    cancelled: n("CANCELLED"),
+  };
+}
+
 export async function listInvoices(opts: { filter?: InvoiceFilter; q?: string; page: number; today: Date }) {
-  const q = opts.q?.trim();
   const where: Prisma.InvoiceWhereInput = {
     ...filterWhere(opts.filter, opts.today),
-    ...(q ? { OR: [{ number: { contains: q } }, { customer: { name: { contains: q } } }] } : {}),
+    ...searchWhere(opts.q),
   };
   const [rows, total] = await Promise.all([
     db.invoice.findMany({

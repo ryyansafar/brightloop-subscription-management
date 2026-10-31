@@ -1,6 +1,7 @@
 // Owner: fathima. Invoice list view with paid / outstanding / overdue filters and search.
 import type { Metadata } from "next";
 import { connection } from "next/server";
+import { Suspense } from "react";
 import {
   DataTable,
   PageHeader,
@@ -13,25 +14,33 @@ import {
   type Params,
 } from "@/components";
 import { formatINR } from "@/lib/money";
-import { PAGE_SIZE, displayStatus, isInvoiceFilter, listInvoices, type InvoiceRow } from "./queries";
+import { PAGE_SIZE, countInvoicesByFilter, displayStatus, isInvoiceFilter, listInvoices, type InvoiceRow } from "./queries";
 
 export const metadata: Metadata = { title: "Invoices" };
 
-export default async function InvoicesPage({ searchParams }: { searchParams: Promise<Params> }) {
+// Page-local Suspense (same pattern as the dashboard), so navigation shows the shell instantly.
+export default function InvoicesPage(props: { searchParams: Promise<Params> }) {
+  return (
+    <Suspense fallback={<div role="status" className="p-6 text-muted">Loading…</div>}>
+      <InvoicesPageContent {...props} />
+    </Suspense>
+  );
+}
+
+async function InvoicesPageContent({ searchParams }: { searchParams: Promise<Params> }) {
   await connection();
   const params = await searchParams;
   const today = new Date();
   const filter = param(params, "filter");
   const page = pageParam(params);
-  const { rows, total } = await listInvoices({
-    filter: isInvoiceFilter(filter) ? filter : undefined,
-    q: param(params, "q"),
-    page,
-    today,
-  });
+  const q = param(params, "q");
+  const [{ rows, total }, counts] = await Promise.all([
+    listInvoices({ filter: isInvoiceFilter(filter) ? filter : undefined, q, page, today }),
+    countInvoicesByFilter(q, today),
+  ]);
 
   const columns: Column<InvoiceRow>[] = [
-    { key: "number", header: "Number" },
+    { key: "number", header: "Number", render: (r) => <span className="font-mono text-[13px]">{r.number}</span> },
     { key: "customer", header: "Customer", render: (r) => r.customer.name },
     {
       key: "period",
@@ -77,6 +86,9 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
           filters={[
             {
               param: "filter",
+              variant: "tabs",
+              allLabel: "All invoices",
+              counts,
               options: [
                 { label: "Draft", value: "draft" },
                 { label: "Outstanding", value: "outstanding" },
