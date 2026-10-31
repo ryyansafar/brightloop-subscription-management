@@ -179,6 +179,7 @@ model Invoice {
   taxTotal       Int          @default(0)
   total          Int          @default(0)
   dueDate        DateTime
+  discountId     Int? // subscription-level discount applied to this invoice
   sentAt         DateTime?
   createdAt      DateTime     @default(now())
   subscription   Subscription @relation(fields: [subscriptionId], references: [id])
@@ -199,6 +200,7 @@ model InvoiceLine {
   quantity       Int
   unitPrice      Int
   discountAmount Int     @default(0)
+  discountId     Int? // product-level discount applied to this line
   taxBps         Int     @default(0)
   taxAmount      Int     @default(0)
   amount         Int // net of discount, before tax (snapshot, never recomputed)
