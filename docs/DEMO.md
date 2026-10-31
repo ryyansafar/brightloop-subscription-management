@@ -20,7 +20,7 @@ Logins (password `Demo@12345`): `admin@brightloop.test`, `staff@brightloop.test`
 | 0:20 | Admin login, dashboard | 3,000 subscriptions and about 15,000 invoices. MRR, ARR, payments, outstanding and overdue in one place, with filters. Pages answer in well under two seconds. |
 | 1:00 | Catalog | Product with variants: choosing the Odoo brand adds 560. A plan billing monthly, with a minimum quantity and availability dates. A discount rule: percentage or fixed, minimum quantity, dates, usage limit. Only the admin can create these. |
 | 2:00 | New subscription from a quotation template | Template already holds the plan and lines. Status bar moves Draft, Quotation, Confirmed, Active. Anyone on the team can see where it stands. |
-| 3:00 | Billing day | `npm run demo:billing -- --live` (or the Run billing button). Thousands of due subscriptions invoiced, customer details, lines, discounts and taxes filled in automatically. Run it again: zero new invoices. Nothing billed twice or skipped. |
+| 3:00 | Billing day | Sidebar > Billing run (admin): pick the date, Run billing, read the result cards, then run it again to show zero new invoices. (Command-line version: `npm run demo:billing -- --live`). Thousands of due subscriptions invoiced, customer details, lines, discounts and taxes filled in automatically. Run it again: zero new invoices. Nothing billed twice or skipped. |
 | 4:00 | One invoice | Discount applied on its own, tax calculated from rules. Confirm, send, print. Draft, Confirmed, Paid. |
 | 4:30 | Record payment | Part payment, then the rest. Overpayment is rejected. Invoice becomes Paid and the dashboard updates. |
 | 5:00 | Roles | Staff cannot create staff or discounts. Customer portal shows only their own subscriptions and invoices; a URL for someone else's invoice returns not found. Customer closes or renews their own subscription. |
@@ -33,4 +33,4 @@ Logins (password `Demo@12345`): `admin@brightloop.test`, `staff@brightloop.test`
 - Month-end dates keep their anchor day: Jan 31, Feb 28, Mar 31.
 - Discount usage counts are updated atomically and returned when an invoice is cancelled.
 - Roles are enforced on the server, not only in the menus.
-- 54 automated tests run against a real SQLite database on every commit.
+- Over 300 automated tests run against a real SQLite database on every commit.

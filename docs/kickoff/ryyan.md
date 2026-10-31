@@ -1,4 +1,4 @@
-> Status: deliverables 1-4 are DONE and pushed (see docs/handoff). Remaining: integration with the others, plan-fee decision, perf check.
+> Status: DONE and pushed: schema, billing engine, services, APIs (subscriptions, invoices, payments, catalog, billing run), seed, demo script, Billing run page. See docs/handoff for details.
 
 # Ryyan — schema, billing engine, subscription/invoice/payment APIs
 

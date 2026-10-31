@@ -30,7 +30,17 @@ See `AGENTS.md` and `docs/kickoff/`.
 
 ## Tests and demo
 ```
-npm test                   # 54 tests against a real SQLite database
+npm test                   # 300+ tests against a real SQLite database
 npm run demo:billing       # billing-day demo on a copy of the data (-- --live to apply)
 ```
 See `docs/DEMO.md` for the recording script.
+
+## Pages
+| Role | Pages |
+|---|---|
+| Everyone | `/login`, `/signup`, `/forgot-password`, `/reset-password` |
+| Admin and staff | `/dashboard`, `/subscriptions`, `/invoices`, `/payments`, `/catalog/*` |
+| Admin only | `/billing` (run billing), `/admin/staff`, catalog discounts and taxes (edit) |
+| Customer | `/portal`, `/portal/invoices`, subscription and invoice detail (own data only) |
+
+Run the app on http://localhost:3000, or set `APP_ORIGIN` in `.env` to the exact origin you use; otherwise every save is blocked by the origin check.

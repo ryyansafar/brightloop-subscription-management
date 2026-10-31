@@ -13,7 +13,7 @@ Run: `npm install && npx prisma migrate dev && npm run seed && npm run dev`
 ## Ownership (edit only your own paths)
 | Owner | Paths |
 |---|---|
-| ryyan | `prisma/**`, `src/lib/{db,money,dates,billing,pricing,discount-usage,errors,state,subscriptions,invoices,payments,api}.ts`, `src/test/**`, `src/app/api/{subscriptions,invoices,payments,billing}/**` |
+| ryyan | `prisma/**`, `src/lib/{db,money,dates,billing,pricing,discount-usage,errors,state,subscriptions,invoices,payments,api}.ts`, `src/test/**`, `src/app/api/{subscriptions,invoices,payments,billing}/**`, `src/app/(app)/billing/**` |
 | pankaj | `src/lib/api-auth.ts` (resolveUser only), `src/lib/auth/**`, `src/proxy.ts`, `src/app/(auth)/**`, `src/app/portal/**`, `src/app/admin/staff/**`, `src/app/(app)/subscriptions/**` |
 | roshan | `src/lib/catalog/**`, `src/lib/discounts.ts`, `src/app/api/{products,plans,taxes,discounts,templates}/**`, `src/app/(app)/catalog/**` |
 | fathima | `src/components/**`, `src/app/layout.tsx`, `src/app/(app)/layout.tsx`, `src/app/(app)/dashboard/**`, `src/app/(app)/{invoices,payments}/**`, `prisma/seed.ts` |
