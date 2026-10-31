@@ -9,6 +9,7 @@ import { formatINR } from "@/lib/money";
 import { displayStatus, getInvoice } from "../queries";
 import { InvoiceActions } from "./InvoiceActions";
 import { InvoiceDocument } from "./InvoiceDocument";
+import { paymentMethodLabel } from "../../payments/methods";
 import { invoiceStepLabels } from "../status-labels";
 
 export const metadata: Metadata = { title: "Invoice" };
@@ -52,7 +53,7 @@ async function InvoicePageContent({ params }: { params: Promise<{ id: string }> 
               {invoice.payments.map((p) => (
                 <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5">
                   <span>
-                    {formatDate(p.paidOn)} · {p.method.replaceAll("_", " ").toLowerCase()}
+                    {formatDate(p.paidOn)} · {paymentMethodLabel(p.method)}
                     {p.note && <span className="text-muted"> · {p.note}</span>}
                   </span>
                   <span className="font-medium tabular-nums text-success">{formatINR(p.amount)}</span>
