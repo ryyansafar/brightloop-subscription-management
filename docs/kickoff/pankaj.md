@@ -3,7 +3,7 @@
 ## Deliverables
 1. Signup/login: unique email; password longer than 8 characters with an uppercase letter, a lowercase letter and a special character; zod validation, hashed passwords (bcrypt/argon2), cookie session.
 2. Password reset: token table or signed token, link sent by a dev mailer (log the link to the console and show it on screen in dev), expiry.
-3. `src/proxy.ts` plus `requireRole()` helper used by every API route. Only ADMIN can create STAFF (`/admin/staff`). STAFF are limited. CUSTOMER sees only their own data.
+3. `src/proxy.ts` for page protection. For the API, replace the body of `resolveUser()` in `src/lib/api-auth.ts` (Ryyan's routes already call it through `handle()`, which enforces roles). Only ADMIN can create STAFF (`/admin/staff`). STAFF are limited. CUSTOMER sees only their own data.
 4. Customer portal `/portal`: own subscriptions and invoices, close/renew actions that call Ryyan's APIs.
 5. Subscriptions UI `src/app/(app)/subscriptions/**`: list with filters, form (customer, plan, template, lines), a status bar showing Draft → Quotation → Confirmed → Active → Closed with transition buttons.
 

@@ -1,3 +1,5 @@
+> Status: deliverables 1-4 are DONE and pushed (see docs/handoff). Remaining: integration with the others, plan-fee decision, perf check.
+
 # Ryyan — schema, billing engine, subscription/invoice/payment APIs
 
 Deadline for the core: **1:30 PM** (you leave for the 2:30 session). Push the schema first so everyone can start.
