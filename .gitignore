@@ -42,3 +42,5 @@ yarn-error.log*
 !.env.example
 prisma/*.db
 prisma/*.db-journal
+
+.playwright-mcp/
