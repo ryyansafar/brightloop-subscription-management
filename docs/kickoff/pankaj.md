@@ -10,7 +10,7 @@
 ## Current integration update — 31 October 2026
 - Core deliverables above are implemented, integrated and pushed. Shared Sign out and System/Light/Dark controls are available.
 - Real password-reset and invoice email delivery is now implemented using Resend; configuration and test-sender restrictions are in docs/EMAIL.md. Live delivery awaits the user's provider account, API key and approved sender. No credentials are committed.
-- User selected onboarding@resend.dev for initial testing. Local sender/provider settings are saved; the private API key and live inbox verification are still pending. This sender reaches only the Resend account email.
+- User selected onboarding@resend.dev and configured the private API key. A live test through the app transport was accepted by Resend; inbox receipt awaits user confirmation. This sender reaches only the Resend account email. Live reset/invoice flow checks need a matching Brightloop user/customer.
 - Invoice Send records provider acceptance rather than only updating a timestamp. Development reset previews remain an explicit local-only opt-in. Delivery failures, privacy and retry behavior have automated tests with no real email sends.
 - Email verification, durable session revocation, a durable mail outbox and delivery webhooks remain separate work.
 
