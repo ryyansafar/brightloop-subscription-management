@@ -154,7 +154,12 @@ export function DiscountDialog({
               </Select>
             )}
           </FormField>
-          <FormField label={kind === "PERCENT" ? "Discount percentage (%)" : "Discount amount (₹)"} required error={errors.value}>
+          <FormField
+            label={kind === "PERCENT" ? "Discount percentage (%)" : "Discount amount (₹)"}
+            hint={kind === "PERCENT" ? "Percent, e.g. 10 for 10%" : "Amount in ₹, e.g. 100"}
+            required
+            error={errors.value}
+          >
             {(f) => (
               <Input
                 {...f}
