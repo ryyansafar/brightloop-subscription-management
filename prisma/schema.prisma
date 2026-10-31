@@ -1,0 +1,219 @@
+// Owner: ryyan. Money is integer paise. Rates are basis points (1800 = 18%).
+// Enum-like columns are Strings; allowed values live in src/lib/state.ts.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  passwordHash String
+  name         String
+  role         String    @default("CUSTOMER") // ADMIN | STAFF | CUSTOMER
+  createdAt    DateTime  @default(now())
+  customer     Customer?
+  resets       PasswordReset[]
+}
+
+model PasswordReset {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Customer {
+  id            Int            @id @default(autoincrement())
+  userId        Int?           @unique
+  name          String
+  email         String
+  phone         String?
+  company       String?
+  address       String?
+  createdAt     DateTime       @default(now())
+  user          User?          @relation(fields: [userId], references: [id])
+  subscriptions Subscription[]
+  invoices      Invoice[]
+}
+
+model Product {
+  id         Int             @id @default(autoincrement())
+  name       String
+  type       String // e.g. SERVICE | SOFTWARE | ADDON
+  salesPrice Int
+  costPrice  Int             @default(0)
+  notes      String?
+  active     Boolean         @default(true)
+  variants   VariantOption[]
+  discounts  Discount[]
+  createdAt  DateTime        @default(now())
+}
+
+model VariantOption {
+  id         Int    @id @default(autoincrement())
+  productId  Int
+  attribute  String // e.g. Brand
+  value      String // e.g. Odoo
+  extraPrice Int    @default(0) // added to the product price, e.g. 56000 paise = 560
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, attribute, value])
+}
+
+model Plan {
+  id            Int      @id @default(autoincrement())
+  name          String
+  price         Int
+  periodUnit    String // DAY | WEEK | MONTH | YEAR
+  periodCount   Int      @default(1)
+  minQuantity   Int      @default(1)
+  availableFrom DateTime?
+  availableTo   DateTime?
+  autoClose     Boolean  @default(false) // close on its own when it ends
+  closable      Boolean  @default(true)
+  pausable      Boolean  @default(true)
+  renewable     Boolean  @default(true)
+  active        Boolean  @default(true)
+  templates     QuoteTemplate[]
+  subscriptions Subscription[]
+}
+
+model TaxRate {
+  id      Int     @id @default(autoincrement())
+  name    String
+  rateBps Int
+  active  Boolean @default(true)
+}
+
+model Discount {
+  id          Int       @id @default(autoincrement())
+  name        String
+  kind        String // FIXED | PERCENT
+  value       Int // paise for FIXED, basis points for PERCENT
+  minAmount   Int       @default(0)
+  minQuantity Int       @default(0)
+  startsAt    DateTime
+  endsAt      DateTime
+  usageLimit  Int? // null = unlimited
+  usedCount   Int       @default(0)
+  scope       String // PRODUCT | SUBSCRIPTION
+  productId   Int?
+  active      Boolean   @default(true)
+  product     Product?  @relation(fields: [productId], references: [id])
+}
+
+model QuoteTemplate {
+  id           Int                 @id @default(autoincrement())
+  name         String
+  planId       Int
+  validityDays Int                 @default(30)
+  plan         Plan                @relation(fields: [planId], references: [id])
+  lines        QuoteTemplateLine[]
+  subscriptions Subscription[]
+}
+
+model QuoteTemplateLine {
+  id              Int           @id @default(autoincrement())
+  templateId      Int
+  productId       Int
+  variantOptionId Int?
+  quantity        Int           @default(1)
+  template        QuoteTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id              Int       @id @default(autoincrement())
+  number          String    @unique
+  customerId      Int
+  planId          Int
+  templateId      Int?
+  status          String    @default("DRAFT") // DRAFT | QUOTATION | CONFIRMED | ACTIVE | PAUSED | CLOSED
+  startDate       DateTime
+  endDate         DateTime?
+  nextInvoiceDate DateTime? // drives the billing run
+  anchorDay       Int? // original day of month, avoids drift after clamping
+  paymentTermDays Int       @default(15)
+  closeReason     String?
+  pausedAt        DateTime?
+  createdAt       DateTime  @default(now())
+  customer        Customer  @relation(fields: [customerId], references: [id])
+  plan            Plan      @relation(fields: [planId], references: [id])
+  template        QuoteTemplate? @relation(fields: [templateId], references: [id])
+  lines           SubscriptionLine[]
+  invoices        Invoice[]
+
+  @@index([status, nextInvoiceDate])
+  @@index([customerId])
+}
+
+model SubscriptionLine {
+  id              Int          @id @default(autoincrement())
+  subscriptionId  Int
+  productId       Int
+  variantOptionId Int?
+  quantity        Int          @default(1)
+  unitPrice       Int // includes the variant extra
+  taxBps          Int          @default(0)
+  discountId      Int?
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+}
+
+model Invoice {
+  id             Int          @id @default(autoincrement())
+  number         String       @unique
+  subscriptionId Int
+  customerId     Int
+  periodStart    DateTime
+  periodEnd      DateTime
+  status         String       @default("DRAFT") // DRAFT | CONFIRMED | PAID | CANCELLED
+  subtotal       Int          @default(0)
+  discountTotal  Int          @default(0)
+  taxTotal       Int          @default(0)
+  total          Int          @default(0)
+  dueDate        DateTime
+  sentAt         DateTime?
+  createdAt      DateTime     @default(now())
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  customer       Customer     @relation(fields: [customerId], references: [id])
+  lines          InvoiceLine[]
+  payments       Payment[]
+
+  // one invoice per subscription period: nothing billed twice
+  @@unique([subscriptionId, periodStart])
+  @@index([status, dueDate])
+  @@index([customerId])
+}
+
+model InvoiceLine {
+  id             Int     @id @default(autoincrement())
+  invoiceId      Int
+  description    String
+  quantity       Int
+  unitPrice      Int
+  discountAmount Int     @default(0)
+  taxBps         Int     @default(0)
+  taxAmount      Int     @default(0)
+  amount         Int // net of discount, before tax (snapshot, never recomputed)
+  invoice        Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id        Int      @id @default(autoincrement())
+  invoiceId Int
+  method    String // CARD | BANK_TRANSFER | UPI | CASH | OTHER
+  amount    Int
+  paidOn    DateTime
+  note      String?
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+
+  @@index([paidOn])
+  @@index([invoiceId])
+}
