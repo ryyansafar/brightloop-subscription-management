@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import type { Role } from "@/lib/state";
-import { humanize } from "../ui/Badge";
 import { isActive, navFor } from "./nav";
+import { UserMenu } from "./UserMenu";
 
 interface AppShellProps {
   role: Role;
@@ -72,10 +72,7 @@ export function AppShell({ role, userName, children }: AppShellProps) {
           ))}
         </nav>
 
-        <div className="border-t border-line px-4 py-3 text-sm">
-          <p className="truncate font-medium">{userName}</p>
-          <p className="text-xs text-muted">{humanize(role)}</p>
-        </div>
+        <UserMenu name={userName} role={role} />
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
