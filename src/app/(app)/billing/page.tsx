@@ -1,5 +1,6 @@
 // Admin-only billing run page: preview what is due, run billing, see exactly what happened.
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
@@ -12,7 +13,7 @@ import { BillingRunner } from "./BillingRunner";
 
 export const metadata: Metadata = { title: "Billing run" };
 
-export default async function BillingPage() {
+async function BillingContent() {
   await connection();
   const request = new Request("http://app.local", { headers: { cookie: (await cookies()).toString() } });
   const user = await getSessionUser(request);
@@ -41,5 +42,13 @@ export default async function BillingPage() {
         <BillingRunner initialDue={due} todayIso={today.toISOString().slice(0, 10)} />
       </div>
     </>
+  );
+}
+
+export default function BillingPage() {
+  return (
+    <Suspense fallback={<PageHeader title="Billing run" description="Loading what is due..." />}>
+      <BillingContent />
+    </Suspense>
   );
 }
