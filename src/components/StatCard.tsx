@@ -23,14 +23,20 @@ interface StatCardProps {
 export function StatCard({ label, value, hint, tone = "neutral", href }: StatCardProps) {
   const body = (
     <>
-      <p className="text-sm text-muted">{label}</p>
-      <p className={`mt-1 text-lg font-semibold sm:text-2xl tabular-nums ${ACCENTS[tone]}`}>{value}</p>
-      {hint && <p className="mt-1 text-xs text-muted">{hint}</p>}
+      {/* Stitch style: caps label, large Plus Jakarta numeral, hint under a hairline. */}
+      <p className="text-[11px] font-semibold uppercase tracking-[0.05em] text-muted">{label}</p>
+      <p className={`mt-2 font-display text-xl font-bold tracking-tight tabular-nums sm:text-[28px] sm:leading-9 ${ACCENTS[tone]}`}>
+        {value}
+      </p>
+      {hint && <p className="mt-3 border-t border-line pt-2 text-xs text-muted">{hint}</p>}
     </>
   );
-  const classes = "block rounded-lg border border-line bg-surface p-3 sm:p-4";
+  const classes = "block rounded-lg border border-line bg-surface p-3 shadow-sm sm:p-5";
   return href ? (
-    <Link href={href} className={`${classes} hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}>
+    <Link
+      href={href}
+      className={`${classes} transition-colors hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
+    >
       {body}
     </Link>
   ) : (

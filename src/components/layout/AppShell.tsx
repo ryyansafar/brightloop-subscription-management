@@ -13,6 +13,18 @@ interface AppShellProps {
   children: ReactNode;
 }
 
+/** Stitch logo: concentric "loop" rings on an indigo tile. */
+function LogoMark() {
+  return (
+    <span aria-hidden className="grid size-8 place-items-center rounded-lg bg-primary text-on-primary shadow-sm">
+      <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={2.5}>
+        <circle cx="12" cy="12" r="8" />
+        <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />
+      </svg>
+    </span>
+  );
+}
+
 export function AppShell({ role, userName, children }: AppShellProps) {
   const pathname = usePathname();
   // The drawer remembers the page it was opened on, so it closes by itself after navigating.
@@ -37,18 +49,16 @@ export function AppShell({ role, userName, children }: AppShellProps) {
           open ? "visible translate-x-0" : "invisible -translate-x-full"
         }`}
       >
-        <div className="flex h-14 items-center gap-2 border-b border-line px-4">
-          <span aria-hidden className="grid size-7 place-items-center rounded-md bg-primary text-sm font-bold text-on-primary">
-            B
-          </span>
-          <span className="font-semibold">Brightloop</span>
+        <div className="flex h-14 items-center gap-2.5 border-b border-line px-4">
+          <LogoMark />
+          <span className="font-display text-lg font-bold tracking-tight">Brightloop</span>
         </div>
 
         <nav aria-label="Main" className="flex-1 overflow-y-auto px-2 py-3">
           {sections.map((section, i) => (
-            <div key={section.title ?? i} className="mb-4">
+            <div key={section.title ?? i} className="mb-3">
               {section.title && (
-                <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted">{section.title}</p>
+                <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-[0.05em] text-muted">{section.title}</p>
               )}
               <ul className="flex flex-col gap-0.5">
                 {section.items.map((item) => {
@@ -58,8 +68,10 @@ export function AppShell({ role, userName, children }: AppShellProps) {
                       <Link
                         href={item.href}
                         aria-current={active ? "page" : undefined}
-                        className={`block rounded-md px-3 py-2 text-sm ${
-                          active ? "bg-primary-soft font-medium text-primary" : "text-foreground hover:bg-surface-2"
+                        className={`relative block rounded-md px-3 py-1.5 text-sm ${
+                          active
+                            ? "bg-primary-soft font-semibold text-primary before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-full before:bg-primary"
+                            : "text-muted hover:bg-surface-2 hover:text-foreground"
                         }`}
                       >
                         {item.label}
@@ -86,7 +98,8 @@ export function AppShell({ role, userName, children }: AppShellProps) {
           >
             ☰
           </button>
-          <span className="font-semibold">Brightloop</span>
+          <LogoMark />
+          <span className="font-display font-bold tracking-tight">Brightloop</span>
         </div>
         <main className="min-w-0 flex-1">{children}</main>
       </div>

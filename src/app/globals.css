@@ -4,26 +4,28 @@
  * Design tokens (owner: fathima). Components only use these names
  * (bg-primary, text-muted, border-line, ...), so a new look from the Stitch
  * design is applied by changing the values here, not the components.
+ * Palette: Stitch preview (stitch_preview/), indigo on slate. Dark mode is derived
+ * from it (Stitch has no dark set); every text pair is >= 4.5:1.
  */
 :root {
-  --background: #f6f7f9;
-  --foreground: #1f2328;
+  --background: #f8f9ff;
+  --foreground: #0b1c30;
   --surface: #ffffff;
-  --surface-2: #f0f2f5;
-  --line: #dde1e6;
-  --muted: #5f6b7a;
-  --primary: #714b67; /* Odoo plum */
-  --primary-hover: #5e3d55;
-  --primary-soft: #f3edf2;
+  --surface-2: #eff4ff;
+  --line: #dcdbe9;
+  --muted: #565e74;
+  --primary: #4f46e5; /* Stitch indigo */
+  --primary-hover: #3525cd;
+  --primary-soft: #ecebff;
   --on-primary: #ffffff;
-  --success: #1e7d4f;
-  --success-soft: #e6f4ec;
-  --warning: #9a6200;
-  --warning-soft: #fdf3e1;
-  --danger: #b42318;
-  --danger-soft: #fdecea;
-  --info: #1d5fa8;
-  --info-soft: #e8f0fb;
+  --success: #047857;
+  --success-soft: #ecfdf5;
+  --warning: #b45309;
+  --warning-soft: #fffbeb;
+  --danger: #ba1a1a;
+  --danger-soft: #fdecec;
+  --info: #1d4ed8;
+  --info-soft: #eff6ff;
   /* Chart series, in fixed order (colour-blind checked as a pair, light and dark). */
   --series-1: #2a78d6;
   --series-2: #eb6834;
@@ -33,24 +35,24 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #19151b;
-  --foreground: #e6e8eb;
-  --surface: #231e26;
-  --surface-2: #2e2631;
-  --line: #433447;
-  --muted: #9aa4b2;
-  --primary: #c28fb5;
-  --primary-hover: #d3a6c7;
-  --primary-soft: #2e2230;
-  --on-primary: #1a1116;
+  --background: #0b1220;
+  --foreground: #e6ebf5;
+  --surface: #111a2e;
+  --surface-2: #18233a;
+  --line: #2a3650;
+  --muted: #9aa6bf;
+  --primary: #a5a1ff;
+  --primary-hover: #c3c0ff;
+  --primary-soft: #221f4a;
+  --on-primary: #0f0069;
   --success: #5cc795;
-  --success-soft: #16291f;
+  --success-soft: #12271d;
   --warning: #e3a944;
-  --warning-soft: #2c2312;
+  --warning-soft: #2a2111;
   --danger: #f2877c;
-  --danger-soft: #331b19;
+  --danger-soft: #2f1a1a;
   --info: #7fb2ec;
-  --info-soft: #172436;
+  --info-soft: #14223a;
   --series-1: #3987e5;
   --series-2: #d95926;
 }
@@ -58,24 +60,24 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]) {
     color-scheme: dark;
-    --background: #19151b;
-    --foreground: #e6e8eb;
-    --surface: #231e26;
-    --surface-2: #2e2631;
-    --line: #433447;
-    --muted: #9aa4b2;
-    --primary: #c28fb5;
-    --primary-hover: #d3a6c7;
-    --primary-soft: #2e2230;
-    --on-primary: #1a1116;
+    --background: #0b1220;
+    --foreground: #e6ebf5;
+    --surface: #111a2e;
+    --surface-2: #18233a;
+    --line: #2a3650;
+    --muted: #9aa6bf;
+    --primary: #a5a1ff;
+    --primary-hover: #c3c0ff;
+    --primary-soft: #221f4a;
+    --on-primary: #0f0069;
     --success: #5cc795;
-    --success-soft: #16291f;
+    --success-soft: #12271d;
     --warning: #e3a944;
-    --warning-soft: #2c2312;
+    --warning-soft: #2a2111;
     --danger: #f2877c;
-    --danger-soft: #331b19;
+    --danger-soft: #2f1a1a;
     --info: #7fb2ec;
-    --info-soft: #172436;
+    --info-soft: #14223a;
     --series-1: #3987e5;
     --series-2: #d95926;
   }
@@ -102,14 +104,23 @@
   --color-info-soft: var(--info-soft);
   --color-series-1: var(--series-1);
   --color-series-2: var(--series-2);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-jakarta);
+  --font-mono: var(--font-jetbrains);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Stitch type: Plus Jakarta Sans for headings and big numbers (font-display), Inter for the rest. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+  letter-spacing: -0.015em;
 }
 
 /* Print: only the document itself (invoices). Mark chrome with .no-print. */

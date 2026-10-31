@@ -67,7 +67,7 @@ export function DataTable<T>({
     }`;
 
   return (
-    <div className="rounded-lg border border-line bg-surface">
+    <div className="rounded-lg border border-line bg-surface shadow-sm">
       {(filters?.length || search) && (
         <TableToolbar basePath={basePath} searchParams={searchParams} filters={filters} search={search} />
       )}

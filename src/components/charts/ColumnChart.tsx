@@ -65,7 +65,7 @@ export function ColumnChart({ title, series, data, formatValue, formatTick, heig
   const labelEvery = band < 34 ? 2 : 1;
 
   return (
-    <figure className="rounded-lg border border-line bg-surface p-4">
+    <figure className="rounded-lg border border-line bg-surface p-4 shadow-sm sm:p-5">
       <figcaption className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-sm font-semibold">{title}</span>
         <span className="flex flex-wrap gap-4 text-xs text-muted">
