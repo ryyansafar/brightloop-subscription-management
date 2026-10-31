@@ -13,6 +13,12 @@ Rules from the event: open-access link, functional flow only, 5 to 6 minutes, su
 
 Logins (password `Demo@12345`): `admin@brightloop.test`, `staff@brightloop.test`, `customer@brightloop.test`.
 
+## Recording-day checklist (from the independent audit)
+- **Production build, not dev mode:** `npm run build && npm start` (dev mode prints red overlay errors on some routes and a dev-tools badge overlaps Sign out). Run it on http://localhost:3000.
+- **Email:** real delivery needs a Resend key (`docs/EMAIL.md`). Until `EMAIL_PROVIDER=resend` is configured, **Send invoice** and **Forgot password** show an error. Either configure it before recording, or skip those two steps in the video.
+- **Create invoice** only bills a period whose date has arrived; a second click is refused. To show a later billing day use Sidebar > Billing run with a future date.
+- Reseed first: `npm run seed:full` (resets all data, including any test records).
+
 ## Flow and talk track
 | Time | Show | Say |
 |---|---|---|
