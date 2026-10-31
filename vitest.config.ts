@@ -7,7 +7,7 @@ export default defineConfig({
     environment: "node",
     include: ["src/**/*.test.ts"],
     globalSetup: ["./src/test/global-setup.ts"],
-    env: { DATABASE_URL: "file:./test.db" },
+    env: { DATABASE_URL: "file:./test.db", AUTH_DEV_BYPASS: "1" },
     fileParallelism: false,
   },
 });
