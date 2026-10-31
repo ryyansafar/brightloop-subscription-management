@@ -61,15 +61,30 @@ export async function markInvoiceSent(id: number, client: PrismaClient = db): Pr
   await client.invoice.update({ where: { id }, data: { sentAt: new Date() } });
 }
 
-/** Create the next period's invoice for a subscription right now. */
+/**
+ * Create the invoice(s) a subscription is due for right now. Billing ahead is refused: the
+ * next period is only invoiced once its date has arrived, so a second click can never bill
+ * a future period (use the Billing run page to simulate a later billing day).
+ */
 export async function generateInvoiceNow(
   subscriptionId: number,
   today: Date = new Date(),
   client: PrismaClient = db,
 ): Promise<number> {
-  const outcome = await client.$transaction((tx) =>
-    billSubscription(tx, subscriptionId, { today, force: true }),
-  );
+  const outcome = await client.$transaction(async (tx) => {
+    const sub = await tx.subscription.findUnique({
+      where: { id: subscriptionId },
+      select: { status: true, nextInvoiceDate: true },
+    });
+    if (!sub) throw new DomainError("Subscription not found", 404);
+    if (sub.status !== "ACTIVE") throw new DomainError("Only active subscriptions can be invoiced", 409);
+    if (!sub.nextInvoiceDate) throw new DomainError("This subscription has nothing left to bill", 409);
+    if (sub.nextInvoiceDate > today) {
+      const due = sub.nextInvoiceDate.toISOString().slice(0, 10);
+      throw new DomainError(`The next invoice is not due until ${due}, so there is nothing to bill yet`, 409);
+    }
+    return billSubscription(tx, subscriptionId, { today });
+  });
   const invoiceId = outcome.invoiceIds[0];
   if (invoiceId === undefined) {
     throw new DomainError("That period already has an invoice, or there is nothing to bill", 409);

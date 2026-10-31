@@ -181,12 +181,21 @@ describe("invoice actions", () => {
     expect(await db.invoice.count()).toBe(1);
   });
 
-  it("generates the next invoice on demand, once per period", async () => {
-    const { subscription } = await seedSubscription({ start: "2026-06-01" });
-    const id = await generateInvoiceNow(subscription.id, utc("2026-01-01"));
+  it("creates the invoice a subscription is due for, exactly once", async () => {
+    const { subscription } = await seedSubscription({ start: "2026-01-15" });
+    const id = await generateInvoiceNow(subscription.id, utc("2026-01-20"));
     expect(id).toBeGreaterThan(0);
-    await expect(generateInvoiceNow(subscription.id, utc("2026-01-01"))).resolves.toBeGreaterThan(0);
-    expect(await db.invoice.count()).toBe(2); // second call bills the following period, never the same one
+    // the next period (15 Feb) is in the future: a second click must not bill it
+    await expect(generateInvoiceNow(subscription.id, utc("2026-01-20"))).rejects.toThrow(/not due until 2026-02-15/);
+    expect(await db.invoice.count()).toBe(1);
+  });
+
+  it("refuses to bill a subscription ahead of its first date or when inactive", async () => {
+    const future = await seedSubscription({ start: "2026-06-01" });
+    await expect(generateInvoiceNow(future.subscription.id, utc("2026-01-01"))).rejects.toThrow(/not due until 2026-06-01/);
+    const paused = await seedSubscription({ status: "PAUSED" });
+    await expect(generateInvoiceNow(paused.subscription.id, utc("2026-01-20"))).rejects.toThrow(/Only active/);
+    expect(await db.invoice.count()).toBe(0);
   });
 });
 
