@@ -23,3 +23,13 @@ export function devMailerEnabled(): boolean {
   return process.env.AUTH_DEV_MAILER === "1" && process.env.NODE_ENV === "development" &&
     isLoopbackHost(new URL(appOrigin()).hostname);
 }
+
+/** Production is fail-closed by default; tests/local demos can explicitly disable the signup gate. */
+export function emailVerificationEnabled(): boolean {
+  return process.env.AUTH_REQUIRE_EMAIL_VERIFICATION === "1" ||
+    (process.env.NODE_ENV === "production" && process.env.AUTH_REQUIRE_EMAIL_VERIFICATION !== "0");
+}
+
+export function needsEmailVerification(user: { emailVerificationRequired: boolean; emailVerifiedAt: Date | null }): boolean {
+  return emailVerificationEnabled() && user.emailVerificationRequired && !user.emailVerifiedAt;
+}

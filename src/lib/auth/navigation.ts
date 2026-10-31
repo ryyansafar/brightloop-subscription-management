@@ -8,7 +8,7 @@ export function loginDestination(next: string | undefined, role: Role): string {
     const url = new URL(next, "https://brightloop.invalid");
     const path = decodeURIComponent(url.pathname);
     if (url.origin !== "https://brightloop.invalid" || path.startsWith("//") || path.includes("\\")) return home;
-    if (/^\/(api|login|signup|forgot-password|reset-password)(\/|$)/.test(path) || path === "/") return home;
+    if (/^\/(api|login|signup|forgot-password|reset-password|verify-email)(\/|$)/.test(path) || path === "/") return home;
     if (role === "CUSTOMER" && !/^\/portal(\/|$)/.test(path)) return home;
     if (role === "STAFF" && /^\/admin(\/|$)/.test(path)) return home;
     return url.pathname + url.search + url.hash;

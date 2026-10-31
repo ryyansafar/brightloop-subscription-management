@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { loginDestination } from "./navigation";
 
 describe("post-login navigation", () => {
-  it.each(["https://attacker.test", "//attacker.test", "/\\attacker.test", "/%2f%2fattacker.test", "/%5cattacker.test", "/login", "/api/auth/logout", "/signup?next=/login", "/invalid%", "/\nattacker"])(
+  it.each(["https://attacker.test", "//attacker.test", "/\\attacker.test", "/%2f%2fattacker.test", "/%5cattacker.test", "/login", "/api/auth/logout", "/signup?next=/login", "/verify-email?token=private", "/invalid%", "/\nattacker"])(
     "rejects unsafe or authentication-loop destinations: %s", (next) => {
       expect(loginDestination(next, "ADMIN")).toBe("/dashboard");
     },

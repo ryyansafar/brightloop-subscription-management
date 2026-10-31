@@ -31,11 +31,11 @@ export function InvoiceActions({ id, number, status, balance, hasPayments, sentA
 
   async function run(action: Action) {
     setBusy(action);
-    const result = await postJson(`/api/invoices/${id}/${action}`);
+    const result = await postJson<{ delivery?: string }>(`/api/invoices/${id}/${action}`);
     setBusy(null);
     setConfirmingCancel(false);
     if (!result.ok) return toast.error(result.error);
-    toast.success(DONE[action]);
+    toast.success(action === "send" && result.data.delivery === "queued" ? "Email queued. Delivery will retry automatically while the mail worker runs." : DONE[action]);
     router.refresh();
   }
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
 
-const publicPages = new Set(["/login", "/signup", "/forgot-password", "/reset-password"]);
+const publicPages = new Set(["/login", "/signup", "/forgot-password", "/reset-password", "/verify-email"]);
 
 export async function proxy(request: NextRequest) {
   let path: string;
@@ -19,7 +19,7 @@ export async function proxy(request: NextRequest) {
   }
   if (publicPages.has(path)) {
     const response = NextResponse.next();
-    if (path === "/reset-password") response.headers.set("Referrer-Policy", "no-referrer");
+    if (path === "/reset-password" || path === "/verify-email") response.headers.set("Referrer-Policy", "no-referrer");
     return response;
   }
   // Mutations are authorized in their route handlers and return JSON errors.

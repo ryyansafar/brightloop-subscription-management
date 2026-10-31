@@ -3,15 +3,16 @@ import { db } from "@/lib/db";
 import { AuthError, clearAuthAttempts, limitAuthAttempt } from "./security";
 import { hashPassword, verifyPassword } from "./password-work";
 import { loginSchema, signupSchema } from "./validation";
+import { needsEmailVerification } from "./config";
 
 export async function createAccount(input: unknown, source: string, role: "CUSTOMER" | "STAFF" = "CUSTOMER") {
   const data = signupSchema.parse(input);
-  limitAuthAttempt("signup", data.email, source);
+  await limitAuthAttempt("signup", data.email, source);
   const passwordHash = await hashPassword(data.password);
   try {
     return await db.user.create({
       data: {
-        name: data.name, email: data.email, passwordHash, role,
+        name: data.name, email: data.email, passwordHash, role, emailVerificationRequired: role === "CUSTOMER",
         ...(role === "CUSTOMER" ? { customer: { create: { name: data.name, email: data.email } } } : {}),
       },
     });
@@ -29,11 +30,12 @@ const dummyHash = "$2b$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW"
 
 export async function authenticate(input: unknown, source: string) {
   const { email, password } = loginSchema.parse(input);
-  limitAuthAttempt("login", email, source);
+  await limitAuthAttempt("login", email, source);
   const user = await db.user.findUnique({ where: { email } });
   const valid = await verifyPassword(password, user?.passwordHash ?? dummyHash);
   if (!user || !valid) throw new AuthError("Email or password is incorrect", 401);
-  clearAuthAttempts("login", email, source);
+  if (needsEmailVerification(user)) throw new AuthError("Verify your email before signing in. Use the verification link or request a new one", 403);
+  await clearAuthAttempts("login", email, source);
   return user;
 }
 

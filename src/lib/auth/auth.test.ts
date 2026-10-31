@@ -97,6 +97,19 @@ describe("account routes", () => {
     expect((await me(req())).status).toBe(401);
   });
 
+  it("durably revokes copied cookies and all existing sessions on logout while allowing a fresh login", async () => {
+    const first = cookieFrom(await signUp());
+    const second = cookieFrom(await login(req({ email, password })));
+    expect((await me(req(undefined, first))).status).toBe(200);
+    expect((await logout(req({}, first))).status).toBe(200);
+    expect((await me(req(undefined, first))).status).toBe(401);
+    expect((await me(req(undefined, second))).status).toBe(401);
+    const fresh = cookieFrom(await login(req({ email, password })));
+    expect((await me(req(undefined, fresh))).status).toBe(200);
+    await logout(req({}, first)); // A revoked cookie cannot log the new generation out.
+    expect((await me(req(undefined, fresh))).status).toBe(200);
+  });
+
   it("returns JSON errors for malformed bodies and hostile origins", async () => {
     expect((await signup(new Request("http://localhost/api/auth/signup", {
       method: "POST", body: "{", headers: { "content-type": "application/json", "x-test-client-ip": `192.0.2.${sequence}` },

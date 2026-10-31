@@ -4,6 +4,9 @@ export const utc = (iso: string) => new Date(`${iso}T00:00:00.000Z`);
 
 /** Wipe every table, children first. */
 export async function resetDb(): Promise<void> {
+  await db.mailOutbox.deleteMany();
+  await db.authRateLimit.deleteMany();
+  await db.emailVerification.deleteMany();
   await db.payment.deleteMany();
   await db.invoiceLine.deleteMany();
   await db.invoice.deleteMany();

@@ -4,6 +4,7 @@ import { runBilling } from "./billing";
 import { confirmInvoice, markInvoiceSent } from "./invoices";
 import { resetDb, seedSubscription, utc } from "@/test/factory";
 import { POST as invoiceAction } from "@/app/api/invoices/[id]/[action]/route";
+import { drainMailOutbox } from "./mail-outbox";
 
 const request = vi.fn<typeof fetch>();
 beforeEach(async () => {
@@ -43,9 +44,10 @@ describe("invoice mail integration", () => {
     const { invoice } = await invoiceFixture();
     await confirmInvoice(invoice.id);
     request.mockImplementationOnce(async () => Response.json({ message: "quota" }, { status: 429 }));
-    await expect(markInvoiceSent(invoice.id)).rejects.toThrow(/could not be sent/);
+    expect(await markInvoiceSent(invoice.id)).toEqual({ delivery: "queued" });
     expect((await db.invoice.findUniqueOrThrow({ where: { id: invoice.id } })).sentAt).toBeNull();
-    await markInvoiceSent(invoice.id);
+    await db.mailOutbox.updateMany({ data: { nextAttemptAt: new Date(0) } });
+    await drainMailOutbox();
     const key = (index: number) => (request.mock.calls[index][1]!.headers as Record<string, string>)["Idempotency-Key"];
     expect(key(0)).toBe(key(1));
     await markInvoiceSent(invoice.id);
@@ -80,11 +82,13 @@ describe("invoice mail integration", () => {
     }), { params: Promise.resolve({ id: String(invoice.id), action: "send" }) });
     expect((await call("CUSTOMER")).status).toBe(403);
     expect(request).not.toHaveBeenCalled();
-    request.mockRejectedValueOnce(new Error("private provider response"));
+    request.mockResolvedValueOnce(Response.json({ message: "private provider response" }, { status: 403 }));
     const failed = await call("STAFF");
     expect(failed.status).toBe(503);
     expect(await failed.json()).toEqual({ ok: false, error: "Email could not be sent. Please try again later" });
     expect((await db.invoice.findUniqueOrThrow({ where: { id: invoice.id } })).sentAt).toBeNull();
+    // Permanent failures require a newly corrected sender rather than replaying a failed job.
+    vi.stubEnv("EMAIL_FROM", "corrected@example.com");
     expect((await call("ADMIN")).status).toBe(200);
   });
 });

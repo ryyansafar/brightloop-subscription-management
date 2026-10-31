@@ -2,6 +2,9 @@ import { createHash } from "node:crypto";
 import { isIP } from "node:net";
 import { DomainError } from "@/lib/errors";
 import { appOrigin, isLoopbackHost } from "./config";
+import { DatabaseAttemptLimiter } from "./rate-limit";
+import { AuthError } from "./errors";
+export { AuthError } from "./errors";
 
 /** SameSite cookies are supplemented with an origin check for browser mutations. */
 export function assertSameOrigin(request: Request): void {
@@ -14,10 +17,6 @@ export function assertSameOrigin(request: Request): void {
         !origin && site !== "same-origin")) {
     throw new DomainError("Cross-origin requests are not allowed", 403);
   }
-}
-
-export class AuthError extends Error {
-  constructor(message: string, public readonly status: number) { super(message); }
 }
 
 /** Fixed-window counters with bounded memory and amortized O(1) expiry cleanup. */
@@ -47,12 +46,8 @@ export class AttemptLimiter {
   clear(key: string): void { this.buckets.delete(key); }
 }
 
-// Share limits across separately bundled Next route modules within this Node process.
-const globalForLimits = globalThis as typeof globalThis & {
-  brightloopAuthLimits?: { source: AttemptLimiter; account: AttemptLimiter };
-};
-const limits = globalForLimits.brightloopAuthLimits ??= {
-  source: new AttemptLimiter(40, 10_000), account: new AttemptLimiter(10, 10_000),
+const limits = {
+  source: new DatabaseAttemptLimiter(40, "source"), account: new DatabaseAttemptLimiter(10, "account"),
 };
 const keyHash = (value: string) => createHash("sha256").update(value).digest("hex");
 
@@ -75,14 +70,14 @@ export function authSource(request: Request): string {
   return "local-development";
 }
 
-export function limitAuthSource(request: Request): void {
-  limits.source.consume(authSource(request));
+export async function limitAuthSource(request: Request): Promise<void> {
+  await limits.source.consume(authSource(request));
 }
 
-export function limitAuthAttempt(action: string, email: string, source: string): void {
-  limits.account.consume(keyHash(JSON.stringify([action, source, email])));
+export async function limitAuthAttempt(action: string, email: string, source: string): Promise<void> {
+  await limits.account.consume(keyHash(JSON.stringify([action, source, email])));
 }
 
-export function clearAuthAttempts(action: string, email: string, source: string): void {
-  limits.account.clear(keyHash(JSON.stringify([action, source, email])));
+export async function clearAuthAttempts(action: string, email: string, source: string): Promise<void> {
+  await limits.account.clear(keyHash(JSON.stringify([action, source, email])));
 }

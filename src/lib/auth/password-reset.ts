@@ -2,7 +2,8 @@ import { createHash, randomBytes } from "node:crypto";
 import { db } from "@/lib/db";
 import { AuthError, limitAuthAttempt } from "./security";
 import { appOrigin } from "./config";
-import { recoveryMailAvailable, sendRecoveryEmail } from "./recovery-mail";
+import { recoveryMailAvailable, recoveryMessage, sendRecoveryEmail } from "./recovery-mail";
+import { enqueueEmail, deliverQueuedEmail } from "@/lib/mail-outbox";
 import { unstable_rethrow } from "next/navigation";
 import { hashPassword } from "./password-work";
 import { forgotPasswordSchema, resetPasswordSchema } from "./validation";
@@ -14,7 +15,7 @@ const invalidToken = () => new AuthError("Reset link is invalid or expired. Requ
 /** Real mail never returns or logs a reset token; local previews require explicit opt-in. */
 export async function requestPasswordReset(input: unknown, source: string) {
   const { email } = forgotPasswordSchema.parse(input);
-  limitAuthAttempt("reset", email, source);
+  await limitAuthAttempt("reset", email, source);
   if (!recoveryMailAvailable()) {
     throw new AuthError("Password recovery mail delivery is not configured", 503);
   }
@@ -22,16 +23,22 @@ export async function requestPasswordReset(input: unknown, source: string) {
   if (!user) return {};
   const token = randomBytes(32).toString("hex");
   const now = new Date();
-  const record = await db.$transaction(async (tx) => {
-    await tx.passwordReset.updateMany({ where: { userId: user.id, usedAt: null }, data: { usedAt: now } });
-    return tx.passwordReset.create({ data: {
-      userId: user.id, tokenHash: tokenHash(token), expiresAt: new Date(now.getTime() + RESET_MINUTES * 60_000),
-    } });
-  });
+  const expiresAt = new Date(now.getTime() + RESET_MINUTES * 60_000);
   // Never derive reset URLs from untrusted Host/Origin headers.
   const url = new URL("/reset-password", appOrigin());
   url.searchParams.set("token", token);
+  const { record, jobId } = await db.$transaction(async (tx) => {
+    await tx.passwordReset.updateMany({ where: { userId: user.id, usedAt: null }, data: { usedAt: now } });
+    const record = await tx.passwordReset.create({ data: {
+      userId: user.id, tokenHash: tokenHash(token), expiresAt,
+    } });
+    const jobId = process.env.EMAIL_PROVIDER === "resend"
+      ? await enqueueEmail(recoveryMessage(email, url.href, RESET_MINUTES, record.id), { kind: "password-reset", referenceId: record.id, expiresAt }, tx)
+      : null;
+    return { record, jobId };
+  });
   try {
+    if (jobId) { await deliverQueuedEmail(jobId); return {}; }
     return await sendRecoveryEmail(email, url.href, RESET_MINUTES, record.id);
   } catch (error) {
     unstable_rethrow(error);
@@ -55,7 +62,8 @@ export async function resetPassword(input: unknown): Promise<void> {
       where: { id: record.id, usedAt: null, expiresAt: { gt: now } }, data: { usedAt: now },
     });
     if (consumed.count !== 1) throw invalidToken();
-    await tx.user.update({ where: { id: record.userId }, data: { passwordHash } });
+    await tx.user.update({ where: { id: record.userId }, data: { passwordHash, sessionVersion: { increment: 1 }, emailVerifiedAt: now } });
     await tx.passwordReset.updateMany({ where: { userId: record.userId, usedAt: null }, data: { usedAt: now } });
+    await tx.emailVerification.updateMany({ where: { userId: record.userId, usedAt: null }, data: { usedAt: now } });
   });
 }

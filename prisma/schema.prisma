@@ -16,9 +16,50 @@ model User {
   passwordHash String
   name         String
   role         String    @default("CUSTOMER") // ADMIN | STAFF | CUSTOMER
+  sessionVersion Int     @default(0)
+  emailVerifiedAt DateTime?
+  emailVerificationRequired Boolean @default(true)
   createdAt    DateTime  @default(now())
   customer     Customer?
   resets       PasswordReset[]
+  verifications EmailVerification[]
+}
+
+model EmailVerification {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  email     String    @default("")
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuthRateLimit {
+  key       String @id
+  count     Int
+  resetAtMs BigInt
+
+  @@index([resetAtMs])
+}
+
+model MailOutbox {
+  id             String   @id @default(cuid())
+  idempotencyKey String   @unique
+  payload        String
+  kind           String
+  referenceId    Int?
+  status         String   @default("PENDING")
+  attempts       Int      @default(0)
+  nextAttemptAt  DateTime @default(now())
+  leaseUntil     DateTime?
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+  deliveredAt    DateTime?
+  lastError      String?
+
+  @@index([status, nextAttemptAt])
+  @@index([expiresAt])
 }
 
 model PasswordReset {

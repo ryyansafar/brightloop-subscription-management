@@ -12,6 +12,6 @@ export const POST = handle<{ id: string; action: string }>(["ADMIN", "STAFF"], a
   const action = params.action as keyof typeof ACTIONS;
   if (!(action in ACTIONS)) throw new DomainError("Unknown invoice action", 404);
   const id = intParam(params.id);
-  await ACTIONS[action](id);
-  return ok({ id, action });
+  const delivery = await ACTIONS[action](id);
+  return ok({ id, action, ...(delivery || {}) });
 });

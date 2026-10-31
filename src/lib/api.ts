@@ -6,11 +6,11 @@ import { DomainError } from "./errors";
 import type { Role } from "./state";
 
 export function ok<T>(data: T, status = 200): NextResponse {
-  return NextResponse.json({ ok: true, data }, { status });
+  return NextResponse.json({ ok: true, data }, { status, headers: { "Cache-Control": "private, no-store" } });
 }
 
 export function fail(error: string, status = 400): NextResponse {
-  return NextResponse.json({ ok: false, error }, { status });
+  return NextResponse.json({ ok: false, error }, { status, headers: { "Cache-Control": "private, no-store" } });
 }
 
 interface HandlerArgs<P> {
@@ -39,12 +39,13 @@ export function handle<P extends Record<string, string> = Record<string, never>>
       unstable_rethrow(error);
       if (error instanceof ZodError) {
         const message = error.issues
+          .filter((issue) => issue.code !== "unrecognized_keys")
           .map((issue) => `${issue.path.join(".") || "input"}: ${issue.message}`)
           .join("; ");
-        return fail(message, 400);
+        return fail(message || "Invalid request", 400);
       }
       if (error instanceof DomainError) return fail(error.message, error.status);
-      console.error("Unhandled API error", error);
+      console.error("Unhandled API error", { name: error instanceof Error ? error.constructor.name : "Unknown" });
       return fail("Something went wrong", 500);
     }
   };
@@ -60,13 +61,20 @@ export async function readJson(request: Request): Promise<unknown> {
 
 export function intParam(value: string, label = "id"): number {
   const parsed = Number(value);
-  if (!Number.isInteger(parsed) || parsed < 1) throw new DomainError(`Invalid ${label}`, 400);
+  if (!Number.isSafeInteger(parsed) || parsed < 1 || parsed > 2_147_483_647) throw new DomainError(`Invalid ${label}`, 400);
   return parsed;
 }
 
 export function pageParams(url: URL): { page: number; take: number; skip: number } {
-  const page = Math.max(1, Number(url.searchParams.get("page")) || 1);
-  const take = Math.min(100, Math.max(1, Number(url.searchParams.get("limit")) || 50));
+  const read = (name: string, fallback: number, maximum: number) => {
+    const raw = url.searchParams.get(name);
+    if (!raw) return fallback;
+    const value = Number(raw);
+    if (!Number.isSafeInteger(value) || value < 1) throw new DomainError(`Invalid ${name}`, 400);
+    return Math.min(value, maximum);
+  };
+  const page = read("page", 1, 10_000);
+  const take = read("limit", 50, 100);
   return { page, take, skip: (page - 1) * take };
 }
 

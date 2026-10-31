@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { emailConfigured, escapeHtml, sendEmail, type EmailMessage } from "./mail";
+import { emailConfigured, EmailDeliveryError, escapeHtml, sendEmail, type EmailMessage } from "./mail";
 
 const message: EmailMessage = {
   to: "customer@example.com", subject: "Invoice", text: "Text", html: "<p>Text</p>", idempotencyKey: "invoice/test",
@@ -67,5 +67,18 @@ describe("transactional transport", () => {
 
   it("escapes untrusted text in HTML templates", () => {
     expect(escapeHtml('<script a="x">&\'</script>')).toBe("&lt;script a=&quot;x&quot;&gt;&amp;&#39;&lt;/script&gt;");
+  });
+
+  it("accepts HTTP-date retry-after without exposing provider content", async () => {
+    request.mockResolvedValueOnce(Response.json({}, { status: 429, headers: { "Retry-After": new Date(Date.now() + 120_000).toUTCString() } }));
+    let delay = 0;
+    try { await sendEmail(message); }
+    catch (error) {
+      if (!(error instanceof EmailDeliveryError)) throw error;
+      expect(error.retryable).toBe(true);
+      delay = error.retryAfterMs;
+    }
+    expect(delay).toBeGreaterThan(115_000);
+    expect(delay).toBeLessThanOrEqual(120_000);
   });
 });

@@ -44,12 +44,19 @@ export function AuthForm({ mode, next, token, recoveryAvailable = true }: {
     if (!parsed.success || Object.keys(fieldErrors).length) return;
     setBusy(true);
     const endpoint = mode === "staff" ? "/admin/staff/accounts" : `/api/auth/${mode === "forgot" ? "forgot-password" : mode === "reset" ? "reset-password" : mode}`;
-    const result = await postJson<{ role?: Role; message?: string; devResetUrl?: string }>(endpoint, parsed.data);
+    const result = await postJson<{ role?: Role; message?: string; devResetUrl?: string; verificationRequired?: boolean; devVerificationUrl?: string }>(endpoint, parsed.data);
     setBusy(false);
     if (!result.ok) { setError(result.error); return; }
     if (mode === "login" || mode === "signup") {
       // Clear credentials before navigation so a restored route cannot retain password inputs.
       form.reset(); setVisible(false);
+      if (result.data.verificationRequired) {
+        const preview = result.data.devVerificationUrl ? new URL(result.data.devVerificationUrl) : null;
+        const shortcut = preview ? preview.search + preview.hash : "?sent=1";
+        router.replace(`/verify-email${shortcut}`);
+        router.refresh();
+        return;
+      }
       router.replace(loginDestination(next, result.data.role || "CUSTOMER"));
       router.refresh();
     } else if (mode === "staff") {

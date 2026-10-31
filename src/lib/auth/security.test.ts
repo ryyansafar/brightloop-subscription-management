@@ -14,12 +14,14 @@ describe("bounded authentication limits", () => {
     expect(() => limiter.consume("real-user", 1000)).toThrow(/Too many/);
   });
 
-  it("does not let one source lock a target email out on another source", () => {
-    for (let i = 0; i < 10; i++) limitAuthAttempt("login", "target@test.dev", "attacker");
-    expect(() => limitAuthAttempt("login", "target@test.dev", "attacker")).toThrow(/Too many/);
-    expect(() => limitAuthAttempt("login", "target@test.dev", "legitimate")).not.toThrow();
-    clearAuthAttempts("login", "target@test.dev", "attacker");
-    expect(() => limitAuthAttempt("login", "target@test.dev", "attacker")).not.toThrow();
+  it("does not let one source lock a target email out on another source", async () => {
+    await clearAuthAttempts("login", "target@test.dev", "attacker");
+    await clearAuthAttempts("login", "target@test.dev", "legitimate");
+    for (let i = 0; i < 10; i++) await limitAuthAttempt("login", "target@test.dev", "attacker");
+    await expect(limitAuthAttempt("login", "target@test.dev", "attacker")).rejects.toThrow(/Too many/);
+    await expect(limitAuthAttempt("login", "target@test.dev", "legitimate")).resolves.toBeUndefined();
+    await clearAuthAttempts("login", "target@test.dev", "attacker");
+    await expect(limitAuthAttempt("login", "target@test.dev", "attacker")).resolves.toBeUndefined();
   });
 
   it("ignores forged forwarding headers unless an ingress header is explicitly configured", () => {

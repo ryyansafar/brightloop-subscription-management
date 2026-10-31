@@ -15,7 +15,8 @@
     "test": "vitest run",
     "seed:full": "tsx prisma/seed.ts --size=3000",
     "demo:billing": "tsx scripts/demo-billing.ts",
-    "setup:env": "node scripts/setup-env.mjs"
+    "setup:env": "node scripts/setup-env.mjs",
+    "mail:worker": "tsx --env-file=.env scripts/mail-worker.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

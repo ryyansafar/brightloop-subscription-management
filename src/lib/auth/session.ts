@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { ROLES } from "@/lib/state";
 import type { SessionUser } from "@/lib/api-auth";
+import { needsEmailVerification } from "./config";
 
 export const SESSION_COOKIE = "brightloop_session";
 export const sessionCookieName = () => process.env.NODE_ENV === "production" ? `__Host-${SESSION_COOKIE}` : SESSION_COOKIE;
@@ -12,6 +13,7 @@ const claimsSchema = z.object({
   id: z.number().int().positive(),
   expires: z.number().int().positive(),
   version: z.string().regex(/^[a-f0-9]{64}$/),
+  generation: z.number().int().nonnegative().default(0),
 }).strict();
 
 function secret(): string {
@@ -25,11 +27,12 @@ export function assertSessionConfigured(): void { secret(); }
 const version = (hash: string) => createHmac("sha256", secret()).update(`password-version:${hash}`).digest("hex");
 const sign = (payload: string) => createHmac("sha256", secret()).update(payload).digest("base64url");
 
-export function createSession(user: { id: number; passwordHash: string }, now = Date.now()): string {
+export function createSession(user: { id: number; passwordHash: string; sessionVersion?: number }, now = Date.now()): string {
   const payload = Buffer.from(JSON.stringify({
     id: user.id,
     expires: Math.floor(now / 1000) + SESSION_SECONDS,
     version: version(user.passwordHash),
+    generation: user.sessionVersion ?? 0,
   })).toString("base64url");
   return `${payload}.${sign(payload)}`;
 }
@@ -65,6 +68,13 @@ export async function getSessionUser(request: Request): Promise<SessionUser | nu
   if (!claims) return null;
   // Read roles from the database on every request. Password changes revoke old cookies.
   const user = await db.user.findUnique({ where: { id: claims.id } });
-  if (!user || version(user.passwordHash) !== claims.version || !ROLES.includes(user.role as typeof ROLES[number])) return null;
+  if (!user || user.sessionVersion !== claims.generation || version(user.passwordHash) !== claims.version || !ROLES.includes(user.role as typeof ROLES[number])) return null;
+  if (needsEmailVerification(user)) return null;
   return { id: user.id, email: user.email, role: user.role as typeof ROLES[number] };
+}
+
+/** Durable logout revokes all currently issued sessions, including copied cookies. */
+export async function revokeSessions(request: Request): Promise<void> {
+  const user = await getSessionUser(request);
+  if (user) await db.user.updateMany({ where: { id: user.id }, data: { sessionVersion: { increment: 1 } } });
 }

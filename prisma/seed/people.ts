@@ -15,7 +15,8 @@ export const DEMO_LOGINS = [
 export async function seedPeople(db: PrismaClient, count: number): Promise<void> {
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
   await db.user.createMany({
-    data: DEMO_LOGINS.map((u) => ({ ...u, passwordHash })),
+    // Synthetic .test accounts are explicit demo exemptions, never falsely labelled verified.
+    data: DEMO_LOGINS.map((u) => ({ ...u, passwordHash, emailVerificationRequired: false })),
   });
   const demoUser = await db.user.findUniqueOrThrow({ where: { email: "customer@brightloop.test" } });
 

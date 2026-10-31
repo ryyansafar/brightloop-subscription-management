@@ -4,11 +4,18 @@ import { unstable_rethrow } from "next/navigation";
 import { DomainError } from "./errors";
 
 export interface EmailMessage {
+  from?: string;
   to: string;
   subject: string;
   text: string;
   html: string;
   idempotencyKey: string;
+}
+
+export class EmailDeliveryError extends DomainError {
+  constructor(public readonly retryable: boolean, public readonly retryAfterMs = 0) {
+    super("Email could not be sent. Please try again later", 503);
+  }
 }
 
 function configuration() {
@@ -44,17 +51,24 @@ export async function sendEmail(message: EmailMessage): Promise<void> {
         "Content-Type": "application/json",
         "Idempotency-Key": message.idempotencyKey,
       },
-      body: JSON.stringify({ from: config.from, to: [message.to], subject: message.subject, text: message.text, html: message.html }),
+      body: JSON.stringify({ from: message.from ?? config.from, to: [message.to], subject: message.subject, text: message.text, html: message.html }),
       signal: AbortSignal.timeout(10_000),
       cache: "no-store",
       redirect: "error",
     });
-    if (!response.ok) throw new Error("Provider rejected message");
+    if (!response.ok) {
+      const header = response.headers.get("retry-after") || "";
+      const seconds = Number(header);
+      const requested = Number.isFinite(seconds) ? seconds * 1000 : Date.parse(header) - Date.now();
+      const retryAfter = Number.isFinite(requested) ? Math.max(0, Math.min(requested, 3_600_000)) : 0;
+      throw new EmailDeliveryError(response.status === 429 || response.status >= 500 || response.status === 409, retryAfter);
+    }
     const result: unknown = await response.json();
     if (!z.object({ id: z.string().min(1) }).safeParse(result).success) throw new Error("Invalid provider response");
   } catch (error) {
     unstable_rethrow(error);
     // Provider responses and exception objects can contain recipients, tokens or credentials.
-    throw new DomainError("Email could not be sent. Please try again later", 503);
+    if (error instanceof EmailDeliveryError) throw error;
+    throw new EmailDeliveryError(true);
   }
 }

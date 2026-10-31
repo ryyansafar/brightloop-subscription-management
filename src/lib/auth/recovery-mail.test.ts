@@ -58,7 +58,7 @@ describe("real password recovery mail", () => {
   });
 
   it("invalidates an undelivered token and keeps provider failures indistinguishable from unknown accounts", async () => {
-    request.mockImplementation(async () => Response.json({ message: "private detail" }, { status: 429 }));
+    request.mockImplementation(async () => Response.json({ message: "private detail" }, { status: 403 }));
     const failed = await recover();
     expect(failed).toEqual(await recover("missing@example.com"));
     expect(console.error).toHaveBeenCalledWith("Password recovery email delivery failed");

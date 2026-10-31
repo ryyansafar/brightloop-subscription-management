@@ -17,7 +17,7 @@ export function authHandler(fn: (request: Request) => Promise<Response>, options
   return async (request: Request): Promise<Response> => {
     try {
       assertSameOrigin(request);
-      if (options.limited) limitAuthSource(request);
+      if (options.limited) await limitAuthSource(request);
       return await fn(request);
     } catch (error) {
       // Preserve Next's request-time/prerender control flow rather than converting it into a 500.

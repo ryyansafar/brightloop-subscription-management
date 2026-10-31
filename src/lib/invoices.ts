@@ -52,13 +52,12 @@ export async function cancelInvoice(id: number, client: PrismaClient = db): Prom
 }
 
 /** Record provider acceptance only after the confirmed invoice email was actually submitted. */
-export async function markInvoiceSent(id: number, client: PrismaClient = db): Promise<void> {
+export async function markInvoiceSent(id: number, client: PrismaClient = db) {
   const invoice = await loadInvoice(client, id);
   if (invoice.status !== "CONFIRMED" && invoice.status !== "PAID") {
     throw new DomainError("Only confirmed invoices can be sent", 409);
   }
-  await sendInvoiceEmail(invoice);
-  await client.invoice.update({ where: { id }, data: { sentAt: new Date() } });
+  return sendInvoiceEmail(invoice);
 }
 
 /**
