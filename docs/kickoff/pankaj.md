@@ -12,7 +12,7 @@
 - Real password-reset and invoice email delivery is now implemented using Resend; configuration and test-sender restrictions are in docs/EMAIL.md. Live delivery awaits the user's provider account, API key and approved sender. No credentials are committed.
 - User selected onboarding@resend.dev and configured the private API key. Live password-reset and invoice-email flows are confirmed: the reset token was consumed after the private password change; the user received the invoice email and opened its protected link. This sender reaches only the Resend account email.
 - Invoice Send records provider acceptance rather than only updating a timestamp. Development reset previews remain an explicit local-only opt-in. Delivery failures, privacy and retry behavior have automated tests with no real email sends.
-- Email verification, durable session revocation, a durable mail outbox and delivery webhooks remain separate work.
+- Application hardening is implemented: email ownership verification (live confirmed), durable account-wide logout, atomic database-backed shared rate limits, encrypted mail outbox/retries, private API responses and bounded/validated inputs. See docs/HARDENING.md. Deployment, domain setup and demo materials were explicitly excluded; the Resend test sender remains restricted to the provider account email. Delivery webhooks remain an optional provider integration.
 - Final portal audit: production HTTP checks completed for own, foreign, nonexistent and invalid invoices plus signed-out redirect. Foreign invoice data was absent and the streamed 404/not-found payload plus noindex was present. Portal payment labels use the shared helper; signup API field names and strict extra-key policy are documented.
 
 ## Dependencies

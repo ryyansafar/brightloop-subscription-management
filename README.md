@@ -21,6 +21,8 @@ Open http://localhost:3000. `npm run seed:full` loads 3,000 subscriptions and ab
 
 Password-reset links and invoice notices can be sent through Resend. Set `EMAIL_PROVIDER=resend`, `RESEND_API_KEY`, and a verified bare-address `EMAIL_FROM` in your private environment. Mail is disabled by default. See [email setup and testing](docs/EMAIL.md), including free quota and test-sender restrictions. Invoice Send records `sentAt` only after provider acceptance.
 
+For the latest security update, apply migrations and regenerate Prisma before starting the app. New public signups require email verification when `AUTH_REQUIRE_EMAIL_VERIFICATION=1` (production defaults on). Run `npm run mail:worker` alongside the app for durable delivery retries. Logout revokes all current sessions, and authentication limits persist in the shared application database. See [hardening and migration guide](docs/HARDENING.md).
+
 ## Roles
 - **Admin**: full control, adds staff, manages catalog, taxes and discounts.
 - **Staff**: day-to-day subscriptions, invoices and payments, limited access.

@@ -30,6 +30,12 @@ Frontend work was resumed by the user after the security review. Auth screens, t
 - [x] Live invoice email: authenticated Send, provider acceptance, user-confirmed inbox receipt and protected invoice link
 - [x] Verify production portal foreign/missing invoice responses and signed-out redirect
 - [x] Align portal payment labels with shared helper and document exact signup fields
+- [x] Email verification, with live ownership confirmation and guarded signup/login
+- [x] Durable account-wide session revocation and shared database rate limits
+- [x] Encrypted persistent mail retry queue and restartable worker
+- [x] Shared API cache/log/input boundaries
+- [x] Existing-data migration/backup and explicit seed-account compatibility
+- Scope excluded by user: deployment, a verified sending domain, demo materials
 
 ## Initial backend verification (historical)
 
