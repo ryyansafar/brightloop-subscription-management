@@ -27,6 +27,7 @@ export const NAV: NavSection[] = [
       { label: "Subscriptions", href: "/subscriptions", roles: TEAM },
       { label: "Invoices", href: "/invoices", roles: TEAM },
       { label: "Payments", href: "/payments", roles: TEAM },
+      { label: "Billing run", href: "/billing", roles: ADMIN },
     ],
   },
   {

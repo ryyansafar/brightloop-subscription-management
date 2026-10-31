@@ -30,7 +30,8 @@ export async function proxy(request: NextRequest) {
     login.searchParams.set("next", request.nextUrl.pathname + request.nextUrl.search);
     return NextResponse.redirect(login);
   }
-  const isAdmin = path === "/admin" || path.startsWith("/admin/");
+  // Pages only the admin may open (the matching APIs enforce the same rule themselves).
+  const isAdmin = ["/admin", "/billing"].some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
   const isPortal = path === "/portal" || path.startsWith("/portal/");
   if ((isAdmin && user.role !== "ADMIN") || (!isPortal && user.role === "CUSTOMER")) {
     return NextResponse.redirect(new URL(user.role === "CUSTOMER" ? "/portal" : "/dashboard", request.url));

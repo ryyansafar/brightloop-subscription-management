@@ -153,8 +153,11 @@ describe("page proxy", () => {
     const staff = await identity("STAFF");
     expect((await proxy(request("/admin/staff", staff.cookie))).headers.get("location")).toBe("http://localhost/dashboard");
     expect((await proxy(request("/%61dmin/staff", staff.cookie))).headers.get("location")).toBe("http://localhost/dashboard");
+    expect((await proxy(request("/billing", staff.cookie))).headers.get("location")).toBe("http://localhost/dashboard");
+    expect((await proxy(request("/billing", customer.cookie))).headers.get("location")).toBe("http://localhost/portal");
     const admin = await identity("ADMIN");
     expect((await proxy(request("/admin/staff", admin.cookie))).headers.get("x-middleware-next")).toBe("1");
+    expect((await proxy(request("/billing", admin.cookie))).headers.get("x-middleware-next")).toBe("1");
   });
 
   it("lets staff mutation handlers return their own JSON authorization errors", async () => {
