@@ -27,3 +27,19 @@ export function pageParam(params: Params): number {
   const page = Number(param(params, "page"));
   return Number.isInteger(page) && page > 0 ? page : 1;
 }
+
+export type SortDir = "asc" | "desc";
+
+/** Validated `?sort=&dir=`: `sort` must be one of `allowed`, otherwise undefined. `dir` defaults to asc. */
+export function sortParam(params: Params, allowed: readonly string[]): { sort?: string; dir: SortDir } {
+  const sort = param(params, "sort");
+  const dir: SortDir = param(params, "dir") === "desc" ? "desc" : "asc";
+  return { sort: sort !== undefined && allowed.includes(sort) ? sort : undefined, dir };
+}
+
+/** Query changes for clicking a sortable header: unsorted -> asc -> desc -> unsorted. */
+export function nextSort(current: { sort?: string; dir: SortDir }, key: string) {
+  if (current.sort !== key) return { sort: key, dir: "asc", page: undefined };
+  if (current.dir === "asc") return { sort: key, dir: "desc", page: undefined };
+  return { sort: undefined, dir: undefined, page: undefined };
+}

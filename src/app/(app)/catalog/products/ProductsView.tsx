@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Prisma } from "@prisma/client";
-import { Badge, Button, DataTable, PageHeader, humanize, type Column, type Params, useToast } from "@/components";
+import { Badge, Button, DataTable, MobileMeta, PageHeader, humanize, type Column, type Params, useToast } from "@/components";
 import { CatalogSubNav } from "../catalog-nav";
 import { apiFetch } from "../client-api";
+import { ConfirmDialog } from "../ConfirmDialog";
 import { formatPaiseToRupees } from "../helpers";
 import { ProductDialog } from "./ProductDialog";
 import { VariantManager } from "./VariantManager";
@@ -31,27 +32,45 @@ export function ProductsView({
   });
   const [variantProduct, setVariantProduct] = useState<ProductWithVariants | null>(null);
 
-  async function handleArchive(product: ProductWithVariants) {
-    if (!confirm(`Archive product "${product.name}"? Existing subscriptions will be preserved.`)) return;
-    const res = await apiFetch(`/api/products/${product.id}`, { method: "DELETE" });
+  const [pendingArchive, setPendingArchive] = useState<ProductWithVariants | null>(null);
+  const [archiving, setArchiving] = useState(false);
+
+  async function confirmArchive() {
+    if (!pendingArchive) return;
+    setArchiving(true);
+    const res = await apiFetch(`/api/products/${pendingArchive.id}`, { method: "DELETE" });
+    setArchiving(false);
     if (!res.ok) return toast.error(res.error);
-    toast.success(`Archived ${product.name}`);
+    toast.success(`Archived ${pendingArchive.name}`);
+    setPendingArchive(null);
     router.refresh();
   }
 
   const columns: Column<ProductWithVariants>[] = [
-    { key: "name", header: "Product Name" },
-    { key: "type", header: "Type", render: (p) => <Badge tone="info">{humanize(p.type)}</Badge> },
+    {
+      key: "name",
+      header: "Product name",
+      render: (p) => (
+        <>
+          {p.name}
+          <MobileMeta below="lg">
+            {humanize(p.type)} · {p.active ? "Active" : "Archived"}
+          </MobileMeta>
+        </>
+      ),
+    },
+    { key: "type", header: "Type", hideBelow: "lg", render: (p) => <Badge tone="info">{humanize(p.type)}</Badge> },
     { key: "salesPrice", header: "Sales Price", align: "right", render: (p) => formatPaiseToRupees(p.salesPrice) },
-    { key: "costPrice", header: "Cost Price", align: "right", hideOnMobile: true, render: (p) => formatPaiseToRupees(p.costPrice) },
+    { key: "costPrice", header: "Cost price", align: "right", hideBelow: "lg", render: (p) => formatPaiseToRupees(p.costPrice) },
     {
       key: "variants",
       header: "Variants",
+      hideBelow: "lg",
       render: (p) => (
         <button
           type="button"
           onClick={() => setVariantProduct(p)}
-          className="text-xs font-medium text-primary hover:underline"
+          className="inline-flex min-h-10 items-center whitespace-nowrap text-xs font-medium text-primary hover:underline md:min-h-0"
         >
           {p.variants.length > 0 ? `${p.variants.length} options` : canWrite ? "+ Add variants" : "None"}
         </button>
@@ -60,19 +79,21 @@ export function ProductsView({
     {
       key: "active",
       header: "Status",
+      hideBelow: "lg",
       render: (p) => <Badge tone={p.active ? "success" : "neutral"}>{p.active ? "Active" : "Archived"}</Badge>,
     },
     {
       key: "actions",
       header: "",
       align: "right",
+      pinRight: true,
       render: (p) => (
-        <div className="flex justify-end gap-1">
+        <div className="flex justify-end gap-1 whitespace-nowrap">
           <Button size="sm" variant="ghost" onClick={() => setProductDialog({ open: true, item: p })}>
             {canWrite ? "Edit" : "View"}
           </Button>
           {canWrite && p.active && (
-            <Button size="sm" variant="danger" onClick={() => handleArchive(p)}>
+            <Button size="sm" variant="danger" onClick={() => setPendingArchive(p)}>
               Archive
             </Button>
           )}
@@ -132,6 +153,17 @@ export function ProductsView({
         product={productDialog.item}
         canWrite={canWrite}
       />
+
+      <ConfirmDialog
+        open={pendingArchive !== null}
+        title="Archive product"
+        confirmLabel="Archive product"
+        busy={archiving}
+        onConfirm={confirmArchive}
+        onClose={() => setPendingArchive(null)}
+      >
+        Archive product &ldquo;{pendingArchive?.name}&rdquo;? Existing subscriptions are preserved.
+      </ConfirmDialog>
 
       {variantProduct && (
         <VariantManager

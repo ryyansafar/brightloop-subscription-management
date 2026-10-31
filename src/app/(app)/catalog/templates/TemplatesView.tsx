@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Prisma } from "@prisma/client";
-import { Button, DataTable, PageHeader, type Column, type Params, useToast } from "@/components";
+import { Button, DataTable, MobileMeta, PageHeader, type Column, type Params, useToast } from "@/components";
 import { CatalogSubNav } from "../catalog-nav";
 import { apiFetch } from "../client-api";
 import { ConfirmDialog } from "../ConfirmDialog";
@@ -65,16 +65,28 @@ export function TemplatesView({
   }
 
   const columns: Column<TemplateView>[] = [
-    { key: "name", header: "Template Name" },
-    { key: "plan", header: "Plan", render: (t) => t.plan.name },
-    { key: "validityDays", header: "Validity", render: (t) => `${t.validityDays} days` },
-    { key: "lines", header: "Line Items", render: (t) => `${t.lines.length} products` },
+    {
+      key: "name",
+      header: "Template name",
+      render: (t) => (
+        <>
+          {t.name}
+          <MobileMeta below="lg">
+            {t.plan.name} · {t.lines.length} products
+          </MobileMeta>
+        </>
+      ),
+    },
+    { key: "plan", header: "Plan", hideBelow: "lg", render: (t) => t.plan.name },
+    { key: "validityDays", header: "Validity", hideBelow: "lg", render: (t) => `${t.validityDays} days` },
+    { key: "lines", header: "Line items", hideBelow: "lg", render: (t) => `${t.lines.length} products` },
     {
       key: "actions",
       header: "",
       align: "right",
+      pinRight: true,
       render: (t) => (
-        <div className="flex justify-end gap-1">
+        <div className="flex justify-end gap-1 whitespace-nowrap">
           <Button size="sm" variant="ghost" onClick={() => openDialog(t)}>
             {canWrite ? "Edit" : "View"}
           </Button>

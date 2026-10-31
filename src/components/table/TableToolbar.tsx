@@ -23,7 +23,7 @@ function Chip({ href, active, label }: { href: string; active: boolean; label: s
       href={href}
       aria-current={active ? "true" : undefined}
       className={
-        "rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap " +
+        "inline-flex min-h-10 items-center rounded-full border px-3 text-xs font-medium whitespace-nowrap md:min-h-0 md:py-1 " +
         (active ? "border-primary bg-primary-soft text-primary" : "border-line text-muted hover:text-foreground")
       }
     >
@@ -66,9 +66,10 @@ export function TableToolbar({ basePath, searchParams, filters = [], search }: T
             name={searchKey}
             defaultValue={param(searchParams, searchKey) ?? ""}
             placeholder={search.placeholder ?? "Search…"}
-            className="h-9 w-full rounded-md border border-line bg-surface px-3 text-sm lg:w-64"
+            aria-label={search.placeholder ?? "Search"}
+            className="h-10 w-full rounded-md border border-line bg-surface px-3 text-sm md:h-9 lg:w-64"
           />
-          <button type="submit" className="h-9 rounded-md border border-line px-3 text-sm hover:bg-surface-2">
+          <button type="submit" className="h-10 rounded-md border border-line px-3 text-sm hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:h-9">
             Search
           </button>
         </form>

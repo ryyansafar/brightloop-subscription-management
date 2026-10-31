@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { TaxRate } from "@prisma/client";
-import { Badge, Button, DataTable, PageHeader, type Column, type Params, useToast } from "@/components";
+import { Badge, Button, DataTable, MobileMeta, PageHeader, type Column, type Params, useToast } from "@/components";
 import { CatalogSubNav } from "../catalog-nav";
 import { apiFetch } from "../client-api";
 import { formatBpsToPercent } from "../helpers";
@@ -33,20 +33,31 @@ export function TaxesView({
   }
 
   const columns: Column<TaxRate>[] = [
-    { key: "name", header: "Tax Name" },
+    {
+      key: "name",
+      header: "Tax name",
+      render: (t) => (
+        <>
+          {t.name}
+          <MobileMeta below="lg">{t.active ? "Active" : "Archived"}</MobileMeta>
+        </>
+      ),
+    },
     { key: "rateBps", header: "Rate", align: "right", render: (t) => formatBpsToPercent(t.rateBps) },
     {
       key: "active",
       header: "Status",
+      hideBelow: "lg",
       render: (t) => <Badge tone={t.active ? "success" : "neutral"}>{t.active ? "Active" : "Archived"}</Badge>,
     },
     {
       key: "actions",
       header: "",
       align: "right",
+      pinRight: true,
       render: (t) =>
         canWrite ? (
-          <div className="flex justify-end gap-1">
+          <div className="flex justify-end gap-1 whitespace-nowrap">
             <Button size="sm" variant="ghost" onClick={() => setDialog({ open: true, item: t })}>
               Edit
             </Button>

@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Plan } from "@prisma/client";
-import { Badge, Button, DataTable, PageHeader, humanize, type Column, type Params, useToast } from "@/components";
+import { Badge, Button, DataTable, MobileMeta, PageHeader, type Column, type Params, useToast } from "@/components";
 import { CatalogSubNav } from "../catalog-nav";
 import { apiFetch } from "../client-api";
+import { ConfirmDialog } from "../ConfirmDialog";
+import { billingPeriodLabel, planFlagSummary } from "../derived";
 import { formatDate, formatPaiseToRupees } from "../helpers";
 import { PlanDialog } from "./PlanDialog";
 
@@ -24,27 +26,45 @@ export function PlansView({
   const toast = useToast();
   const [dialog, setDialog] = useState<{ open: boolean; item: Plan | null }>({ open: false, item: null });
 
-  async function handleArchive(plan: Plan) {
-    if (!confirm(`Archive plan "${plan.name}"?`)) return;
-    const res = await apiFetch(`/api/plans/${plan.id}`, { method: "DELETE" });
+  const [pendingArchive, setPendingArchive] = useState<Plan | null>(null);
+  const [archiving, setArchiving] = useState(false);
+
+  async function confirmArchive() {
+    if (!pendingArchive) return;
+    setArchiving(true);
+    const res = await apiFetch(`/api/plans/${pendingArchive.id}`, { method: "DELETE" });
+    setArchiving(false);
     if (!res.ok) return toast.error(res.error);
-    toast.success(`Archived ${plan.name}`);
+    toast.success(`Archived ${pendingArchive.name}`);
+    setPendingArchive(null);
     router.refresh();
   }
 
   const columns: Column<Plan>[] = [
-    { key: "name", header: "Plan Name" },
+    {
+      key: "name",
+      header: "Plan name",
+      render: (p) => (
+        <>
+          {p.name}
+          <MobileMeta below="lg">
+            {billingPeriodLabel(p.periodCount, p.periodUnit)} · {p.active ? "Active" : "Archived"}
+          </MobileMeta>
+        </>
+      ),
+    },
     { key: "price", header: "Price", align: "right", render: (p) => formatPaiseToRupees(p.price) },
     {
       key: "period",
-      header: "Billing Period",
-      render: (p) => `Every ${p.periodCount > 1 ? `${p.periodCount} ` : ""}${humanize(p.periodUnit).toLowerCase()}`,
+      header: "Billing period",
+      hideBelow: "lg",
+      render: (p) => billingPeriodLabel(p.periodCount, p.periodUnit),
     },
-    { key: "minQuantity", header: "Min Qty", align: "right", hideOnMobile: true },
+    { key: "minQuantity", header: "Min qty", align: "right", hideBelow: "xl" },
     {
       key: "availability",
       header: "Availability",
-      hideOnMobile: true,
+      hideBelow: "xl",
       render: (p) =>
         p.availableFrom || p.availableTo
           ? `${p.availableFrom ? formatDate(p.availableFrom) : "Open"} – ${p.availableTo ? formatDate(p.availableTo) : "Open"}`
@@ -53,32 +73,34 @@ export function PlansView({
     {
       key: "flags",
       header: "Flags",
-      hideOnMobile: true,
-      render: (p) => (
-        <div className="flex flex-wrap gap-1">
-          {p.renewable && <span className="text-[10px] bg-surface-2 px-1 rounded">Renewable</span>}
-          {p.pausable && <span className="text-[10px] bg-surface-2 px-1 rounded">Pausable</span>}
-          {p.closable && <span className="text-[10px] bg-surface-2 px-1 rounded">Closable</span>}
-          {p.autoClose && <span className="text-[10px] bg-warning-soft text-warning px-1 rounded">Auto-close</span>}
-        </div>
-      ),
+      hideBelow: "xl",
+      render: (p) => {
+        const flags = planFlagSummary(p);
+        return (
+          <span title={flags.full} aria-label={flags.full} className="whitespace-nowrap text-xs text-muted">
+            {flags.text}
+          </span>
+        );
+      },
     },
     {
       key: "active",
       header: "Status",
+      hideBelow: "lg",
       render: (p) => <Badge tone={p.active ? "success" : "neutral"}>{p.active ? "Active" : "Archived"}</Badge>,
     },
     {
       key: "actions",
       header: "",
       align: "right",
+      pinRight: true,
       render: (p) => (
-        <div className="flex justify-end gap-1">
+        <div className="flex justify-end gap-1 whitespace-nowrap">
           <Button size="sm" variant="ghost" onClick={() => setDialog({ open: true, item: p })}>
             {canWrite ? "Edit" : "View"}
           </Button>
           {canWrite && p.active && (
-            <Button size="sm" variant="danger" onClick={() => handleArchive(p)}>
+            <Button size="sm" variant="danger" onClick={() => setPendingArchive(p)}>
               Archive
             </Button>
           )}
@@ -138,6 +160,16 @@ export function PlansView({
         plan={dialog.item}
         canWrite={canWrite}
       />
+      <ConfirmDialog
+        open={pendingArchive !== null}
+        title="Archive plan"
+        confirmLabel="Archive plan"
+        busy={archiving}
+        onConfirm={confirmArchive}
+        onClose={() => setPendingArchive(null)}
+      >
+        Archive plan &ldquo;{pendingArchive?.name}&rdquo;? Existing subscriptions keep running on it.
+      </ConfirmDialog>
     </>
   );
 }

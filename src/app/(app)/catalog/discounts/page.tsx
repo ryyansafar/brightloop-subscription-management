@@ -14,11 +14,13 @@ export default async function DiscountsPage({ searchParams }: { searchParams: Pr
   const params = await searchParams;
   const page = pageParam(params);
   const now = new Date();
+  const q = param(params, "q")?.trim();
   const state = param(params, "state");
   const activeParam = param(params, "active");
   const active = activeParam === "1" ? true : activeParam === "0" ? false : undefined;
 
   const where = {
+    ...(q ? { name: { contains: q } } : {}),
     ...(active !== undefined ? { active } : {}),
     ...(state === "running" ? { startsAt: { lte: now }, endsAt: { gte: now } } : {}),
     ...(state === "expired" ? { endsAt: { lt: now } } : {}),
@@ -46,6 +48,7 @@ export default async function DiscountsPage({ searchParams }: { searchParams: Pr
       total={total}
       products={products}
       searchParams={params}
+      now={now.toISOString()}
       canWrite={canWrite}
     />
   );

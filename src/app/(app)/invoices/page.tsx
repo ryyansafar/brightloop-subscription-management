@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { connection } from "next/server";
 import {
   DataTable,
+  MobileMeta,
   PageHeader,
   StatusBadge,
   formatDate,
@@ -36,19 +37,31 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
     {
       key: "period",
       header: "Period",
-      hideOnMobile: true,
+      hideBelow: "xl",
       render: (r) => formatPeriod(r.periodStart, r.periodEnd),
     },
-    { key: "dueDate", header: "Due", hideOnMobile: true, render: (r) => formatDate(r.dueDate) },
-    { key: "total", header: "Total", align: "right", render: (r) => formatINR(r.total) },
+    { key: "dueDate", header: "Due", hideBelow: "lg", render: (r) => formatDate(r.dueDate) },
+    {
+      key: "total",
+      header: "Total",
+      align: "right",
+      render: (r) => (
+        <>
+          {formatINR(r.total)}
+          <span className="mt-1 block md:hidden">
+            <StatusBadge status={displayStatus(r, today)} />
+          </span>
+        </>
+      ),
+    },
     {
       key: "balance",
       header: "Amount due",
       align: "right",
-      hideOnMobile: true,
+      hideBelow: "lg",
       render: (r) => (r.status === "CONFIRMED" ? formatINR(r.balance) : "—"),
     },
-    { key: "status", header: "Status", render: (r) => <StatusBadge status={displayStatus(r, today)} /> },
+    { key: "status", header: "Status", hideOnMobile: true, render: (r) => <StatusBadge status={displayStatus(r, today)} /> },
   ];
 
   return (

@@ -19,11 +19,11 @@ export function Pagination({ basePath, searchParams, page, pageSize, total }: Pa
 
   const arrow = (target: number, label: string, disabled: boolean) =>
     disabled ? (
-      <span aria-disabled className="rounded-md border border-line px-2.5 py-1 text-muted opacity-50">
+      <span aria-disabled className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md border border-line px-2.5 text-muted opacity-50 md:min-h-0 md:min-w-0 md:py-1">
         {label}
       </span>
     ) : (
-      <Link href={to(target)} className="rounded-md border border-line px-2.5 py-1 hover:bg-surface-2" aria-label={label === "‹" ? "Previous page" : "Next page"}>
+      <Link href={to(target)} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md border border-line px-2.5 hover:bg-surface-2 md:min-h-0 md:min-w-0 md:py-1" aria-label={label === "‹" ? "Previous page" : "Next page"}>
         {label}
       </Link>
     );

@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Prisma } from "@prisma/client";
-import { Badge, Button, DataTable, PageHeader, type Column, type Params, useToast } from "@/components";
+import { Badge, Button, DataTable, MobileMeta, PageHeader, type Column, type Params, useToast } from "@/components";
 import { CatalogSubNav } from "../catalog-nav";
 import { apiFetch } from "../client-api";
+import { ConfirmDialog } from "../ConfirmDialog";
+import { discountStatus } from "../derived";
 import { formatBpsToPercent, formatDate, formatPaiseToRupees } from "../helpers";
 import { DiscountDialog } from "./DiscountDialog";
 
@@ -21,12 +23,15 @@ export function DiscountsView({
   total,
   products,
   searchParams,
+  now,
   canWrite,
 }: {
   discounts: DiscountWithProduct[];
   total: number;
   products: ProductOption[];
   searchParams: Params;
+  /** Server time (ISO) so badges match what the billing engine will apply. */
+  now: string;
   canWrite: boolean;
 }) {
   const router = useRouter();
@@ -36,16 +41,32 @@ export function DiscountsView({
     item: null,
   });
 
-  async function handleArchive(d: DiscountWithProduct) {
-    if (!confirm(`Archive discount "${d.name}"?`)) return;
-    const res = await apiFetch(`/api/discounts/${d.id}`, { method: "DELETE" });
+  const [pendingArchive, setPendingArchive] = useState<DiscountWithProduct | null>(null);
+  const [archiving, setArchiving] = useState(false);
+  const nowDate = new Date(now);
+
+  async function confirmArchive() {
+    if (!pendingArchive) return;
+    setArchiving(true);
+    const res = await apiFetch(`/api/discounts/${pendingArchive.id}`, { method: "DELETE" });
+    setArchiving(false);
     if (!res.ok) return toast.error(res.error);
-    toast.success(`Archived ${d.name}`);
+    toast.success(`Archived ${pendingArchive.name}`);
+    setPendingArchive(null);
     router.refresh();
   }
 
   const columns: Column<DiscountWithProduct>[] = [
-    { key: "name", header: "Discount Name" },
+    {
+      key: "name",
+      header: "Discount name",
+      render: (d) => (
+        <>
+          {d.name}
+          <MobileMeta below="lg">{discountStatus(d, nowDate).label}</MobileMeta>
+        </>
+      ),
+    },
     {
       key: "value",
       header: "Benefit",
@@ -54,37 +75,43 @@ export function DiscountsView({
     {
       key: "scope",
       header: "Scope",
+      hideBelow: "lg",
       render: (d) => (d.scope === "PRODUCT" ? `Product: ${d.product?.name ?? "—"}` : "Subscription"),
     },
     {
       key: "period",
       header: "Valid Period",
-      hideOnMobile: true,
+      hideBelow: "lg",
       render: (d) => `${formatDate(d.startsAt)} – ${formatDate(d.endsAt)}`,
     },
     {
       key: "usage",
       header: "Usage",
-      hideOnMobile: true,
+      hideBelow: "xl",
       render: (d) => `${d.usedCount} / ${d.usageLimit != null ? d.usageLimit : "∞"}`,
     },
     {
       key: "active",
       header: "Status",
-      render: (d) => <Badge tone={d.active ? "success" : "neutral"}>{d.active ? "Active" : "Archived"}</Badge>,
+      hideBelow: "lg",
+      render: (d) => {
+        const status = discountStatus(d, nowDate);
+        return <Badge tone={status.tone}>{status.label}</Badge>;
+      },
     },
     {
       key: "actions",
       header: "",
       align: "right",
+      pinRight: true,
       render: (d) =>
         canWrite ? (
-          <div className="flex justify-end gap-1">
+          <div className="flex justify-end gap-1 whitespace-nowrap">
             <Button size="sm" variant="ghost" onClick={() => setDialog({ open: true, item: d })}>
               Edit
             </Button>
             {d.active && (
-              <Button size="sm" variant="danger" onClick={() => handleArchive(d)}>
+              <Button size="sm" variant="danger" onClick={() => setPendingArchive(d)}>
                 Archive
               </Button>
             )}
@@ -98,7 +125,7 @@ export function DiscountsView({
       <PageHeader
         title="Discounts"
         breadcrumbs={[{ label: "Catalog", href: "/catalog/products" }]}
-        description={`${total.toLocaleString("en-IN")} rules (Admin managed · billing engine applies)`}
+        description={`${total.toLocaleString("en-IN")} rules · managed by admins, applied automatically at billing`}
         actions={
           canWrite && (
             <Button variant="primary" onClick={() => setDialog({ open: true, item: null })}>
@@ -133,10 +160,11 @@ export function DiscountsView({
               param: "active",
               options: [
                 { label: "Active", value: "1" },
-                { label: "Archived", value: "0" },
+                { label: "Inactive", value: "0" },
               ],
             },
           ]}
+          search={{ placeholder: "Search discounts by name…" }}
           pagination={{ page: Number(searchParams.page) || 1, pageSize: 20, total }}
           emptyMessage="No discounts match these filters."
         />
@@ -147,6 +175,16 @@ export function DiscountsView({
         discount={dialog.item}
         products={products}
       />
+      <ConfirmDialog
+        open={pendingArchive !== null}
+        title="Archive discount"
+        confirmLabel="Archive discount"
+        busy={archiving}
+        onConfirm={confirmArchive}
+        onClose={() => setPendingArchive(null)}
+      >
+        Archive discount &ldquo;{pendingArchive?.name}&rdquo;? It stops applying to new invoices.
+      </ConfirmDialog>
     </>
   );
 }
