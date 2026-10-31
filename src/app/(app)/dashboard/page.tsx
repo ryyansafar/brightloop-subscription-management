@@ -19,7 +19,9 @@ function readFilters(params: Params, today: Date) {
   const from = new Date(param(params, "from") ?? ymd(defaultFrom));
   const toInput = new Date(param(params, "to") ?? ymd(today));
   const planId = Number(param(params, "plan")) || undefined;
-  const valid = !Number.isNaN(from.getTime()) && !Number.isNaN(toInput.getTime());
+  const parsed = !Number.isNaN(from.getTime()) && !Number.isNaN(toInput.getTime());
+  const reversed = parsed && toInput < from;
+  const valid = parsed && !reversed;
   return {
     from: valid ? from : defaultFrom,
     toInput: valid ? toInput : today,
@@ -27,6 +29,8 @@ function readFilters(params: Params, today: Date) {
     to: new Date((valid ? toInput : today).getTime() + 86_400_000),
     planId,
     today,
+    /** Message when the typed dates were unusable and the default range is shown instead. */
+    notice: !parsed ? "Enter valid dates. Showing the default range." : reversed ? "The end date is before the start date. Showing the default range." : undefined,
   };
 }
 
@@ -35,6 +39,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const f = readFilters(await searchParams, new Date());
   const [s, series, plans] = await Promise.all([getDashboardSummary(f), getMonthlySeries(f), getPlanOptions()]);
   const n = (v: number) => v.toLocaleString("en-IN");
+  const paymentsHref = `/payments?from=${ymd(f.from)}&to=${ymd(f.toInput)}`;
 
   return (
     <>
@@ -64,18 +69,23 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           <Button type="submit" variant="primary">
             Apply
           </Button>
+          {f.notice && (
+            <p role="alert" className="text-sm text-danger sm:basis-full">
+              {f.notice}
+            </p>
+          )}
         </form>
 
-        <section aria-label="Recurring revenue" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section aria-label="Recurring revenue" className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           <StatCard label="Active subscriptions" value={n(s.activeSubscriptions)} tone="primary" href="/subscriptions?status=ACTIVE" />
-          <StatCard label="MRR" value={formatINR(s.mrr)} hint="Monthly recurring revenue, before tax" />
-          <StatCard label="ARR" value={formatINR(s.arr)} hint="MRR × 12" />
-          <StatCard label="Churned" value={n(s.churned)} hint="Closed in this period" tone={s.churned ? "warning" : "neutral"} />
+          <StatCard label="MRR" value={formatINR(s.mrr)} hint="Monthly recurring revenue, before tax" href="/subscriptions?status=ACTIVE" />
+          <StatCard label="ARR" value={formatINR(s.arr)} hint="MRR × 12" href="/subscriptions?status=ACTIVE" />
+          <StatCard label="Churned" value={n(s.churned)} hint="Closed in this period" tone={s.churned ? "warning" : "neutral"} href="/subscriptions?status=CLOSED" />
         </section>
 
-        <section aria-label="Billing" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard label="Revenue" value={formatINR(s.revenue)} hint="Confirmed and paid invoices" />
-          <StatCard label="Payments received" value={formatINR(s.paymentsReceived)} tone="success" href="/payments" />
+        <section aria-label="Billing" className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <StatCard label="Revenue" value={formatINR(s.revenue)} hint="Confirmed and paid invoices" href="/invoices" />
+          <StatCard label="Payments received" value={formatINR(s.paymentsReceived)} tone="success" href={paymentsHref} />
           <StatCard label="Outstanding" value={formatINR(s.outstanding)} hint="Unpaid balance, today" tone="warning" href="/invoices?filter=outstanding" />
           <StatCard
             label="Overdue invoices"

@@ -24,13 +24,13 @@ export function StatCard({ label, value, hint, tone = "neutral", href }: StatCar
   const body = (
     <>
       <p className="text-sm text-muted">{label}</p>
-      <p className={`mt-1 text-2xl font-semibold tabular-nums ${ACCENTS[tone]}`}>{value}</p>
+      <p className={`mt-1 text-lg font-semibold sm:text-2xl tabular-nums ${ACCENTS[tone]}`}>{value}</p>
       {hint && <p className="mt-1 text-xs text-muted">{hint}</p>}
     </>
   );
-  const classes = "block rounded-lg border border-line bg-surface p-4";
+  const classes = "block rounded-lg border border-line bg-surface p-3 sm:p-4";
   return href ? (
-    <Link href={href} className={`${classes} hover:border-primary`}>
+    <Link href={href} className={`${classes} hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}>
       {body}
     </Link>
   ) : (
