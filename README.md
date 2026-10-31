@@ -15,7 +15,7 @@ npx prisma migrate dev
 npm run seed
 npm run dev
 ```
-Open http://localhost:3000. Demo logins (password `Demo@12345`): `admin@brightloop.test`, `staff@brightloop.test`, `customer@brightloop.test`.
+Open http://localhost:3000. `npm run seed:full` loads 3,000 subscriptions and about 15,000 invoices. Demo logins (password `Demo@12345`): `admin@brightloop.test`, `staff@brightloop.test`, `customer@brightloop.test`.
 
 ## Roles
 - **Admin**: full control, adds staff, manages catalog, taxes and discounts.
@@ -27,3 +27,10 @@ See `prisma/schema.prisma`. Money is stored as integer paise, tax and percent di
 
 ## Team workflow
 See `AGENTS.md` and `docs/kickoff/`.
+
+## Tests and demo
+```
+npm test                   # 54 tests against a real SQLite database
+npm run demo:billing       # billing-day demo on a copy of the data (-- --live to apply)
+```
+See `docs/DEMO.md` for the recording script.
