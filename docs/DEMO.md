@@ -9,6 +9,7 @@ Rules from the event: open-access link, functional flow only, 5 to 6 minutes, su
 4. Rehearse billing day without changing data: `npm run demo:billing`
 5. Browser at 100% zoom, one window, notifications off.
 6. To retake after a live run, re-run step 2.
+7. Run the app on http://localhost:3000 (npm run dev) or set APP_ORIGIN in .env to the exact origin you use; otherwise every Save/Confirm/Record payment is blocked by the origin check with a 403.
 
 Logins (password `Demo@12345`): `admin@brightloop.test`, `staff@brightloop.test`, `customer@brightloop.test`.
 
