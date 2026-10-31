@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { PageHeader, StatusBadge, formatDate, param, type Params } from "@/components";
 import { formatINR } from "@/lib/money";
 import { InvoiceDocument } from "@/app/(app)/invoices/[id]/InvoiceDocument";
+import { paymentMethodLabel } from "@/app/(app)/payments/methods";
 import { AutoPrint } from "../../AutoPrint";
 import { invoiceDisplayStatus } from "../../logic";
 import { NoAccount } from "../../NoAccount";
@@ -51,7 +52,7 @@ async function PortalInvoicePageContent({ params, searchParams }: PageProps) {
               {invoice.payments.map((p) => (
                 <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5">
                   <span>
-                    {formatDate(p.paidOn)} · {p.method.replaceAll("_", " ").toLowerCase()}
+                    {formatDate(p.paidOn)} · {paymentMethodLabel(p.method)}
                   </span>
                   <span className="font-medium tabular-nums text-success">
                     {formatINR(p.amount)}

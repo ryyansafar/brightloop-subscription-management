@@ -27,7 +27,9 @@ Frontend work was resumed by the user after the security review. Auth screens, t
 - [x] User configures Resend test account/key/sender; live transport submission accepted
 - [x] Confirm actual inbox receipt (user shared the received test email)
 - [x] Live password reset: email link, private password change and consumed token verified
-- [ ] Run live invoice email flow for the matching test customer
+- [x] Live invoice email: authenticated Send, provider acceptance, user-confirmed inbox receipt and protected invoice link
+- [x] Verify production portal foreign/missing invoice responses and signed-out redirect
+- [x] Align portal payment labels with shared helper and document exact signup fields
 
 ## Initial backend verification (historical)
 

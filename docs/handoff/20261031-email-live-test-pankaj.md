@@ -12,7 +12,7 @@
 - Last source verification remains 342 tests, lint and TypeScript passing. This task changes progress documentation only; whitespace checked before push.
 
 ## Needs action from others
-- @pankaj/user: test email receipt and live password reset are confirmed. Live invoice-email testing remains pending for an invoice whose customer has the authorized test recipient. Do not send seeded .test addresses through this sender.
+- @pankaj/user: test email, password reset and invoice-email flows are confirmed. The user received the zero-value test invoice and opened its protected link. Details are in the invoice/portal verification handoff. Do not send seeded .test addresses through this sender.
 - @ryyan @fathima: Resend test transport is now configured and provider acceptance was verified. Arbitrary recipient delivery still requires a verified domain; no credentials are committed.
 
 ## Breaking / contract changes

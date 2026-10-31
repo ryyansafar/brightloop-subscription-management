@@ -32,11 +32,21 @@ Auth bodies require Content-Type application/json and are limited to 16 KiB of a
 | POST | `/api/auth/login` | `{ email, password }` → public user and session cookie |
 | POST | `/api/auth/logout` | No body needed; clears cookie |
 | GET | `/api/auth/me` | Session required → `{ id, email, role }` |
-| POST | `/api/auth/forgot-password` | `{ email }` → generic message; explicitly enabled local development also returns `devResetUrl` for existing accounts; otherwise 503 until a real mailer exists |
+| POST | `/api/auth/forgot-password` | `{ email }` → generic message; configured Resend sends privately; explicitly enabled local development can return `devResetUrl`; unavailable configuration returns 503 |
 | POST | `/api/auth/reset-password` | `{ token, password }` → confirmation, clears cookie; login required afterwards |
 | POST | `/admin/staff/accounts` | ADMIN session required; `{ name, email, password }` → STAFF user; keeps the admin's session |
 
 Routes under `(auth)` use the `/api/auth/*` URL namespace so future `/login`, `/signup`, `/forgot-password`, and `/reset-password` pages can be added without route/page collisions. `/admin/staff/accounts` similarly leaves `/admin/staff` free for the staff screen.
+
+### Signup request example
+
+POST `/api/auth/signup` with `Content-Type: application/json` and these exact field names:
+
+```json
+{"name":"Example Customer","email":"customer@example.com","password":"ExamplePassword@123"}
+```
+
+`name` is the full name, not `fullName`; `password` is not `newPassword`. The API accepts only `name`, `email` and `password`: omit confirmation fields, role, customerId and other extra keys. Password confirmation belongs to the browser form. A successful signup returns HTTP 201 with `{ ok: true, data: { id, email, name, role } }` and sets the session cookie; role is always CUSTOMER. Duplicate email returns 409. Validation errors return 400; unknown field names are deliberately not echoed, so an extra-key-only failure may say `Invalid request`. Browser requests must use the configured APP_ORIGIN.
 
 Password rules: at least nine characters, uppercase and lowercase letters, a non-whitespace special character, no null characters, and at most 72 UTF-8 bytes (bcrypt's limit). Emails are trimmed and lowercased. Signup creates User and Customer in one nested database write; unique email conflicts return 409. Passwords use bcrypt cost 12, executed in worker threads rather than on the HTTP event loop. At most two password workers may run per Node process, with no waiting queue and a ten-second timeout; overload returns 503. Workers use the existing installed bcryptjs dependency, so standalone/minimal deployments must include it and permit Node worker_threads. The current supported runtime is Next's Node server, not an Edge isolate.
 

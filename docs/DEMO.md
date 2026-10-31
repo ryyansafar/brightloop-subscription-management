@@ -14,10 +14,11 @@ Rules from the event: open-access link, functional flow only, 5 to 6 minutes, su
 Logins (password `Demo@12345`): `admin@brightloop.test`, `staff@brightloop.test`, `customer@brightloop.test`.
 
 ## Recording-day checklist (from the independent audit)
-- **Production build, not dev mode:** `npm run build && npm start` (dev mode prints red overlay errors on some routes and a dev-tools badge overlaps Sign out). Run it on http://localhost:3000.
-- **Email:** real delivery needs a Resend key (`docs/EMAIL.md`). Until `EMAIL_PROVIDER=resend` is configured, **Send invoice** and **Forgot password** show an error. Either configure it before recording, or skip those two steps in the video.
+- **Production build:** `npm run build && npm start` behind an HTTPS endpoint, with APP_ORIGIN set to that exact HTTPS origin. Authentication deliberately rejects HTTP APP_ORIGIN in production; do not record a production localhost HTTP login flow with the development .env. For local HTTP testing, use the loopback-bound development server with its matching APP_ORIGIN instead.
+- **Email:** Resend test transport, live password reset and live invoice delivery/link opening have been verified. Configure your own private key (`docs/EMAIL.md`). The onboarding@resend.dev sender reaches only your Resend account email, so use a matching Brightloop user/customer for those demo steps, never a seeded .test address. Other recipients require a verified sender domain.
 - **Create invoice** only bills a period whose date has arrived; a second click is refused. To show a later billing day use Sidebar > Billing run with a future date.
 - Reseed first: `npm run seed:full` (resets all data, including any test records).
+- After a reseed, recreate the matching email demo account and invoice before recording those flows; the reset removes the earlier live-mail test account/fixture too.
 
 ## Flow and talk track
 | Time | Show | Say |

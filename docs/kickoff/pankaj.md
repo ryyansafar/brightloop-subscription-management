@@ -10,9 +10,10 @@
 ## Current integration update — 31 October 2026
 - Core deliverables above are implemented, integrated and pushed. Shared Sign out and System/Light/Dark controls are available.
 - Real password-reset and invoice email delivery is now implemented using Resend; configuration and test-sender restrictions are in docs/EMAIL.md. Live delivery awaits the user's provider account, API key and approved sender. No credentials are committed.
-- User selected onboarding@resend.dev and configured the private API key. Live test email receipt and the full password-reset flow are confirmed; the reset token was consumed after the user's private password change. This sender reaches only the Resend account email. Live invoice-email testing remains pending for the matching customer.
+- User selected onboarding@resend.dev and configured the private API key. Live password-reset and invoice-email flows are confirmed: the reset token was consumed after the private password change; the user received the invoice email and opened its protected link. This sender reaches only the Resend account email.
 - Invoice Send records provider acceptance rather than only updating a timestamp. Development reset previews remain an explicit local-only opt-in. Delivery failures, privacy and retry behavior have automated tests with no real email sends.
 - Email verification, durable session revocation, a durable mail outbox and delivery webhooks remain separate work.
+- Final portal audit: production HTTP checks completed for own, foreign, nonexistent and invalid invoices plus signed-out redirect. Foreign invoice data was absent and the streamed 404/not-found payload plus noindex was present. Portal payment labels use the shared helper; signup API field names and strict extra-key policy are documented.
 
 ## Dependencies
 - Needs the schema from Ryyan (about 30 minutes in). Start with auth screens and validation while waiting.
