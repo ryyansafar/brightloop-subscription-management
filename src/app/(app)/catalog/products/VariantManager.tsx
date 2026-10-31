@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Prisma } from "@prisma/client";
 import { Button, Dialog, FormField, Input, useToast } from "@/components";
@@ -28,9 +28,12 @@ export function VariantManager({
   const [editPrice, setEditPrice] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  // Follow fresh server data after router.refresh() (compare during render, no effect).
+  const [seenVariants, setSeenVariants] = useState(product.variants);
+  if (seenVariants !== product.variants) {
+    setSeenVariants(product.variants);
     setVariants(product.variants);
-  }, [product.variants]);
+  }
 
   async function handleAddVariant(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -52,7 +55,7 @@ export function VariantManager({
 
     setAdding(true);
     setError(null);
-    const res = await apiFetch<any>(`/api/products/${product.id}/variants`, {
+    const res = await apiFetch<(typeof product.variants)[number]>(`/api/products/${product.id}/variants`, {
       method: "POST",
       body: { attribute, value, extraPrice },
     });
@@ -74,7 +77,7 @@ export function VariantManager({
       toast.error("Enter a valid extra price");
       return;
     }
-    const res = await apiFetch<any>(`/api/products/${product.id}/variants/${variantId}`, {
+    const res = await apiFetch<(typeof product.variants)[number]>(`/api/products/${product.id}/variants/${variantId}`, {
       method: "PATCH",
       body: { extraPrice },
     });

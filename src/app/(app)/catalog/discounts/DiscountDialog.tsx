@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Prisma } from "@prisma/client";
 import { Button, Dialog, FormField, Input, Select, useToast } from "@/components";
@@ -37,13 +37,16 @@ export function DiscountDialog({
   const [kind, setKind] = useState<"FIXED" | "PERCENT">(discount?.kind === "PERCENT" ? "PERCENT" : "FIXED");
   const [scope, setScope] = useState<"SUBSCRIPTION" | "PRODUCT">(discount?.scope === "PRODUCT" ? "PRODUCT" : "SUBSCRIPTION");
 
-  useEffect(() => {
+  // Reset the form whenever the dialog opens or its subject changes (compare during render, no effect).
+  const [seen, setSeen] = useState({ open, discount });
+  if (seen.open !== open || seen.discount !== discount) {
+    setSeen({ open, discount });
     if (open) {
       setKind(discount?.kind === "PERCENT" ? "PERCENT" : "FIXED");
       setScope(discount?.scope === "PRODUCT" ? "PRODUCT" : "SUBSCRIPTION");
       setErrors({});
     }
-  }, [open, discount]);
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();

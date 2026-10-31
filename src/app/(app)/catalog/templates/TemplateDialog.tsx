@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Prisma } from "@prisma/client";
 import { Button, Dialog, FormField, Input, Select, useToast } from "@/components";
@@ -46,12 +46,15 @@ export function TemplateDialog({
 
   const [lines, setLines] = useState<TemplateLineDraft[]>(() => initialTemplateLines(template, products));
 
-  useEffect(() => {
+  // Reset the form whenever the dialog opens or its subject changes (compare during render, no effect).
+  const [seen, setSeen] = useState({ open, template, products });
+  if (seen.open !== open || seen.template !== template || seen.products !== products) {
+    setSeen({ open, template, products });
     if (open) {
       setLines(initialTemplateLines(template, products));
       setErrors({});
     }
-  }, [open, template, products]);
+  }
 
   function addLine() {
     if (products.length === 0) return;
