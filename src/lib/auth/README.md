@@ -1,6 +1,6 @@
 # Authentication backend contract
 
-The frontend is deliberately deferred. No layouts, screens, shared components, or styles were changed.
+Frontend integration is now implemented: /login, /signup, /forgot-password, /reset-password, /admin/staff, /subscriptions (including new/detail), and the customer portal with subscription/invoice details. These screens reuse the shared application shell, semantic design tokens, controls, tables and invoice document. Shared components and global styles were not changed.
 
 ## Local configuration
 
@@ -43,9 +43,11 @@ Reset links expire after 30 minutes; only SHA-256 token hashes are persisted. Is
 
 Existing subscription/invoice/payment/billing APIs now resolve real session cookies through `src/lib/api-auth.ts`. Header identities (`x-dev-role`, `x-dev-user-id`) require NODE_ENV=test, VITEST=true, and AUTH_DEV_BYPASS=1 together. A test-labelled process without the Vitest marker ignores them, as do development and production servers. Tests for real sessions explicitly disable the bypass.
 
-`requireRole(request, roles)` is available for new route handlers. Existing APIs already enforce roles through `handle()`. Pages are protected by default; the public pages are exactly /, /login, /signup, /forgot-password, and /reset-password (including their trailing-slash forms). APIs and explicit public/framework assets have separate matcher exclusions. New pages, including paths with file extensions, are protected without extending a prefix list. The proxy redirects unsigned protected page requests to `/login?next=<internal path>`, sends customers to `/portal` when they try staff pages, and restricts admin pages to ADMIN. Route handlers must always authorize independently of the proxy. Server components and future server actions must do the same.
+`requireRole(request, roles)` is available for new route handlers. Existing APIs already enforce roles through `handle()`. Pages are protected by default; public pages are /login, /signup, /forgot-password, and /reset-password (including their trailing-slash forms). The root / routes unsigned users to /login and signed-in users to their role's workspace, with private/no-store headers. APIs and explicit public/framework assets have separate matcher exclusions. New pages, including paths with file extensions, are protected without extending a prefix list. The proxy redirects unsigned protected page requests to `/login?next=<internal path>`, sends customers to `/portal` when they try staff pages, and restricts admin pages to ADMIN. Route handlers must always authorize independently of the proxy. Server components and future server actions must do the same.
 
-The future portal should call these existing APIs with browser cookies:
+`getCurrentUser()` provides a request-scoped server-page identity with the user's name. `requirePageRole(roles)` independently protects each server-rendered data read. Reads sit behind explicit Suspense boundaries for Next's cache-components/partial-prefetch behavior; no session or customer data is cached across requests. `loginDestination()` validates internal return paths and keeps customers/staff within their allowed areas. Client and server password validation share the same schema, using TextEncoder so byte limits also work in browsers.
+
+The portal uses these existing APIs with browser cookies for mutations and independently scoped server queries for page reads:
 
 - `GET /api/subscriptions` and `GET /api/subscriptions/{id}`
 - `GET /api/invoices` and `GET /api/invoices/{id}`
