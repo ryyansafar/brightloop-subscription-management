@@ -158,7 +158,7 @@ export function AddStaffDialog() {
           <FormField
             label="Role"
             required
-            hint="Staff can manage subscriptions, invoices, payments and the catalog. Only admins manage discounts, taxes and staff accounts. New accounts are always Staff; promoting someone to admin is not available here."
+            hint="Staff can manage subscriptions, invoices and payments, and can view the catalog. Only admins change the catalog, discounts, taxes and staff accounts. New accounts are always Staff; promoting someone to admin is not available here."
           >
             {(f) => <Input {...f} readOnly value="Staff" aria-readonly />}
           </FormField>
