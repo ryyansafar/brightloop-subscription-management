@@ -8,12 +8,12 @@
 5. Quotation templates: plan + product lines + validity in days.
 
 ## Dependencies
-- Schema from Ryyan (about 30 minutes in). Until then, write zod validators and the discount-rule function against a plain TypeScript type.
+- Schema from Ryyan (about 30 minutes in). Until then, write the zod validators against plain TypeScript types.
 - Use Fathima's list/form components; request missing ones via a handoff note.
 
 ## Acceptance
 - Negative prices, end before start, percent over 100, and usage limit below 0 are rejected with clear messages.
-- Only ADMIN can create discounts and taxes (use Pankaj's `requireRole()`).
+- Only ADMIN can create discounts and taxes (wrap routes in `handle(["ADMIN"], ...)` from `src/lib/api.ts`; it enforces roles and returns `{ ok, data }` / `{ ok: false, error }`).
 
 ## First prompt
 "Read AGENTS.md and docs/kickoff/roshan.md. I own the paths listed for roshan. Start with the zod validators (with unit tests) for products, plans, taxes and discounts, then the CRUD routes once prisma/schema.prisma is on main."
