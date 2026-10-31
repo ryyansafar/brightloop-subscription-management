@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation";
-
-// /signup is a public path in the proxy; the form lives on the Create account tab.
-export default function SignupPage() {
-  redirect("/login?tab=signup");
+import type { Metadata } from "next";
+import { AuthScreen } from "../_components/AuthScreen";
+export const metadata: Metadata = { title: "Create account" };
+export default function SignupPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  return <AuthScreen mode="signup" searchParams={searchParams} />;
 }

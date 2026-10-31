@@ -119,11 +119,19 @@ describe("page proxy", () => {
     },
   );
 
-  it.each(["/", "/login", "/signup", "/forgot-password", "/reset-password", "/login/"])(
+  it.each(["/login", "/signup", "/forgot-password", "/reset-password", "/login/"])(
     "keeps explicit public pages accessible: %s", async (path) => {
       expect((await proxy(new NextRequest(`http://localhost${path}`))).headers.get("x-middleware-next")).toBe("1");
     },
   );
+
+  it("opens the application at the correct signed-in or signed-out destination", async () => {
+    expect((await proxy(new NextRequest("http://localhost/"))).headers.get("location")).toBe("http://localhost/login");
+    const customer = await identity();
+    expect((await proxy(new NextRequest("http://localhost/", { headers: { cookie: customer.cookie } }))).headers.get("location")).toBe("http://localhost/portal");
+    const staff = await identity("STAFF");
+    expect((await proxy(new NextRequest("http://localhost/", { headers: { cookie: staff.cookie } }))).headers.get("location")).toBe("http://localhost/dashboard");
+  });
 
   it("does not leak reset tokens through referrers", async () => {
     const response = await proxy(new NextRequest("http://localhost/reset-password?token=secret"));

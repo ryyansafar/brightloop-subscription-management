@@ -1,18 +1,6 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import { ResetPasswordForm } from "../_components/ResetPasswordForm";
-
+import { AuthScreen } from "../_components/AuthScreen";
 export const metadata: Metadata = { title: "Choose a new password", referrer: "no-referrer" };
-
-async function ResetContent({ searchParams }: { searchParams: Promise<{ token?: string | string[] }> }) {
-  const { token } = await searchParams;
-  return <ResetPasswordForm token={Array.isArray(token) ? (token[0] ?? null) : (token ?? null)} />;
-}
-
-export default function ResetPasswordPage({ searchParams }: { searchParams: Promise<{ token?: string | string[] }> }) {
-  return (
-    <Suspense fallback={<div className="h-80 animate-pulse rounded-lg border border-line bg-surface" aria-busy />}>
-      <ResetContent searchParams={searchParams} />
-    </Suspense>
-  );
+export default function ResetPasswordPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  return <AuthScreen mode="reset" searchParams={searchParams} />;
 }

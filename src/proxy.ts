@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
 
-const publicPages = new Set(["/", "/login", "/signup", "/forgot-password", "/reset-password"]);
+const publicPages = new Set(["/login", "/signup", "/forgot-password", "/reset-password"]);
 
 export async function proxy(request: NextRequest) {
   let path: string;
@@ -10,6 +10,12 @@ export async function proxy(request: NextRequest) {
     if (path.includes("\\")) throw new Error("Ambiguous path");
   } catch {
     return new NextResponse(null, { status: 400 });
+  }
+  if (path === "/") {
+    const user = await getSessionUser(request);
+    const response = NextResponse.redirect(new URL(user ? user.role === "CUSTOMER" ? "/portal" : "/dashboard" : "/login", request.url));
+    response.headers.set("Cache-Control", "private, no-store");
+    return response;
   }
   if (publicPages.has(path)) {
     const response = NextResponse.next();
