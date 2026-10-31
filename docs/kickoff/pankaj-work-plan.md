@@ -26,7 +26,8 @@ Frontend work was resumed by the user after the security review. Auth screens, t
 - [x] Resend transport, password-reset email and invoice email integration (see docs/EMAIL.md)
 - [x] User configures Resend test account/key/sender; live transport submission accepted
 - [x] Confirm actual inbox receipt (user shared the received test email)
-- [ ] Run live reset/invoice flows for the matching test account
+- [x] Live password reset: email link, private password change and consumed token verified
+- [ ] Run live invoice email flow for the matching test customer
 
 ## Initial backend verification (historical)
 
