@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "./db";
 import { addPeriod } from "./dates";
 import { DomainError } from "./errors";
+import { bestEffort, sendSubscriptionActivatedEmail } from "./notification-mail";
 import { canMoveSubscription, type PeriodUnit, type SubscriptionStatus } from "./state";
 
 const lineSchema = z.object({
@@ -131,7 +132,10 @@ export async function transitionSubscription(
   { closeReason, today = new Date() }: TransitionOptions = {},
   client: Client = db,
 ): Promise<void> {
-  const sub = await client.subscription.findUnique({ where: { id }, include: { plan: true } });
+  const sub = await client.subscription.findUnique({
+    where: { id },
+    include: { plan: true, customer: true, lines: true },
+  });
   if (!sub) throw new DomainError("Subscription not found", 404);
 
   const from = sub.status as SubscriptionStatus;
@@ -160,6 +164,20 @@ export async function transitionSubscription(
     data.nextInvoiceDate = null;
   }
   await client.subscription.update({ where: { id }, data });
+
+  // Only a first activation is announced, not a resume from pause. Runs after the update has committed.
+  if (to === "ACTIVE" && from === "CONFIRMED") {
+    await bestEffort("Subscription activated", () =>
+      sendSubscriptionActivatedEmail({
+        subscription: { id: sub.id, number: sub.number },
+        planName: sub.plan.name,
+        customer: sub.customer,
+        recurringAmount: sub.lines.reduce((sum, l) => sum + l.quantity * l.unitPrice, 0),
+        nextInvoiceDate: sub.startDate,
+        activatedAt: today,
+      }),
+    );
+  }
 }
 
 /** Extend an active subscription by one plan period. */

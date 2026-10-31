@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "./db";
 import { DomainError } from "./errors";
 import { outstanding } from "./invoices";
+import { bestEffort, sendPaymentReceivedEmail } from "./notification-mail";
 import { PAYMENT_METHODS } from "./state";
 
 export const recordPaymentSchema = z.object({
@@ -22,10 +23,10 @@ export async function recordPayment(
 ): Promise<{ paymentId: number; invoiceStatus: string; outstanding: number }> {
   const data = recordPaymentSchema.parse(input);
 
-  return client.$transaction(async (tx) => {
+  const recorded = await client.$transaction(async (tx) => {
     const invoice = await tx.invoice.findUnique({
       where: { id: data.invoiceId },
-      include: { payments: true },
+      include: { payments: true, customer: true },
     });
     if (!invoice) throw new DomainError("Invoice not found", 404);
     if (invoice.status !== "CONFIRMED") {
@@ -50,9 +51,20 @@ export async function recordPayment(
       await tx.invoice.update({ where: { id: invoice.id }, data: { status: "PAID" } });
     }
     return {
-      paymentId: payment.id,
-      invoiceStatus: remaining === 0 ? "PAID" : "CONFIRMED",
-      outstanding: remaining,
+      result: {
+        paymentId: payment.id,
+        invoiceStatus: remaining === 0 ? "PAID" : "CONFIRMED",
+        outstanding: remaining,
+      },
+      notice: {
+        invoice: { id: invoice.id, number: invoice.number, customer: invoice.customer },
+        payment: { id: payment.id, amount: payment.amount },
+        outstanding: remaining,
+      },
     };
   });
+
+  // After commit: a mail failure must never undo or fail the payment.
+  await bestEffort("Payment received", () => sendPaymentReceivedEmail(recorded.notice));
+  return recorded.result;
 }
