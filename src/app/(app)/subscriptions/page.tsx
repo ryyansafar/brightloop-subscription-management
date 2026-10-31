@@ -43,7 +43,7 @@ async function SubscriptionsPageContent({ searchParams }: { searchParams: Promis
           <StatCard
             label="Monthly recurring revenue"
             value={formatINR(stats.mrr)}
-            hint="Normalised to a month, tax included"
+            hint="Normalised to a month, before tax"
             href="/subscriptions?status=active"
           />
           <StatCard

@@ -121,7 +121,7 @@ export async function subscriptionStats(today: Date) {
     }),
     db.$queryRaw<{ periodUnit: string; periodCount: number; amount: number | bigint }[]>`
       SELECT p.periodUnit AS periodUnit, p.periodCount AS periodCount,
-             SUM(l.quantity * l.unitPrice + ROUND(l.quantity * l.unitPrice * l.taxBps / 10000.0)) AS amount
+             SUM(l.quantity * l.unitPrice) AS amount
       FROM Subscription s
       JOIN Plan p ON p.id = s.planId
       JOIN SubscriptionLine l ON l.subscriptionId = s.id
