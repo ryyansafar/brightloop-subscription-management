@@ -1,4 +1,6 @@
-@import "tailwindcss";
+/* Scan application sources only. Watching the repository also watches SQLite
+ * journals and worker/test output, which can trigger a continuous HMR loop. */
+@import "tailwindcss" source("../");
 
 /*
  * Design tokens (owner: fathima). Components only use these names

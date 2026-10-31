@@ -16,6 +16,7 @@
 - Final portal audit: production HTTP checks completed for own, foreign, nonexistent and invalid invoices plus signed-out redirect. Foreign invoice data was absent and the streamed 404/not-found payload plus noindex was present. Portal payment labels use the shared helper; signup API field names and strict extra-key policy are documented.
 
 ## Dependencies
+- Local development refresh-loop fix: Tailwind scans and registers loader dependency contexts under `src/` only. SQLite writes from authentication, tests and the mail worker must not act as CSS source updates. Keep the explicit source/base settings when changing the build configuration.
 - Needs the schema from Ryyan (about 30 minutes in). Start with auth screens and validation while waiting.
 - Use Fathima's components in `src/components/**`; request missing ones via a handoff note.
 

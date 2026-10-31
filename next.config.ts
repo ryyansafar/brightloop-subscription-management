@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "node:path";
 
 const nextConfig: NextConfig = {
   devIndicators: false, // hides the dev badge so demo recordings stay clean
@@ -9,9 +10,11 @@ const nextConfig: NextConfig = {
     incomingRequests: { ignore: [/\/(?:verify-email|reset-password)(?:[/?]|$)/] },
   },
   turbopack: {
+    root: process.cwd(),
     rules: {
       "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
+        // Keep loader dependency contexts out of mutable databases and build output.
+        loaders: [{ loader: "@tailwindcss/turbopack", options: { base: path.join(process.cwd(), "src") } }],
         as: "*.css",
       },
     },
