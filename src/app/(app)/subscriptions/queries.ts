@@ -1,3 +1,4 @@
+import { requirePageRole } from "@/lib/auth/current-user";
 // Reads for the subscription list. Aggregates run in SQL so 3,000 subscriptions stay fast and nothing is N+1.
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
@@ -79,6 +80,7 @@ function orderFor(sort: SortKey | undefined, dir: SortDir): Prisma.SubscriptionO
 }
 
 export async function listSubscriptions(opts: ListOptions) {
+  await requirePageRole(["ADMIN", "STAFF"]);
   const where = whereFor(opts);
   const dir = opts.dir ?? "desc";
   const skip = (opts.page - 1) * PAGE_SIZE;
@@ -111,6 +113,7 @@ export async function listSubscriptions(opts: ListOptions) {
 export type SubscriptionRow = Awaited<ReturnType<typeof listSubscriptions>>["rows"][number];
 
 export async function subscriptionStats(today: Date) {
+  await requirePageRole(["ADMIN", "STAFF"]);
   const [active, dueSoon, groups] = await Promise.all([
     db.subscription.count({ where: { status: "ACTIVE" } }),
     db.subscription.count({

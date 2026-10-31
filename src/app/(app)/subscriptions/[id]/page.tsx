@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { requirePageRole } from "@/lib/auth/current-user";
 // Subscription form view: status bar with the valid actions, details, lines and generated invoices.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -12,8 +14,9 @@ export const metadata: Metadata = { title: "Subscription" };
 
 const STEPS = ["DRAFT", "QUOTATION", "CONFIRMED", "ACTIVE", "CLOSED"] as const;
 
-export default async function SubscriptionPage({ params }: { params: Promise<{ id: string }> }) {
+async function SubscriptionPageContent({ params }: { params: Promise<{ id: string }> }) {
   await connection();
+  await requirePageRole(["ADMIN", "STAFF"]);
   const id = Number((await params).id);
   const data = Number.isInteger(id) && id > 0 ? await getSubscription(id) : null;
   if (!data) notFound();
@@ -52,4 +55,8 @@ export default async function SubscriptionPage({ params }: { params: Promise<{ i
       </div>
     </>
   );
+}
+
+export default function SubscriptionPage(props: { params: Promise<{ id: string }> }) {
+  return <Suspense fallback={<div role="status" className="p-6 text-muted">Loading…</div>}><SubscriptionPageContent {...props} /></Suspense>;
 }

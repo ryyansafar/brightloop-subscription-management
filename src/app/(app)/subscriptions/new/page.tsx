@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { requirePageRole } from "@/lib/auth/current-user";
 // Create a subscription: loads the catalog once, the form runs in the browser.
 import type { Metadata } from "next";
 import { connection } from "next/server";
@@ -7,8 +9,9 @@ import { NewSubscriptionForm } from "./NewSubscriptionForm";
 
 export const metadata: Metadata = { title: "New subscription" };
 
-export default async function NewSubscriptionPage() {
+async function NewSubscriptionPageContent() {
   await connection();
+  await requirePageRole(["ADMIN", "STAFF"]);
   const [plans, products, taxes, templates] = await Promise.all([
     db.plan.findMany({ where: { active: true }, orderBy: { id: "asc" } }),
     db.product.findMany({
@@ -54,4 +57,8 @@ export default async function NewSubscriptionPage() {
       />
     </>
   );
+}
+
+export default function NewSubscriptionPage() {
+  return <Suspense fallback={<div role="status" className="p-6 text-muted">Loading…</div>}><NewSubscriptionPageContent /></Suspense>;
 }

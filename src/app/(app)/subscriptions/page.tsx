@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { requirePageRole } from "@/lib/auth/current-user";
 // Subscriptions list: stat cards, status chips, search, sorting and paging, all driven by the URL.
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -9,8 +11,9 @@ import { DUE_DAYS, listSubscriptions, parseSort, parseStatus, subscriptionStats 
 
 export const metadata: Metadata = { title: "Subscriptions" };
 
-export default async function SubscriptionsPage({ searchParams }: { searchParams: Promise<Params> }) {
+async function SubscriptionsPageContent({ searchParams }: { searchParams: Promise<Params> }) {
   await connection();
+  await requirePageRole(["ADMIN", "STAFF"]);
   const params = await searchParams;
   const today = new Date();
   const page = pageParam(params);
@@ -65,4 +68,8 @@ export default async function SubscriptionsPage({ searchParams }: { searchParams
       </div>
     </>
   );
+}
+
+export default function SubscriptionsPage(props: { searchParams: Promise<Params> }) {
+  return <Suspense fallback={<div role="status" className="p-6 text-muted">Loading…</div>}><SubscriptionsPageContent {...props} /></Suspense>;
 }

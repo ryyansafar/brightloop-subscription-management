@@ -1,3 +1,4 @@
+import { requirePageRole } from "@/lib/auth/current-user";
 // Reads for the subscription form view. Totals use the same pricing engine and discount rules billing uses.
 import { db } from "@/lib/db";
 import { addPeriod } from "@/lib/dates";
@@ -7,6 +8,7 @@ import { lineDescription } from "./labels";
 import { orderTotals } from "./logic";
 
 export async function getSubscription(id: number) {
+  await requirePageRole(["ADMIN", "STAFF"]);
   const sub = await db.subscription.findUnique({
     where: { id },
     include: {
