@@ -10,7 +10,7 @@ Next.js (App Router), TypeScript, Prisma, SQLite, Tailwind, zod.
 ## Run
 ```
 npm install
-cp .env.example .env
+npm run setup:env
 npx prisma migrate dev
 npm run seed
 npm run dev

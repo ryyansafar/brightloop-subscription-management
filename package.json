@@ -14,7 +14,8 @@
     "handoff": "./scripts/handoff.sh",
     "test": "vitest run",
     "seed:full": "SEED_SIZE=3000 tsx prisma/seed.ts",
-    "demo:billing": "tsx scripts/demo-billing.ts"
+    "demo:billing": "tsx scripts/demo-billing.ts",
+    "setup:env": "node scripts/setup-env.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

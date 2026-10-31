@@ -9,11 +9,10 @@ export interface SessionUser {
 /**
  * The single seam between the API routes and authentication.
  *
- * pankaj: replace the body with the real session lookup (cookie -> user). Keep the
- * signature; every route in src/app/api already calls this through `handle()`.
- *
- * Until then, set AUTH_DEV_BYPASS=1 in .env and send `x-dev-user-id` and
- * `x-dev-role` headers to call the API locally. Never enable it for the demo.
+ * Resolves the signed session cookie to a user (see src/lib/auth/README.md) and
+ * checks the request origin on mutations. Header identities (`x-dev-role`,
+ * `x-dev-user-id`) are honoured only under NODE_ENV=test with AUTH_DEV_BYPASS=1,
+ * so a running server always ignores them.
  */
 export async function resolveUser(request: Request): Promise<SessionUser | null> {
   const { assertSameOrigin } = await import("./auth/security");
