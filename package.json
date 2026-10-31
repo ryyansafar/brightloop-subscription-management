@@ -13,7 +13,8 @@
     "sync": "./scripts/sync.sh",
     "handoff": "./scripts/handoff.sh",
     "test": "vitest run",
-    "seed:full": "SEED_SIZE=3000 tsx prisma/seed.ts"
+    "seed:full": "SEED_SIZE=3000 tsx prisma/seed.ts",
+    "demo:billing": "tsx scripts/demo-billing.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
