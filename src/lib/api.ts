@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { unstable_rethrow } from "next/navigation";
 import { ZodError } from "zod";
 import { resolveUser, type SessionUser } from "./api-auth";
 import { DomainError } from "./errors";
@@ -34,6 +35,8 @@ export function handle<P extends Record<string, string> = Record<string, never>>
       const params = context ? await context.params : ({} as P);
       return await fn({ request, user, params });
     } catch (error) {
+      // Next uses thrown signals to defer request-dependent routes during prerendering.
+      unstable_rethrow(error);
       if (error instanceof ZodError) {
         const message = error.issues
           .map((issue) => `${issue.path.join(".") || "input"}: ${issue.message}`)
