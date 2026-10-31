@@ -1,49 +1,161 @@
+// Customer-scoped reads. Every function takes the customer id resolved from the session (never from the
+// URL) and puts it in the WHERE clause, so a guessed id from another customer simply finds nothing.
 import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
-import { requirePageRole } from "@/lib/auth/current-user";
-import { SUBSCRIPTION_STATUSES, INVOICE_STATUSES } from "@/lib/state";
+import { outstanding } from "@/lib/invoices";
+import { summariseOverdue, type PortalFilter } from "./logic";
 
-export const PAGE_SIZE = 12;
-const safePage = (page: number) => Number.isSafeInteger(page) ? Math.min(10_000, Math.max(1, page)) : 1;
+export const PORTAL_PAGE_SIZE = 10;
+export const RECENT_INVOICES = 5;
 
-export async function portalOverview({ status, q, page = 1 }: { status?: string; q?: string; page?: number }) {
-  const user = await requirePageRole(["CUSTOMER"]);
-  const own = { customer: { userId: user.id } };
-  const where: Prisma.SubscriptionWhereInput = { ...own,
-    ...((SUBSCRIPTION_STATUSES as readonly string[]).includes(status || "") ? { status } : {}),
-    ...(q?.trim() ? { OR: [{ number: { contains: q.trim().slice(0, 100) } }, { plan: { name: { contains: q.trim().slice(0, 100) } } }] } : {}),
-  };
-  const [rows, total, active, billed, paid, next] = await Promise.all([
-    db.subscription.findMany({ where, include: { plan: true, lines: { select: { quantity: true, unitPrice: true } } }, orderBy: { id: "desc" }, take: PAGE_SIZE, skip: (safePage(page) - 1) * PAGE_SIZE }),
-    db.subscription.count({ where }),
-    db.subscription.count({ where: { ...own, status: "ACTIVE" } }),
-    db.invoice.aggregate({ where: { ...own, status: "CONFIRMED" }, _sum: { total: true } }),
-    db.payment.aggregate({ where: { invoice: { ...own, status: "CONFIRMED" } }, _sum: { amount: true } }),
-    db.subscription.findFirst({ where: { ...own, status: "ACTIVE", nextInvoiceDate: { not: null } }, orderBy: { nextInvoiceDate: "asc" }, select: { nextInvoiceDate: true } }),
-  ]);
-  return { user, rows, total, active, page: safePage(page), outstanding: (billed._sum.total || 0) - (paid._sum.amount || 0), nextInvoiceDate: next?.nextInvoiceDate || null };
+/** Drafts are internal: a customer only sees invoices that have been issued. */
+function invoiceScope(customerId: number): Prisma.InvoiceWhereInput {
+  return { customerId, status: { not: "DRAFT" } };
 }
 
-export async function portalInvoices({ status, q, page = 1 }: { status?: string; q?: string; page?: number }) {
-  const user = await requirePageRole(["CUSTOMER"]);
-  const where: Prisma.InvoiceWhereInput = { customer: { userId: user.id },
-    ...(status === "OVERDUE" ? { status: "CONFIRMED", dueDate: { lt: new Date() } } : (INVOICE_STATUSES as readonly string[]).includes(status || "") ? { status } : {}),
-    ...(q?.trim() ? { number: { contains: q.trim().slice(0, 100) } } : {}),
+function filterWhere(filter: PortalFilter | undefined, today: Date): Prisma.InvoiceWhereInput {
+  switch (filter) {
+    case "outstanding":
+      return { status: "CONFIRMED" };
+    case "overdue":
+      return { status: "CONFIRMED", dueDate: { lt: today } };
+    case "paid":
+      return { status: "PAID" };
+    default:
+      return {};
+  }
+}
+
+const invoiceRowSelect = {
+  id: true,
+  number: true,
+  status: true,
+  periodStart: true,
+  periodEnd: true,
+  dueDate: true,
+  total: true,
+  payments: { select: { amount: true } },
+} satisfies Prisma.InvoiceSelect;
+
+function withBalance<T extends { total: number; payments: { amount: number }[] }>(row: T) {
+  const { payments, ...rest } = row;
+  return { ...rest, balance: outstanding({ total: row.total, payments }) };
+}
+
+export async function listPortalInvoices(
+  customerId: number,
+  opts: { filter?: PortalFilter; q?: string; page: number; pageSize?: number; today: Date },
+) {
+  const q = opts.q?.trim();
+  const take = opts.pageSize ?? PORTAL_PAGE_SIZE;
+  const where: Prisma.InvoiceWhereInput = {
+    AND: [invoiceScope(customerId), filterWhere(opts.filter, opts.today), q ? { number: { contains: q } } : {}],
   };
   const [rows, total] = await Promise.all([
-    db.invoice.findMany({ where, include: { payments: { select: { amount: true } }, subscription: { select: { number: true } } }, orderBy: { id: "desc" }, take: PAGE_SIZE, skip: (safePage(page) - 1) * PAGE_SIZE }),
+    db.invoice.findMany({
+      where,
+      select: invoiceRowSelect,
+      orderBy: { id: "desc" },
+      take,
+      skip: (opts.page - 1) * take,
+    }),
     db.invoice.count({ where }),
   ]);
-  return { rows: rows.map(({ payments, ...invoice }) => ({ ...invoice, balance: invoice.total - payments.reduce((sum, payment) => sum + payment.amount, 0) })), total, page: safePage(page) };
+  return { total, rows: rows.map(withBalance) };
 }
 
-export async function portalInvoiceDetail(id: number) {
-  const user = await requirePageRole(["CUSTOMER"]);
-  // Include ownership in the initial query, including for printable invoice details.
-  const invoice = await db.invoice.findFirst({ where: { id, customer: { userId: user.id } }, include: {
-    customer: true, lines: { orderBy: { id: "asc" } }, payments: { orderBy: { paidOn: "asc" } }, subscription: { select: { id: true, number: true, plan: { select: { name: true } } } },
-  } });
+export type PortalInvoiceRow = Awaited<ReturnType<typeof listPortalInvoices>>["rows"][number];
+
+export async function overdueSummary(customerId: number, today: Date) {
+  const rows = await db.invoice.findMany({
+    where: { AND: [invoiceScope(customerId), filterWhere("overdue", today)] },
+    select: invoiceRowSelect,
+  });
+  return summariseOverdue(rows.map((r) => ({ number: r.number, dueDate: r.dueDate, balance: withBalance(r).balance })));
+}
+
+/** Same shape as the staff invoice detail, so the staff printable document can be reused as is. */
+export async function getPortalInvoice(customerId: number, id: number) {
+  const invoice = await db.invoice.findFirst({
+    where: { id, ...invoiceScope(customerId) },
+    include: {
+      customer: true,
+      lines: { orderBy: { id: "asc" } },
+      payments: { orderBy: { paidOn: "asc" } },
+      subscription: { select: { id: true, number: true, plan: { select: { name: true } } } },
+    },
+  });
   if (!invoice) return null;
-  const paid = invoice.payments.reduce((sum, payment) => sum + payment.amount, 0);
+  const paid = invoice.payments.reduce((sum, p) => sum + p.amount, 0);
   return { ...invoice, paid, balance: invoice.total - paid };
 }
+
+const planSelect = {
+  name: true,
+  periodUnit: true,
+  periodCount: true,
+  renewable: true,
+  closable: true,
+} satisfies Prisma.PlanSelect;
+
+export async function listPortalSubscriptions(customerId: number) {
+  return db.subscription.findMany({
+    where: { customerId, status: { not: "DRAFT" } },
+    select: {
+      id: true,
+      number: true,
+      status: true,
+      startDate: true,
+      endDate: true,
+      nextInvoiceDate: true,
+      closeReason: true,
+      plan: { select: planSelect },
+      lines: { select: { productId: true, quantity: true, unitPrice: true, taxBps: true } },
+    },
+    orderBy: { id: "asc" },
+  });
+}
+
+export type PortalSubscription = Awaited<ReturnType<typeof listPortalSubscriptions>>[number];
+
+export async function getPortalSubscription(customerId: number, id: number) {
+  const sub = await db.subscription.findFirst({
+    where: { id, customerId, status: { not: "DRAFT" } },
+    select: {
+      id: true,
+      number: true,
+      status: true,
+      startDate: true,
+      endDate: true,
+      nextInvoiceDate: true,
+      paymentTermDays: true,
+      closeReason: true,
+      plan: { select: planSelect },
+      lines: {
+        select: { id: true, productId: true, quantity: true, unitPrice: true, taxBps: true },
+        orderBy: { id: "asc" },
+      },
+    },
+  });
+  if (!sub) return null;
+  const [products, invoices] = await Promise.all([
+    db.product.findMany({
+      where: { id: { in: sub.lines.map((l) => l.productId) } },
+      select: { id: true, name: true },
+    }),
+    db.invoice.findMany({
+      where: { AND: [invoiceScope(customerId), { subscriptionId: sub.id }] },
+      select: invoiceRowSelect,
+      orderBy: { id: "desc" },
+      take: 20,
+    }),
+  ]);
+  const names = new Map(products.map((p) => [p.id, p.name]));
+  return {
+    ...sub,
+    lines: sub.lines.map((l) => ({ ...l, productName: names.get(l.productId) ?? "Product" })),
+    invoices: invoices.map(withBalance),
+  };
+}
+
+export type PortalSubscriptionDetail = NonNullable<Awaited<ReturnType<typeof getPortalSubscription>>>;

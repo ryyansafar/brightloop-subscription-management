@@ -1,6 +1,6 @@
 # Authentication backend contract
 
-Frontend integration is now implemented: /login, /signup, /forgot-password, /reset-password, /admin/staff, /subscriptions (including new/detail), and the customer portal with subscription/invoice details. These screens reuse the shared application shell, semantic design tokens, controls, tables and invoice document. Shared components and global styles were not changed.
+Frontend integration is now implemented: /login, /signup, /forgot-password, /reset-password, /admin/staff, /subscriptions (including new/detail), and the customer portal with subscription/invoice details. These screens reuse the shared application shell, semantic design tokens, controls, tables and invoice document. Shared navigation provides Sign out and persistent System/Light/Dark controls; the public auth screens share the theme selector. Portal/staff pages live under src/app/portal and src/app/admin/staff to avoid duplicate route-group URLs.
 
 ## Local configuration
 

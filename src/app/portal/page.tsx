@@ -1,28 +1,91 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
-import { PagePending } from "@/lib/auth/ui/PagePending";
-import { Button, PageHeader, StatCard, StatusBadge, formatDate, param, pageParam, type Params } from "@/components";
-import { TableToolbar } from "@/components/table/TableToolbar";
-import { Pagination } from "@/components/table/Pagination";
+// Customer portal home: overdue alert, subscription cards and recent invoices.
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Button, PageHeader, formatDate } from "@/components";
 import { formatINR } from "@/lib/money";
-import { SubscriptionActions } from "@/app/(app)/subscriptions/SubscriptionActions";
-import { portalOverview, PAGE_SIZE } from "./queries";
+import { InvoiceTable } from "./InvoiceTable";
+import { NoAccount } from "./NoAccount";
+import { listPortalInvoices, listPortalSubscriptions, overdueSummary, RECENT_INVOICES } from "./queries";
+import { getPortalScope } from "./scope";
+import { SubscriptionCard } from "./SubscriptionCard";
 
 export const metadata: Metadata = { title: "My subscriptions" };
-async function PortalPage({ searchParams }: { searchParams: Promise<Params> }) {
-  const params = await searchParams;
-  const data = await portalOverview({ status: param(params, "status"), q: param(params, "q"), page: pageParam(params) });
-  return <><PageHeader title={`Welcome, ${data.user.name.split(" ")[0]}`} description="Your subscriptions, renewals and billing, all in one place." actions={<><Button href="/portal/invoices" variant="primary">View my invoices</Button></>} />
-    <div className="space-y-6 p-4 md:p-6"><div className="grid gap-4 sm:grid-cols-3"><StatCard label="Active subscriptions" value={String(data.active)} tone="success" /><StatCard label="Outstanding invoices" value={formatINR(data.outstanding)} tone={data.outstanding > 0 ? "warning" : "neutral"} href="/portal/invoices?status=CONFIRMED" /><StatCard label="Next invoice date" value={formatDate(data.nextInvoiceDate)} /></div>
-      <section className="overflow-hidden rounded-xl border border-line bg-surface"><TableToolbar basePath="/portal" searchParams={params} filters={[{ param: "status", options: [{ label: "Active", value: "ACTIVE" }, { label: "Paused", value: "PAUSED" }, { label: "Closed", value: "CLOSED" }] }]} search={{ placeholder: "Search your subscriptions" }} /></section>
-      {data.rows.length ? <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-2">{data.rows.map((subscription) => <article key={subscription.id} className="overflow-hidden rounded-xl border border-line bg-surface">
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line p-5"><div><p className="mb-2 text-xs font-medium text-muted">{subscription.number}</p><h2 className="text-lg font-semibold">{subscription.plan.name}</h2></div><StatusBadge status={subscription.status} /></div>
-        <div className="space-y-5 p-5"><div><p className="text-2xl font-semibold tracking-tight tabular-nums">{formatINR(subscription.lines.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0))}</p><p className="mt-1 text-xs text-muted">Every {subscription.plan.periodCount} {subscription.plan.periodUnit.toLowerCase()}{subscription.plan.periodCount > 1 ? "s" : ""}, before tax and discounts</p></div>
-          <dl className="grid grid-cols-2 gap-4 text-sm"><div><dt className="text-xs text-muted">Next invoice</dt><dd className="mt-1 font-medium">{formatDate(subscription.nextInvoiceDate)}</dd></div><div><dt className="text-xs text-muted">Contract ends</dt><dd className="mt-1 font-medium">{subscription.endDate ? formatDate(subscription.endDate) : "Ongoing"}</dd></div></dl>
-          <div className="flex flex-wrap gap-2 border-t border-line pt-4"><Button href={`/portal/subscriptions/${subscription.id}`} size="sm">View subscription</Button><SubscriptionActions id={subscription.id} status={subscription.status} plan={subscription.plan} hasEndDate={!!subscription.endDate} portal /></div>
-        </div>
-      </article>)}</div> : <section className="rounded-xl border border-line bg-surface px-6 py-16 text-center"><h2 className="text-lg font-semibold">No subscriptions to show</h2><p className="mx-auto mt-3 max-w-md text-sm text-muted">Your subscriptions will appear here once your account is set up. If you expected to see one, contact your account manager.</p></section>}
-      {data.total > PAGE_SIZE && <div className="rounded-xl border border-line bg-surface"><Pagination basePath="/portal" searchParams={params} page={data.page} pageSize={PAGE_SIZE} total={data.total} /></div>}
-    </div></>;
+
+async function PortalPageContent() {
+  const scope = await getPortalScope();
+  if (!scope.linked) return <NoAccount name={scope.displayName} />;
+  const { customerId, today } = scope;
+
+  const [subs, overdue, recent] = await Promise.all([
+    listPortalSubscriptions(customerId),
+    overdueSummary(customerId, today),
+    listPortalInvoices(customerId, { page: 1, pageSize: RECENT_INVOICES, today }),
+  ]);
+
+  return (
+    <>
+      <PageHeader title="My subscriptions" description={`Hello, ${scope.displayName}. Here is what is on your account.`} />
+      <div className="flex flex-col gap-6 p-4 md:p-6">
+        {overdue.count > 0 && (
+          <div
+            role="alert"
+            className="flex flex-col gap-3 rounded-lg bg-danger-soft px-4 py-3 text-sm text-danger sm:flex-row sm:items-center sm:justify-between"
+          >
+            <p>
+              <strong>
+                {overdue.count === 1 ? "1 invoice is overdue" : `${overdue.count} invoices are overdue`}
+              </strong>
+              {" · "}
+              {overdue.count === 1 && overdue.oldest
+                ? `${overdue.oldest.number} · ${formatINR(overdue.total)} was due ${formatDate(overdue.oldest.dueDate)}`
+                : `${formatINR(overdue.total)} in total, the oldest due ${formatDate(overdue.oldest?.dueDate)}`}
+            </p>
+            <Button
+              href="/portal/invoices?filter=overdue"
+              variant="primary"
+              className="min-h-11 shrink-0 md:min-h-10"
+            >
+              View invoices
+            </Button>
+          </div>
+        )}
+
+        <section aria-labelledby="subs-heading" className="flex flex-col gap-3">
+          <h2 id="subs-heading" className="text-base font-semibold">
+            Subscriptions
+          </h2>
+          {subs.length === 0 ? (
+            <p className="rounded-lg border border-line bg-surface px-4 py-8 text-center text-sm text-muted">
+              You have no subscriptions yet.
+            </p>
+          ) : (
+            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {subs.map((sub) => (
+                <SubscriptionCard key={sub.id} sub={sub} />
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section aria-labelledby="inv-heading" className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <h2 id="inv-heading" className="text-base font-semibold">
+              Recent invoices
+            </h2>
+            {recent.total > RECENT_INVOICES && (
+              <Link href="/portal/invoices" className="inline-flex min-h-11 items-center text-sm text-primary hover:underline">
+                See all {recent.total}
+              </Link>
+            )}
+          </div>
+          <InvoiceTable rows={recent.rows} today={today} />
+        </section>
+      </div>
+    </>
+  );
 }
-export default function Page(props: { searchParams: Promise<Params> }) { return <Suspense fallback={<PagePending />}><PortalPage {...props} /></Suspense>; }
+
+export default function PortalPage() {
+  return <Suspense fallback={<div role="status" className="p-6 text-muted">Loading…</div>}><PortalPageContent /></Suspense>;
+}

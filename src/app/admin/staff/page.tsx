@@ -1,22 +1,48 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
-import { PagePending } from "@/lib/auth/ui/PagePending";
-import { PageHeader, Badge, formatDate } from "@/components";
-import { db } from "@/lib/db";
-import { requirePageRole } from "@/lib/auth/current-user";
-import { AuthForm } from "@/app/(auth)/_components/AuthForm";
+// Staff users: admin-only list with an Add staff member dialog.
+import type { Metadata } from "next";
+import { Badge, DataTable, PageHeader, formatDate, type Column } from "@/components";
+import { AddStaffDialog } from "./AddStaffDialog";
+import { requireAdminPage } from "./guard";
+import { listStaffUsers, type StaffRow } from "./queries";
 
 export const metadata: Metadata = { title: "Staff users" };
-async function StaffPage() {
-  await requirePageRole(["ADMIN"]);
-  const staff = await db.user.findMany({ where: { role: "STAFF" }, select: { id: true, name: true, email: true, createdAt: true }, orderBy: { createdAt: "desc" } });
-  return <><PageHeader title="Staff users" description="Give your team the access they need to keep subscriptions moving." />
-    <div className="grid grid-cols-1 items-start gap-6 p-4 md:p-6 xl:grid-cols-[minmax(0,1fr)_380px]">
-      <section className="overflow-hidden rounded-xl border border-line bg-surface"><div className="flex items-center justify-between border-b border-line p-5"><h2 className="font-semibold">Your team</h2><Badge>{staff.length} staff</Badge></div>
-        {staff.length === 0 ? <p className="p-8 text-sm text-muted">No staff accounts yet. Create one to get your team started.</p> : <ul className="divide-y divide-line">{staff.map((user) => <li key={user.id} className="flex flex-wrap items-center justify-between gap-3 p-5"><div className="flex min-w-0 items-center gap-3"><span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-full bg-primary-soft font-semibold text-primary">{user.name.slice(0, 1).toUpperCase()}</span><div className="min-w-0"><p className="font-medium">{user.name}</p><p className="break-all text-sm text-muted">{user.email}</p></div></div><span className="text-xs text-muted">Added {formatDate(user.createdAt)}</span></li>)}</ul>}
-      </section>
-      <section className="rounded-xl border border-line bg-surface p-5"><h2 className="font-semibold">Add a team member</h2><p className="mb-6 mt-2 text-sm text-muted">Staff can manage day-to-day subscriptions, invoices and payments. Administrator settings stay restricted.</p><AuthForm mode="staff" /></section>
-    </div>
-  </>;
+
+const columns: Column<StaffRow>[] = [
+  { key: "name", header: "Name", render: (r) => <span className="break-words font-medium">{r.name}</span> },
+  { key: "email", header: "Email", render: (r) => <span className="break-all">{r.email}</span> },
+  {
+    key: "role",
+    header: "Role",
+    render: (r) => <Badge tone={r.role === "ADMIN" ? "primary" : "neutral"}>{r.role === "ADMIN" ? "Admin" : "Staff"}</Badge>,
+  },
+  { key: "created", header: "Created", hideOnMobile: true, render: (r) => formatDate(r.createdAt) },
+];
+
+async function StaffUsersPageContent() {
+  const session = await requireAdminPage();
+  const users = await listStaffUsers(session.role);
+
+  return (
+    <>
+      <PageHeader
+        title="Staff users"
+        description={`${users.length} ${users.length === 1 ? "member" : "members"} · Admin only`}
+        actions={<AddStaffDialog />}
+      />
+      <div className="p-4 md:p-6">
+        <DataTable
+          columns={columns}
+          rows={users}
+          rowKey={(r) => r.id}
+          basePath="/admin/staff"
+          emptyMessage="No staff users yet."
+        />
+      </div>
+    </>
+  );
 }
-export default function Page() { return <Suspense fallback={<PagePending />}><StaffPage /></Suspense>; }
+
+export default function StaffUsersPage() {
+  return <Suspense fallback={<div role="status" className="p-6 text-muted">Loading…</div>}><StaffUsersPageContent /></Suspense>;
+}
