@@ -1,6 +1,7 @@
 // Owner: fathima. Shell for the back-office pages (dashboard, subscriptions, invoices, catalog...).
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense, type ReactNode } from "react";
 import { AppShell, ToastProvider } from "@/components";
 import { getSessionUser } from "@/lib/auth/session";
@@ -8,6 +9,7 @@ import { db } from "@/lib/db";
 
 /** The signed-in user, using Pankaj's session check (signature, expiry, password version). */
 async function currentUser() {
+  await connection(); // the session check reads the clock (expiry), so this is per request
   const cookie = (await cookies()).toString();
   const session = await getSessionUser(new Request("http://app.local", { headers: { cookie } }));
   if (!session) return null;

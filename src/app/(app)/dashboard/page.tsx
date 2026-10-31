@@ -75,13 +75,13 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         <section aria-label="Billing" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard label="Revenue" value={formatINR(s.revenue)} hint="Confirmed and paid invoices" />
           <StatCard label="Payments received" value={formatINR(s.paymentsReceived)} tone="success" href="/payments" />
-          <StatCard label="Outstanding" value={formatINR(s.outstanding)} hint="Unpaid balance, today" tone="warning" href="/invoices?status=CONFIRMED" />
+          <StatCard label="Outstanding" value={formatINR(s.outstanding)} hint="Unpaid balance, today" tone="warning" href="/invoices?filter=outstanding" />
           <StatCard
             label="Overdue invoices"
             value={n(s.overdueCount)}
             hint={`${formatINR(s.overdueAmount)} past due`}
             tone={s.overdueCount ? "danger" : "neutral"}
-            href="/invoices?overdue=1"
+            href="/invoices?filter=overdue"
           />
         </section>
       </div>
