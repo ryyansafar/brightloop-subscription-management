@@ -36,6 +36,7 @@ beforeEach(async () => {
   vi.stubEnv("AUTH_DEV_BYPASS", "0");
   vi.stubEnv("NODE_ENV", "development");
   vi.stubEnv("AUTH_DEV_MAILER", "1");
+  vi.stubEnv("EMAIL_PROVIDER", "disabled");
   vi.stubEnv("AUTH_TRUSTED_IP_HEADER", "x-test-client-ip");
   vi.stubEnv("APP_ORIGIN", "http://localhost:3000");
   vi.spyOn(console, "info").mockImplementation(() => {});

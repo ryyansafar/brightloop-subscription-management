@@ -19,7 +19,7 @@ type Action = "confirm" | "cancel" | "send";
 const DONE: Record<Action, string> = {
   confirm: "Invoice confirmed",
   cancel: "Invoice cancelled",
-  send: "Invoice marked as sent",
+  send: "Invoice email submitted for delivery",
 };
 
 export function InvoiceActions({ id, number, status, balance, hasPayments, sentAt }: InvoiceActionsProps) {

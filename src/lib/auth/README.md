@@ -11,6 +11,9 @@ AUTH_SESSION_SECRET=<random secret, at least 32 characters>
 APP_ORIGIN=http://localhost:3000
 AUTH_DEV_BYPASS=0
 AUTH_DEV_MAILER=0
+EMAIL_PROVIDER=disabled
+RESEND_API_KEY=
+EMAIL_FROM=
 ```
 
 Generate a secret with `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"`. Every app process must use the same secret. APP_ORIGIN is required and must use HTTPS in production; it cannot include credentials, a path, query or fragment. Request Host headers never determine trusted origins. Changing the secret invalidates all current sessions.
@@ -37,7 +40,9 @@ Routes under `(auth)` use the `/api/auth/*` URL namespace so future `/login`, `/
 
 Password rules: at least nine characters, uppercase and lowercase letters, a non-whitespace special character, no null characters, and at most 72 UTF-8 bytes (bcrypt's limit). Emails are trimmed and lowercased. Signup creates User and Customer in one nested database write; unique email conflicts return 409. Passwords use bcrypt cost 12, executed in worker threads rather than on the HTTP event loop. At most two password workers may run per Node process, with no waiting queue and a ten-second timeout; overload returns 503. Workers use the existing installed bcryptjs dependency, so standalone/minimal deployments must include it and permit Node worker_threads. The current supported runtime is Next's Node server, not an Edge isolate.
 
-Reset links expire after 30 minutes; only SHA-256 token hashes are persisted. Issuing a new link invalidates earlier links. Consuming a token and changing the password run in a transaction with a conditional one-time update. Link logging/disclosure requires all three: AUTH_DEV_MAILER=1, NODE_ENV=development, and a loopback APP_ORIGIN (localhost, 127.0.0.1 or ::1). Unset/test/staging/production environments and public demo origins cannot enable this mailer. To use it locally, explicitly set the flag and run `npm run dev -- --hostname 127.0.0.1`; never expose that development server through a public interface or tunnel. A loopback-configured URL cannot prove the socket's peer address in a Web Request. The future reset screen should read the URL's token and POST it with the new password. Reset pages receive Referrer-Policy: no-referrer. All other environments return 503 until a real mail transport is configured and never log/return tokens.
+Reset links expire after 30 minutes; only SHA-256 token hashes are persisted. Issuing a new link invalidates earlier links. Consuming a token and changing the password run in a transaction with a conditional one-time update. For real delivery set EMAIL_PROVIDER=resend with RESEND_API_KEY and EMAIL_FROM; see docs/EMAIL.md. Provider mode never returns/logs reset URLs, even with AUTH_DEV_MAILER=1. Recovery responses stay generic for unknown accounts and delivery failures; failed sends invalidate that token and log only a fixed failure message.
+
+Local console/on-screen previews require EMAIL_PROVIDER unset/disabled, AUTH_DEV_MAILER=1, NODE_ENV=development, and a loopback APP_ORIGIN (localhost, 127.0.0.1 or ::1). To use them locally, explicitly set the flag and run `npm run dev -- --hostname 127.0.0.1`; never expose this development mode through a public interface or tunnel. A loopback-configured URL cannot prove the socket's peer address in a Web Request. Without a configured real provider or permitted preview, recovery returns 503 before issuing a token. Reset pages receive Referrer-Policy: no-referrer.
 
 ## Roles and portal integration
 

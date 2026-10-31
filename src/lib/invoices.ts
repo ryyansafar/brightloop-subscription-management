@@ -4,6 +4,7 @@ import { billSubscription } from "./billing";
 import { releaseInvoiceDiscounts } from "./discount-usage";
 import { DomainError } from "./errors";
 import { canMoveInvoice, type InvoiceStatus } from "./state";
+import { sendInvoiceEmail } from "./invoice-mail";
 
 export function outstanding(invoice: { total: number; payments: { amount: number }[] }): number {
   return invoice.total - invoice.payments.reduce((sum, p) => sum + p.amount, 0);
@@ -12,7 +13,7 @@ export function outstanding(invoice: { total: number; payments: { amount: number
 async function loadInvoice(client: PrismaClient, id: number) {
   const invoice = await client.invoice.findUnique({
     where: { id },
-    include: { lines: true, payments: true },
+    include: { lines: true, payments: true, customer: { select: { email: true, name: true } } },
   });
   if (!invoice) throw new DomainError("Invoice not found", 404);
   return invoice;
@@ -50,12 +51,13 @@ export async function cancelInvoice(id: number, client: PrismaClient = db): Prom
   });
 }
 
-/** Mark a confirmed invoice as sent to the customer. */
+/** Record provider acceptance only after the confirmed invoice email was actually submitted. */
 export async function markInvoiceSent(id: number, client: PrismaClient = db): Promise<void> {
   const invoice = await loadInvoice(client, id);
   if (invoice.status !== "CONFIRMED" && invoice.status !== "PAID") {
     throw new DomainError("Only confirmed invoices can be sent", 409);
   }
+  await sendInvoiceEmail(invoice);
   await client.invoice.update({ where: { id }, data: { sentAt: new Date() } });
 }
 

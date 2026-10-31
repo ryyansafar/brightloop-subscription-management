@@ -1,5 +1,7 @@
 # Security review — 31 October 2026
 
+Historical review below: frontend and security work have since been pushed with user authorization. Resend mail integration now supports real recovery/invoice delivery when configured; see docs/EMAIL.md. Real recovery tokens remain absent from responses/logs. Email verification, durable session revocation and distributed rate limiting are still separate follow-ups.
+
 Reviewed both supplied reports against the current code and all CUSTOMER-reachable API routes. Changes stay in Pankaj's owned paths. No Git push is authorized or performed. UI development remains paused.
 
 ## Confirmed issues fixed here

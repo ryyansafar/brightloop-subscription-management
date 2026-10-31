@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/current-user";
-import { devMailerEnabled } from "@/lib/auth/config";
+import { recoveryMailAvailable } from "@/lib/auth/recovery-mail";
 import { loginDestination } from "@/lib/auth/navigation";
 import { AuthForm, type AuthMode } from "./AuthForm";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -25,7 +25,7 @@ async function Content({ mode, searchParams }: { mode: PublicMode; searchParams:
     const user = await getCurrentUser();
     if (user) redirect(loginDestination(next, user.role));
   }
-  return <AuthForm mode={mode} next={next} token={typeof params.token === "string" ? params.token : undefined} recoveryAvailable={mode !== "forgot" || devMailerEnabled()} />;
+  return <AuthForm mode={mode} next={next} token={typeof params.token === "string" ? params.token : undefined} recoveryAvailable={mode !== "forgot" || recoveryMailAvailable()} />;
 }
 
 export function AuthScreen({ mode, searchParams }: { mode: PublicMode; searchParams: Search }) {

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { db } from "@/lib/db";
 import { runBilling } from "@/lib/billing";
 import { cancelInvoice, confirmInvoice, generateInvoiceNow, markInvoiceSent } from "@/lib/invoices";
@@ -13,6 +13,7 @@ import { resetDb, seedDiscount, seedSubscription, utc } from "@/test/factory";
 const ymd = (d: Date | null) => d?.toISOString().slice(0, 10);
 
 beforeEach(resetDb);
+afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
 async function draftInvoice() {
   const seeded = await seedSubscription();
@@ -146,6 +147,11 @@ describe("renewSubscription", () => {
 
 describe("invoice actions", () => {
   it("confirms, sends and refuses to confirm twice", async () => {
+    vi.stubEnv("EMAIL_PROVIDER", "resend");
+    vi.stubEnv("RESEND_API_KEY", "re_test_dummy_key");
+    vi.stubEnv("EMAIL_FROM", "billing@brightloop.test");
+    vi.stubEnv("APP_ORIGIN", "https://brightloop.test");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({ id: "test-email" })));
     const { invoice } = await draftInvoice();
     await expect(markInvoiceSent(invoice.id)).rejects.toThrow(/Only confirmed/);
     await confirmInvoice(invoice.id);

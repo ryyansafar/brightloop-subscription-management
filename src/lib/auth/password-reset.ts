@@ -1,7 +1,9 @@
 import { createHash, randomBytes } from "node:crypto";
 import { db } from "@/lib/db";
 import { AuthError, limitAuthAttempt } from "./security";
-import { appOrigin, devMailerEnabled } from "./config";
+import { appOrigin } from "./config";
+import { recoveryMailAvailable, sendRecoveryEmail } from "./recovery-mail";
+import { unstable_rethrow } from "next/navigation";
 import { hashPassword } from "./password-work";
 import { forgotPasswordSchema, resetPasswordSchema } from "./validation";
 
@@ -9,28 +11,35 @@ export const RESET_MINUTES = 30;
 const tokenHash = (token: string) => createHash("sha256").update(token).digest("hex");
 const invalidToken = () => new AuthError("Reset link is invalid or expired. Request a new link", 400);
 
-/** Only development returns/logs a link; a production mail transport is a separate integration. */
+/** Real mail never returns or logs a reset token; local previews require explicit opt-in. */
 export async function requestPasswordReset(input: unknown, source: string) {
   const { email } = forgotPasswordSchema.parse(input);
   limitAuthAttempt("reset", email, source);
-  if (!devMailerEnabled()) {
+  if (!recoveryMailAvailable()) {
     throw new AuthError("Password recovery mail delivery is not configured", 503);
   }
   const user = await db.user.findUnique({ where: { email } });
   if (!user) return {};
   const token = randomBytes(32).toString("hex");
   const now = new Date();
-  await db.$transaction(async (tx) => {
+  const record = await db.$transaction(async (tx) => {
     await tx.passwordReset.updateMany({ where: { userId: user.id, usedAt: null }, data: { usedAt: now } });
-    await tx.passwordReset.create({ data: {
+    return tx.passwordReset.create({ data: {
       userId: user.id, tokenHash: tokenHash(token), expiresAt: new Date(now.getTime() + RESET_MINUTES * 60_000),
     } });
   });
   // Never derive reset URLs from untrusted Host/Origin headers.
   const url = new URL("/reset-password", appOrigin());
   url.searchParams.set("token", token);
-  console.info(`[dev mailer] Password reset for ${email}: ${url.href}`);
-  return { devResetUrl: url.href };
+  try {
+    return await sendRecoveryEmail(email, url.href, RESET_MINUTES, record.id);
+  } catch (error) {
+    unstable_rethrow(error);
+    // Do not expose account existence through a different response on provider failure.
+    await db.passwordReset.updateMany({ where: { id: record.id, usedAt: null }, data: { usedAt: new Date() } });
+    console.error("Password recovery email delivery failed");
+    return {};
+  }
 }
 
 export async function resetPassword(input: unknown): Promise<void> {
