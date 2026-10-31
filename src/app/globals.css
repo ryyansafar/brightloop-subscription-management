@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens (owner: fathima). Components only use these names
+ * (bg-primary, text-muted, border-line, ...), so a new look from the Stitch
+ * design is applied by changing the values here, not the components.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f6f7f9;
+  --foreground: #1f2328;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  --line: #dde1e6;
+  --muted: #5f6b7a;
+  --primary: #714b67; /* Odoo plum */
+  --primary-hover: #5e3d55;
+  --primary-soft: #f3edf2;
+  --on-primary: #ffffff;
+  --success: #1e7d4f;
+  --success-soft: #e6f4ec;
+  --warning: #9a6200;
+  --warning-soft: #fdf3e1;
+  --danger: #b42318;
+  --danger-soft: #fdecea;
+  --info: #1d5fa8;
+  --info-soft: #e8f0fb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #121418;
+    --foreground: #e6e8eb;
+    --surface: #1a1d22;
+    --surface-2: #23272e;
+    --line: #2f343c;
+    --muted: #9aa4b2;
+    --primary: #c28fb5;
+    --primary-hover: #d3a6c7;
+    --primary-soft: #2e2230;
+    --on-primary: #1a1116;
+    --success: #5cc795;
+    --success-soft: #16291f;
+    --warning: #e3a944;
+    --warning-soft: #2c2312;
+    --danger: #f2877c;
+    --danger-soft: #331b19;
+    --info: #7fb2ec;
+    --info-soft: #172436;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary: var(--on-primary);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Print: only the document itself (invoices). Mark chrome with .no-print. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
 }
