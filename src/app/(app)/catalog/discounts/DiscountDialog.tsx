@@ -27,6 +27,8 @@ export function DiscountDialog({
 }) {
   const router = useRouter();
   const toast = useToast();
+  // lazy initialiser keeps the clock read out of render (react-hooks/purity)
+  const [today] = useState(() => new Date());
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const isEdit = Boolean(discount);
@@ -197,7 +199,7 @@ export function DiscountDialog({
                 {...f}
                 name="startsAt"
                 type="date"
-                defaultValue={toDateInputValue(discount?.startsAt ?? new Date())}
+                defaultValue={toDateInputValue(discount?.startsAt ?? today)}
               />
             )}
           </FormField>
@@ -207,7 +209,7 @@ export function DiscountDialog({
                 {...f}
                 name="endsAt"
                 type="date"
-                defaultValue={toDateInputValue(discount?.endsAt ?? new Date(Date.now() + 30 * 86400000))}
+                defaultValue={toDateInputValue(discount?.endsAt ?? new Date(today.getTime() + 30 * 86400000))}
               />
             )}
           </FormField>

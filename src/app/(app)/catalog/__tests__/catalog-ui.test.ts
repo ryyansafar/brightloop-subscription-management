@@ -179,7 +179,7 @@ describe("Zod schema validations for catalog dialog inputs", () => {
     });
 
     it("rejects invalid types and empty names", () => {
-      expect(() => productSchema.parse({ ...validProduct, type: "HARDWARE" as any })).toThrow();
+      expect(() => productSchema.parse({ ...validProduct, type: "HARDWARE" as unknown as typeof validProduct.type })).toThrow();
       expect(() => productSchema.parse({ ...validProduct, name: "   " })).toThrow(
         /Name is required/,
       );
@@ -209,7 +209,7 @@ describe("Zod schema validations for catalog dialog inputs", () => {
       for (const unit of ["DAY", "WEEK", "MONTH", "YEAR"] as const) {
         expect(planSchema.parse({ ...validPlan, periodUnit: unit }).periodUnit).toBe(unit);
       }
-      expect(() => planSchema.parse({ ...validPlan, periodUnit: "FORTNIGHT" as any })).toThrow();
+      expect(() => planSchema.parse({ ...validPlan, periodUnit: "FORTNIGHT" as unknown as typeof validPlan.periodUnit })).toThrow();
     });
 
     it("rejects negative price and invalid quantities", () => {
@@ -353,7 +353,7 @@ describe("Re-export verification: src/lib/discounts.ts", () => {
   it("re-exports all keys and methods", () => {
     const catalogKeys = Object.keys(catalogDiscounts);
     for (const key of catalogKeys) {
-      expect((rootDiscounts as any)[key]).toBe((catalogDiscounts as any)[key]);
+      expect((rootDiscounts as Record<string, unknown>)[key]).toBe((catalogDiscounts as Record<string, unknown>)[key]);
     }
     expect(typeof rootDiscounts.discountService.list).toBe("function");
     expect(typeof rootDiscounts.discountService.get).toBe("function");
