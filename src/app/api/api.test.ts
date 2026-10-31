@@ -157,3 +157,17 @@ describe("API validation and errors", () => {
     expect(res.status).toBe(404);
   });
 });
+
+describe("billing preview", () => {
+  it("lets only the admin preview how many subscriptions are due", async () => {
+    const { GET: previewBilling } = await import("@/app/api/billing/run/route");
+    await seedSubscription();
+    const staff = await previewBilling(req("/api/billing/run?asOf=2026-01-20", { role: "STAFF", userId: 1 }));
+    expect(staff.status).toBe(403);
+    const admin = await previewBilling(req("/api/billing/run?asOf=2026-01-20", { role: "ADMIN", userId: 1 }));
+    expect(admin.status).toBe(200);
+    expect(((await admin.json()) as { data: { due: number } }).data.due).toBe(1);
+    const bad = await previewBilling(req("/api/billing/run?asOf=not-a-date", { role: "ADMIN", userId: 1 }));
+    expect(bad.status).toBe(400);
+  });
+});

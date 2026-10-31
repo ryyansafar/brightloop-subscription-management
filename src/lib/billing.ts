@@ -34,6 +34,13 @@ interface BillOutcome {
   closed: boolean;
 }
 
+/** How many subscriptions a billing run as of `asOf` would pick up (the preview before running). */
+export async function countDue(asOf: Date, client: PrismaClient = db): Promise<number> {
+  return client.subscription.count({
+    where: { status: "ACTIVE", nextInvoiceDate: { lte: asOf } },
+  });
+}
+
 /**
  * Invoice every ACTIVE subscription whose next invoice date has passed.
  * Safe to run repeatedly: each period is unique per subscription, and missed

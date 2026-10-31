@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { handle, ok } from "@/lib/api";
-import { runBilling } from "@/lib/billing";
+import { countDue, runBilling } from "@/lib/billing";
 import { DomainError } from "@/lib/errors";
 
 const bodySchema = z.object({ asOf: z.coerce.date().optional() });
@@ -18,4 +18,12 @@ export const POST = handle(["ADMIN"], async ({ request }) => {
   }
   const { asOf } = bodySchema.parse(raw);
   return ok(await runBilling(asOf ?? new Date()));
+});
+
+/** Preview for the billing page: how many subscriptions are due as of `?asOf=` (default now). */
+export const GET = handle(["ADMIN"], async ({ request }) => {
+  const raw = new URL(request.url).searchParams.get("asOf");
+  const { asOf } = bodySchema.parse(raw ? { asOf: raw } : {});
+  const date = asOf ?? new Date();
+  return ok({ asOf: date.toISOString(), due: await countDue(date) });
 });

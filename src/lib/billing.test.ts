@@ -171,3 +171,22 @@ describe("billSubscription force", () => {
     ).rejects.toThrow(/active/i);
   });
 });
+
+describe("countDue", () => {
+  it("counts only active subscriptions whose next invoice date has passed", async () => {
+    await seedSubscription({ start: "2026-01-15" }); // due
+    await seedSubscription({ start: "2026-06-01" }); // not yet due
+    await seedSubscription({ status: "PAUSED" }); // not active
+    const { countDue } = await import("@/lib/billing");
+    expect(await countDue(utc("2026-01-20"))).toBe(1);
+    expect(await countDue(utc("2026-07-01"))).toBe(2);
+  });
+
+  it("matches what a billing run then picks up", async () => {
+    await seedSubscription();
+    const { countDue } = await import("@/lib/billing");
+    const asOf = utc("2026-01-20");
+    const due = await countDue(asOf);
+    expect((await runBilling(asOf)).due).toBe(due);
+  });
+});
