@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { connection } from "next/server";
 import {
   DataTable,
-  MobileMeta,
   PageHeader,
   StatusBadge,
   formatDate,

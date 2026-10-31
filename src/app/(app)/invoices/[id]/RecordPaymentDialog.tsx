@@ -4,22 +4,17 @@ import { useState, type FormEvent } from "react";
 import { Button, Dialog, FormField, Input, Select, Textarea, postJson, toDateInput } from "@/components";
 import { formatINR, rupees } from "@/lib/money";
 import { PAYMENT_METHODS } from "@/lib/state";
+import { paymentMethodLabel } from "../../payments/methods";
 
 interface RecordPaymentDialogProps {
   open: boolean;
   onClose: () => void;
   invoiceId: number;
+  /** Shown in the title when the dialog is opened away from the invoice itself. */
+  invoiceNumber?: string;
   balance: number; // paise
   onRecorded: (fullyPaid: boolean) => void;
 }
-
-const METHOD_LABELS: Record<(typeof PAYMENT_METHODS)[number], string> = {
-  CARD: "Card",
-  BANK_TRANSFER: "Bank transfer",
-  UPI: "UPI",
-  CASH: "Cash",
-  OTHER: "Other",
-};
 
 /** "1,234.5" -> 123450 paise, or null if it is not a valid amount with at most 2 decimals. */
 function toPaise(input: string): number | null {
@@ -28,7 +23,7 @@ function toPaise(input: string): number | null {
   return Math.round(Number(clean) * 100);
 }
 
-export function RecordPaymentDialog({ open, onClose, invoiceId, balance, onRecorded }: RecordPaymentDialogProps) {
+export function RecordPaymentDialog({ open, onClose, invoiceId, invoiceNumber, balance, onRecorded }: RecordPaymentDialogProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const formId = `pay-${invoiceId}`;
@@ -63,7 +58,7 @@ export function RecordPaymentDialog({ open, onClose, invoiceId, balance, onRecor
     <Dialog
       open={open}
       onClose={onClose}
-      title="Record payment"
+      title={invoiceNumber ? `Record payment: ${invoiceNumber}` : "Record payment"}
       footer={
         <>
           <Button onClick={onClose}>Discard</Button>
@@ -88,7 +83,7 @@ export function RecordPaymentDialog({ open, onClose, invoiceId, balance, onRecor
             <Select {...f} name="method" defaultValue="BANK_TRANSFER">
               {PAYMENT_METHODS.map((m) => (
                 <option key={m} value={m}>
-                  {METHOD_LABELS[m]}
+                  {paymentMethodLabel(m)}
                 </option>
               ))}
             </Select>
