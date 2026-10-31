@@ -164,6 +164,8 @@ model SubscriptionLine {
   taxBps          Int          @default(0)
   discountId      Int?
   subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
 }
 
 model Invoice {
@@ -205,6 +207,8 @@ model InvoiceLine {
   taxAmount      Int     @default(0)
   amount         Int // net of discount, before tax (snapshot, never recomputed)
   invoice        Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
 }
 
 model Payment {

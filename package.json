@@ -13,7 +13,7 @@
     "sync": "./scripts/sync.sh",
     "handoff": "./scripts/handoff.sh",
     "test": "vitest run",
-    "seed:full": "SEED_SIZE=3000 tsx prisma/seed.ts",
+    "seed:full": "tsx prisma/seed.ts --size=3000",
     "demo:billing": "tsx scripts/demo-billing.ts",
     "setup:env": "node scripts/setup-env.mjs"
   },

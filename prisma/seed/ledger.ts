@@ -61,7 +61,7 @@ export async function settleInvoices(db: PrismaClient, now: Date): Promise<void>
           invoiceId: inv.id,
           method: faker.helpers.weightedArrayElement(METHODS),
           amount: part,
-          paidOn: addDays(inv.periodStart, 5),
+          paidOn: new Date(Math.min(addDays(inv.periodStart, 5).getTime(), now.getTime())),
           note: "Part payment",
         });
       }

@@ -1,5 +1,5 @@
 // Owner: fathima (written by ryyan for the demo; extend freely).
-// SEED_SIZE controls how many subscriptions to create (default 1500, full demo 3000).
+// --size=N (or SEED_SIZE) controls how many subscriptions to create (default 1500, full demo 3000).
 // Invoices come from the real billing engine, so numbers match what the app computes.
 import { PrismaClient } from "@prisma/client";
 import { fakerEN_IN as faker } from "@faker-js/faker";
@@ -18,7 +18,8 @@ const CLOSE_REASONS = ["Switched provider", "Budget cuts", "Merged into parent a
 
 async function main(): Promise<void> {
   if (process.env.NODE_ENV === "production") throw new Error("Refusing to seed in production");
-  const size = Math.max(10, Number(process.env.SEED_SIZE) || 1500);
+  const sizeArg = process.argv.find((a) => a.startsWith("--size="))?.split("=")[1];
+  const size = Math.max(10, Number(sizeArg ?? process.env.SEED_SIZE) || 1500);
   const customerCount = Math.max(5, Math.ceil(size / 7));
   const now = startOfDayUTC(new Date());
   const started = Date.now();
